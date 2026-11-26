@@ -42,7 +42,7 @@ const StatCard = ({ title, value, subtitle, icon: Icon, accentColor = '#F59E0B' 
     height: '100%',
     bgcolor: '#131722',
     border: '1px solid rgba(255, 255, 255, 0.08)',
-    borderRadius: 3,
+    borderRadius: 1,
     color: 'white',
     backdropFilter: 'blur(20px)'
   }}>
@@ -136,42 +136,47 @@ export function DriverGroupsPage() {
   return (
     <Box sx={{ p: { xs: 2, md: 0 } }}>
       {/* Header */}
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
-        <Box>
-          <Typography variant="h4" fontWeight="800" sx={{
-            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            mb: 0.5
-          }}>
-            Driver Groups
-          </Typography>
-          <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-            Manage driver groups and hierarchical organization structure
-          </Typography>
+      <Box mb={3}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+              FLEET & PEOPLE
+            </Typography>
+            <Typography variant="h4" fontWeight="800" sx={{
+              color: '#ffffff',
+              mb: 0.5
+            }}>
+              Driver Groups
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+              Manage driver groups, SACCO fleets, and hierarchical organization structure
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<PlusIcon />}
+            onClick={handleCreateGroup}
+            sx={{
+              background: 'linear-gradient(to right, #F59E0B, #D97706)',
+              color: '#000000',
+              boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
+              fontWeight: 'bold',
+              px: 2,
+              py: 0.75,
+              fontSize: '0.75rem',
+              borderRadius: '3px',
+              textTransform: 'none',
+              whiteSpace: 'nowrap',
+              '&:hover': {
+                background: 'linear-gradient(to right, #FBBF24, #F59E0B)',
+              }
+            }}
+          >
+            Create Group
+          </Button>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<PlusIcon />}
-          onClick={handleCreateGroup}
-          sx={{
-            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            color: '#000000',
-            boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
-            fontWeight: 'bold',
-            px: 3,
-            py: 1.25,
-            borderRadius: 2,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
-            whiteSpace: 'nowrap',
-            '&:hover': {
-              background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)',
-            }
-          }}
-        >
-          Create Group
-        </Button>
+        {/* Golden Gradient Separator */}
+        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
       </Box>
 
       {/* Stats Cards */}

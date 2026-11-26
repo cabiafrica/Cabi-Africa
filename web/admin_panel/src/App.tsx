@@ -8,6 +8,7 @@ import { CommandPalette, CommandItem } from './components/layout/CommandPalette'
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Admin2FAStepUpModal } from './components/modals/Admin2FAStepUpModal';
 import InactivitySentinel from './components/common/InactivitySentinel';
+import { PageHeader } from './components/common/PageHeader';
 import {
   LayoutDashboard, Radio, Flame, TrendingUp, ShieldAlert,
   Users, UserCog, FileCheck, FolderKanban, BarChart3, Building2, Ban,
@@ -463,10 +464,18 @@ function App() {
 
               <Route path="/dashboard" element={
                 <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold">Admin Dashboard</h2>
-                    <span className="text-sm text-gray-500">Live Overview</span>
-                  </div>
+                  <PageHeader
+                    category="Command Center"
+                    title="Executive Dashboard"
+                    subtitle="Real-time operational metrics, trip volumes, and fleet telemetry"
+                    icon={<LayoutDashboard className="w-6 h-6" />}
+                    badge={
+                      <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                        LIVE TELEMETRY
+                      </span>
+                    }
+                  />
                   <DashboardAnalytics />
                   <div className="grid grid-cols-1 gap-6">
                     <ExpiringDocumentsWidget />

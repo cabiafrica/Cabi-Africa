@@ -87,47 +87,45 @@ const RolesList: React.FC = () => {
             background: 'linear-gradient(135deg, #121212 0%, #000000 100%)',
             color: 'white'
         }}>
-            {/* Header */}
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={4} sx={{
-                background: 'rgba(255,255,255,0.03)',
-                p: 3,
-                borderRadius: 4,
-                backdropFilter: 'blur(10px)',
-                border: '1px solid rgba(255,255,255,0.05)'
-            }}>
-                <Box>
-                    <Typography variant="h4" fontWeight="800" sx={{
-                        background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        mb: 1
-                    }}>
-                        Roles & Permissions
-                    </Typography>
-                    <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                        Manage system access levels and permissions across all platforms
-                    </Typography>
+            {/* Header Section */}
+            <Box mb={3}>
+                <Box display="flex" justifyContent="space-between" alignItems="center">
+                    <Box>
+                        <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+                            GROWTH & PLATFORM
+                        </Typography>
+                        <Typography variant="h4" fontWeight="800" sx={{
+                            color: '#ffffff',
+                            mb: 0.5
+                        }}>
+                            Roles & Permissions
+                        </Typography>
+                        <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+                            Manage system access levels and permissions across all platforms
+                        </Typography>
+                    </Box>
+                    <Button
+                        variant="contained"
+                        startIcon={<AddIcon />}
+                        onClick={() => navigate('/roles/new')}
+                        sx={{
+                            background: 'linear-gradient(to right, #F59E0B, #D97706)',
+                            color: '#000000',
+                            boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
+                            '&:hover': { background: 'linear-gradient(to right, #FBBF24, #F59E0B)' },
+                            fontWeight: 'bold',
+                            px: 2,
+                            py: 0.75,
+                            fontSize: '0.75rem',
+                            whiteSpace: 'nowrap',
+                            borderRadius: '3px',
+                        }}
+                    >
+                        Create New Role
+                    </Button>
                 </Box>
-                <Button
-                    variant="contained"
-                    startIcon={<AddIcon />}
-                    onClick={() => navigate('/roles/new')}
-                    sx={{
-                        backgroundColor: '#F59E0B',
-                        color: '#000000',
-                        boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
-                        '&:hover': { backgroundColor: '#D97706' },
-                        fontWeight: 'bold',
-                        px: 3,
-                        py: 1.25,
-                        whiteSpace: 'nowrap',
-                        borderRadius: 2,
-                        textTransform: 'uppercase',
-                        letterSpacing: '0.5px'
-                    }}
-                >
-                    Create New Role
-                </Button>
+                {/* Golden Gradient Separator */}
+                <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
             </Box>
 
             {/* Search Bar */}

@@ -80,41 +80,46 @@ export const UserManagement: React.FC = () => {
   return (
     <Box sx={{ p: { xs: 2, md: 0 } }}>
       {/* Header */}
-      <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-        <Box>
-          <Typography variant="h4" fontWeight="800" sx={{
-            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            mb: 1
-          }}>
-            Admin User Management
-          </Typography>
-          <Typography variant="body1" sx={{ color: '#94a3b8' }}>
-            Manage system administrators and their access roles.
-          </Typography>
+      <Box mb={3}>
+        <Box display="flex" justifyContent="space-between" alignItems="center">
+          <Box>
+            <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+              FLEET & PEOPLE
+            </Typography>
+            <Typography variant="h4" fontWeight="800" sx={{
+              color: '#ffffff',
+              mb: 0.5
+            }}>
+              Admin User Management
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+              Manage system administrators and their access roles.
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            startIcon={<AddIcon />}
+            onClick={() => setEditingUser('new')}
+            sx={{
+              background: 'linear-gradient(to right, #F59E0B, #D97706)',
+              color: '#000000',
+              boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
+              fontWeight: 700,
+              px: 2,
+              py: 0.75,
+              borderRadius: '3px',
+              fontSize: '0.75rem',
+              textTransform: 'none',
+              '&:hover': {
+                background: 'linear-gradient(to right, #FBBF24, #F59E0B)',
+              }
+            }}
+          >
+            Create New User
+          </Button>
         </Box>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={() => setEditingUser('new')}
-          sx={{
-            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            color: '#000000',
-            boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
-            fontWeight: 700,
-            px: 2,
-            py: 0.75,
-            borderRadius: 0.75,
-            fontSize: '0.8125rem',
-            textTransform: 'none',
-            '&:hover': {
-              background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)',
-            }
-          }}
-        >
-          Create New User
-        </Button>
+        {/* Golden Gradient Separator */}
+        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
       </Box>
 
       {/* Content Card */}

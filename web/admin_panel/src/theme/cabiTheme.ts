@@ -203,6 +203,19 @@ export const cabiTheme = createTheme({
         },
       },
     },
+    MuiInputAdornment: {
+      styleOverrides: {
+        root: {
+          color: '#94a3b8',
+        },
+        positionStart: {
+          marginRight: 10,
+        },
+        positionEnd: {
+          marginLeft: 10,
+        },
+      },
+    },
     MuiMenu: {
       styleOverrides: {
         paper: {

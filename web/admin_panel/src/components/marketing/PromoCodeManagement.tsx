@@ -9,6 +9,7 @@ import {
     CheckCircle,
     Cancel
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const PromoCodeManagement: React.FC = () => {
     const [promos, setPromos] = useState<any[]>([]);
@@ -20,19 +21,18 @@ export const PromoCodeManagement: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Discount className="text-amber-600 dark:text-amber-400" />
-                        Promo Codes
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Manage marketing codes and discount offers.</p>
-                </div>
-                <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0">
-                    <Add fontSize="small" />
-                    Create Promo Code
-                </button>
-            </div>
+            <PageHeader
+                category="Growth & Platform"
+                title="Promo Codes"
+                subtitle="Manage marketing campaign codes, trip discount parameters, and redemption limits."
+                icon={<Discount className="text-amber-500" />}
+                actions={
+                    <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded-[3px] text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0">
+                        <Add fontSize="small" />
+                        Create Promo Code
+                    </button>
+                }
+            />
 
             <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
                 <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex justify-between items-center">

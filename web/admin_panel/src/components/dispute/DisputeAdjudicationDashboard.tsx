@@ -4,6 +4,7 @@ import {
   MapPin, ShieldAlert, ArrowUpRight, Check, X, FileText 
 } from 'lucide-react';
 import { dispatchApiClient } from '../../services/dispatchApiClient';
+import { PageHeader } from '../common/PageHeader';
 
 interface DisputeItem {
   id: string;
@@ -46,8 +47,11 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
   const fetchDisputes = async () => {
     try {
       const res = await dispatchApiClient.get('/disputes');
-      if (res.data && Array.isArray(res.data)) {
-        setDisputes(res.data);
+      const apiClaims = Array.isArray(res.data) 
+        ? res.data 
+        : (Array.isArray(res.data?.claims) && res.data.claims.length > 0 ? res.data.claims : []);
+      if (apiClaims.length > 0) {
+        setDisputes(apiClaims);
         return;
       }
     } catch (_) {
@@ -200,86 +204,78 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-card-dark p-6 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-xs tracking-wider uppercase">
-            <Scale className="w-4 h-4" />
-            <span>Senior Adjudication & Dispute Engine</span>
-          </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-            Trip Detour & Fare Recalculation Escrow
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-            Audit GPS trajectory anomalies (&gt;30% variance), evaluate driver 48-hour appeals, and adjudicate fair compensation.
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="px-3 py-1.5 rounded-lg bg-emerald-50 dark:bg-emerald-950/40 text-emerald-700 dark:text-emerald-400 text-xs font-semibold border border-emerald-200 dark:border-emerald-800">
-            {pendingCount} Active In Adjudication Queue
+      {/* Harmonized Page Header with Golden Separator */}
+      <PageHeader
+        category="Trips & Safety"
+        title="Disputes & Detours"
+        subtitle="Audit GPS trajectory anomalies (>30% variance), evaluate driver 48-hour appeals, and adjudicate fair compensation."
+        icon={<Scale className="w-6 h-6" />}
+        badge={
+          <span className="px-2.5 py-1 rounded-[3px] bg-amber-500/10 text-amber-400 text-xs font-semibold border border-amber-500/20">
+            {pendingCount} Active In Queue
           </span>
-        </div>
-      </div>
+        }
+      />
 
       {actionSuccessMessage && (
-        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between">
+        <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/80 rounded-[4px] text-emerald-300 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
             <span>{actionSuccessMessage}</span>
           </div>
-          <button onClick={() => setActionSuccessMessage(null)} className="text-emerald-600 hover:text-emerald-900 font-bold">×</button>
+          <button onClick={() => setActionSuccessMessage(null)} className="text-emerald-400 hover:text-emerald-200 font-bold text-sm">×</button>
         </div>
       )}
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Pending Adjudication</span>
             <Clock className="w-4 h-4 text-amber-500" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">{pendingCount}</span>
-            <span className="text-xs text-amber-400 font-medium">Requires Review</span>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">{pendingCount}</span>
+            <span className="text-[11px] text-amber-400 font-medium">Requires Review</span>
           </div>
         </div>
 
-        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Driver Appeals</span>
-            <ShieldAlert className="w-4 h-4 text-sky-400" />
+            <ShieldAlert className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">{appealedCount}</span>
-            <span className="text-xs text-sky-400 font-medium">Under 48h SLA</span>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">{appealedCount}</span>
+            <span className="text-[11px] text-amber-400 font-medium">Under 48h SLA</span>
           </div>
         </div>
 
-        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Resolved Disputes</span>
             <CheckCircle className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">{resolvedCount}</span>
-            <span className="text-xs text-emerald-400 font-medium">Auto & Manual</span>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">{resolvedCount}</span>
+            <span className="text-[11px] text-emerald-400 font-medium">Auto & Manual</span>
           </div>
         </div>
 
-        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Avg Detour Anomaly</span>
             <AlertTriangle className="w-4 h-4 text-rose-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-white">+33.5%</span>
-            <span className="text-xs text-rose-400 font-medium">Above Corridor</span>
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">+33.5%</span>
+            <span className="text-[11px] text-rose-400 font-medium">Above Corridor</span>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#131722] p-4 rounded-2xl border border-white/10 shadow-sm">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#131722] p-3 rounded-[4px] border border-white/10 shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
           {[
             { id: 'ALL', label: 'All Claims' },
@@ -290,9 +286,9 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
             <button
               key={tab.id}
               onClick={() => setFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`px-3 py-1.5 rounded-[3px] text-xs font-semibold whitespace-nowrap transition-colors ${
                 filter === tab.id
-                  ? 'bg-amber-500 text-black font-bold shadow-sm'
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-sm shadow-amber-500/20'
                   : 'bg-white/5 text-slate-300 hover:bg-white/10'
               }`}
             >
@@ -301,57 +297,59 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
           ))}
         </div>
 
-        <div className="relative w-full sm:w-64">
-          <Search className="w-4 h-4 absolute left-3 top-2.5 text-slate-400" />
+        {/* Search input with proper leading icon alignment and generous left padding */}
+        <div className="relative w-full sm:w-72">
+          <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
           <input
             type="text"
             placeholder="Search trip, passenger, driver..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
+            style={{ paddingLeft: '2.75rem' }}
+            className="w-full !pl-11 pr-3 py-1.5 text-xs bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
           />
         </div>
       </div>
 
       {/* Disputes Table */}
-      <div className="bg-[#131722] rounded-2xl border border-white/10 overflow-hidden shadow-sm">
+      <div className="bg-[#131722] rounded-[4px] border border-white/10 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-            <thead className="bg-slate-50 dark:bg-white/5 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/10">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="bg-white/[0.02] text-[11px] uppercase tracking-wider text-slate-400 border-b border-white/10">
               <tr>
-                <th className="px-5 py-3">Dispute & Trip</th>
-                <th className="px-5 py-3">Parties</th>
-                <th className="px-5 py-3">Trajectory Anomaly</th>
-                <th className="px-5 py-3">Fare Variance</th>
-                <th className="px-5 py-3">Driver SLA</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Action</th>
+                <th className="px-4 py-3">Dispute & Trip</th>
+                <th className="px-4 py-3">Parties</th>
+                <th className="px-4 py-3">Trajectory Anomaly</th>
+                <th className="px-4 py-3">Fare Variance</th>
+                <th className="px-4 py-3">Driver SLA</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3 text-right">Action</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/10">
+            <tbody className="divide-y divide-white/10">
               {filteredDisputes.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="text-center py-12 text-slate-400 text-sm">
+                  <td colSpan={7} className="text-center py-10 text-slate-400 text-xs">
                     No disputes match the current criteria.
                   </td>
                 </tr>
               ) : (
                 filteredDisputes.map(item => (
-                  <tr key={item.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="font-semibold text-slate-900 dark:text-white text-xs">{item.id}</div>
+                  <tr key={item.id} className="hover:bg-white/[0.02] transition-colors">
+                    <td className="px-4 py-3">
+                      <div className="font-semibold text-white text-xs">{item.id}</div>
                       <div className="text-[11px] text-slate-400 font-mono mt-0.5">{item.tripId}</div>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <div className="text-xs font-medium text-slate-900 dark:text-white">Rider: {item.passengerName}</div>
-                      <div className="text-[11px] text-slate-500 dark:text-slate-400 mt-0.5">Driver: {item.driverName}</div>
+                    <td className="px-4 py-3">
+                      <div className="text-xs font-medium text-white">Rider: {item.passengerName}</div>
+                      <div className="text-[11px] text-slate-400 mt-0.5">Driver: {item.driverName}</div>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3">
                       <div className="flex items-center gap-1.5">
-                        <span className={`px-2 py-0.5 rounded text-[11px] font-bold ${
+                        <span className={`px-2 py-0.5 rounded-[2px] text-[11px] font-bold ${
                           item.detourPercent > 30 
-                            ? 'bg-red-50 text-red-700 dark:bg-red-950/40 dark:text-red-400 border border-red-200 dark:border-red-900' 
-                            : 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                            ? 'bg-rose-950/40 text-rose-300 border border-rose-900/60' 
+                            : 'bg-emerald-950/40 text-emerald-300 border border-emerald-900/60'
                         }`}>
                           +{item.detourPercent.toFixed(1)}% Detour
                         </span>
@@ -360,17 +358,17 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
                         {item.actualDistanceKm}km (opt: {item.optimalDistanceKm}km)
                       </div>
                     </td>
-                    <td className="px-5 py-3.5">
-                      <div className="text-xs font-bold text-slate-900 dark:text-white">
+                    <td className="px-4 py-3">
+                      <div className="text-xs font-bold text-white">
                         KES {item.claimedOvercharge} diff
                       </div>
                       <div className="text-[10px] text-slate-400">
                         Paid: KES {item.originalFare} • Fair: KES {item.recalculatedFairFare}
                       </div>
                     </td>
-                    <td className="px-5 py-3.5">
+                    <td className="px-4 py-3">
                       {item.driverAppealed ? (
-                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-blue-600 dark:text-blue-400">
+                        <span className="inline-flex items-center gap-1 text-[11px] font-semibold text-amber-400">
                           <ShieldAlert className="w-3 h-3" /> Appealed
                         </span>
                       ) : (
@@ -379,25 +377,25 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-5 py-3.5">
-                      <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold ${
+                    <td className="px-4 py-3">
+                      <span className={`px-2.5 py-0.5 rounded-[2px] text-[10px] font-bold ${
                         item.status === 'RESOLVED_AUTO_VOUCHER'
-                          ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
+                          ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/50'
                           : item.status === 'RESOLVED_MANUAL_REFUND'
-                          ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 border border-emerald-300'
+                          ? 'bg-emerald-950/80 text-emerald-300 border border-emerald-700/60'
                           : item.status === 'UNDER_APPEAL_REVIEW'
-                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300'
+                          ? 'bg-amber-950/60 text-amber-300 border border-amber-800/50'
                           : item.status === 'REJECTED_CLAIM'
-                          ? 'bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-400'
-                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                          ? 'bg-white/5 text-slate-400 border border-white/10'
+                          : 'bg-amber-950/50 text-amber-300 border border-amber-800/40'
                       }`}>
                         {item.status.replace(/_/g, ' ')}
                       </span>
                     </td>
-                    <td className="px-5 py-3.5 text-right">
+                    <td className="px-4 py-3 text-right">
                       <button
                         onClick={() => setSelectedDispute(item)}
-                        className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-white/10 hover:bg-emerald-600 hover:text-white transition-colors"
+                        className="px-3 py-1.5 rounded-[3px] text-xs font-semibold bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 transition-colors whitespace-nowrap"
                       >
                         Inspect & Adjudicate
                       </button>
@@ -412,65 +410,65 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
 
       {/* Adjudication Drawer / Modal */}
       {selectedDispute && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white dark:bg-card-dark rounded-2xl max-w-2xl w-full p-6 border border-slate-200 dark:border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
-            <div className="flex justify-between items-center border-b border-slate-200 dark:border-white/10 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div className="bg-[#131722] rounded-[4px] max-w-2xl w-full p-6 border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5 text-white">
+            <div className="flex justify-between items-center border-b border-white/10 pb-4">
               <div>
-                <span className="text-[11px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-amber-500">
                   Case Review • {selectedDispute.id}
                 </span>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                <h3 className="text-lg font-bold text-white mt-0.5">
                   Trajectory Audit & Claim Adjudication
                 </h3>
               </div>
               <button
                 onClick={() => setSelectedDispute(null)}
-                className="text-slate-400 hover:text-slate-600 dark:hover:text-white font-bold text-lg"
+                className="text-slate-400 hover:text-white font-bold text-lg"
               >
                 ×
               </button>
             </div>
 
             {/* Trajectory telemetry */}
-            <div className="bg-slate-50 dark:bg-white/5 p-4 rounded-xl border border-slate-200 dark:border-white/10 space-y-3">
+            <div className="bg-white/[0.03] p-4 rounded-[4px] border border-white/10 space-y-3">
               <div className="flex justify-between items-center">
-                <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Route Mileage Comparison</span>
-                <span className="text-xs font-bold text-red-600 dark:text-red-400">
+                <span className="text-xs font-semibold text-slate-300">Route Mileage Comparison</span>
+                <span className="text-xs font-bold text-rose-400">
                   +{selectedDispute.detourPercent.toFixed(1)}% Anomaly Detected
                 </span>
               </div>
               <div className="grid grid-cols-3 gap-3 text-center">
-                <div className="bg-white dark:bg-card-dark p-2.5 rounded-lg border border-slate-200 dark:border-white/5">
+                <div className="bg-[#0a0a0a] p-2.5 rounded-[3px] border border-white/10">
                   <div className="text-[10px] text-slate-400">Actual GPS Route</div>
-                  <div className="text-sm font-bold text-slate-900 dark:text-white">{selectedDispute.actualDistanceKm} km</div>
+                  <div className="text-sm font-bold text-white">{selectedDispute.actualDistanceKm} km</div>
                 </div>
-                <div className="bg-white dark:bg-card-dark p-2.5 rounded-lg border border-slate-200 dark:border-white/5">
+                <div className="bg-[#0a0a0a] p-2.5 rounded-[3px] border border-white/10">
                   <div className="text-[10px] text-slate-400">Optimal Corridor</div>
-                  <div className="text-sm font-bold text-slate-900 dark:text-white">{selectedDispute.optimalDistanceKm} km</div>
+                  <div className="text-sm font-bold text-white">{selectedDispute.optimalDistanceKm} km</div>
                 </div>
-                <div className="bg-white dark:bg-card-dark p-2.5 rounded-lg border border-slate-200 dark:border-white/5">
+                <div className="bg-[#0a0a0a] p-2.5 rounded-[3px] border border-white/10">
                   <div className="text-[10px] text-slate-400">Overcharge Difference</div>
-                  <div className="text-sm font-bold text-emerald-600">KES {selectedDispute.claimedOvercharge}</div>
+                  <div className="text-sm font-bold text-amber-400">KES {selectedDispute.claimedOvercharge}</div>
                 </div>
               </div>
             </div>
 
             {/* Passenger Statement */}
             <div className="space-y-1">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Passenger Claim</label>
-              <div className="p-3 bg-slate-50 dark:bg-white/5 rounded-lg border border-slate-200 dark:border-white/10 text-xs text-slate-700 dark:text-slate-300">
-                <div className="font-semibold text-slate-900 dark:text-white mb-1">Reason: {selectedDispute.reason.replace(/_/g, ' ')}</div>
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Passenger Claim</label>
+              <div className="p-3 bg-white/[0.03] rounded-[3px] border border-white/10 text-xs text-slate-300">
+                <div className="font-semibold text-white mb-1">Reason: {selectedDispute.reason.replace(/_/g, ' ')}</div>
                 "{selectedDispute.description}"
               </div>
             </div>
 
             {/* Driver Appeal Statement */}
             <div className="space-y-1">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">Driver Appeal Context</label>
-              <div className="p-3 bg-blue-50/50 dark:bg-blue-950/20 rounded-lg border border-blue-200 dark:border-blue-900/50 text-xs text-slate-700 dark:text-slate-300">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">Driver Appeal Context</label>
+              <div className="p-3 bg-amber-500/5 rounded-[3px] border border-amber-500/20 text-xs text-slate-300">
                 {selectedDispute.driverAppealed ? (
                   <>
-                    <div className="font-semibold text-blue-800 dark:text-blue-300 mb-1">
+                    <div className="font-semibold text-amber-400 mb-1">
                       Justification: {selectedDispute.driverAppealReason?.replace(/_/g, ' ')}
                     </div>
                     "{selectedDispute.driverAppealJustification}"
@@ -483,7 +481,7 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
 
             {/* Adjudication Notes Input */}
             <div className="space-y-1">
-              <label className="text-xs font-bold uppercase tracking-wider text-slate-500">
+              <label className="text-xs font-bold uppercase tracking-wider text-slate-400">
                 Senior Adjudication Note (Logged in Occurrence Book)
               </label>
               <textarea
@@ -491,16 +489,16 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
                 value={adjudicationNote}
                 onChange={(e) => setAdjudicationNote(e.target.value)}
                 placeholder="Enter justification for decision, telemetry audit notes, or refund authorization..."
-                className="w-full p-2.5 text-xs bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                className="w-full p-2.5 text-xs bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
               />
             </div>
 
             {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-white/10">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/10">
               <button
                 type="button"
                 onClick={() => setSelectedDispute(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 dark:text-slate-400 hover:text-slate-900"
+                className="px-3.5 py-1.5 text-xs font-semibold text-slate-400 hover:text-white"
               >
                 Close
               </button>
@@ -508,16 +506,16 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleAdjudicate('REJECTED_CLAIM')}
-                className="px-4 py-2 text-xs font-bold bg-slate-200 hover:bg-slate-300 dark:bg-white/10 dark:hover:bg-white/20 text-slate-700 dark:text-slate-200 rounded-lg transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-1.5 text-xs font-semibold bg-white/5 hover:bg-rose-500/20 text-rose-400 border border-rose-500/30 rounded-[3px] transition-colors flex items-center gap-1.5"
               >
-                <X className="w-3.5 h-3.5 text-red-500" />
+                <X className="w-3.5 h-3.5 text-rose-400" />
                 Reject Claim (Uphold Driver)
               </button>
               <button
                 type="button"
                 disabled={isSubmitting}
                 onClick={() => handleAdjudicate('RESOLVED_MANUAL_REFUND')}
-                className="px-5 py-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-colors shadow-sm flex items-center gap-1.5"
+                className="px-3.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-[3px] transition-all shadow-sm shadow-amber-500/20 flex items-center gap-1.5"
               >
                 <Check className="w-3.5 h-3.5" />
                 Approve Voucher (KES {selectedDispute.claimedOvercharge})

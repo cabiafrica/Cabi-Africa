@@ -2,6 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, BlogPost } from '../../services/adminService';
 import { BlogPostForm } from '../forms/BlogPostForm';
 import { Article, Add, Edit, Delete } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const BlogManagement: React.FC = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -37,24 +38,21 @@ export const BlogManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-            <Article className="text-amber-500" />
-            Blog Management
-          </h1>
-          <p className="text-slate-400 mt-1 text-sm">
-            Publish, edit, and curate marketing articles, driver bulletins, and platform news.
-          </p>
-        </div>
-        <button
-          onClick={() => setEditingPost('new')}
-          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-1.5"
-        >
-          <Add fontSize="small" />
-          Create New Post
-        </button>
-      </div>
+      <PageHeader
+        category="Growth & Platform"
+        title="Blog Management"
+        subtitle="Publish, edit, and curate marketing articles, driver bulletins, and platform news."
+        icon={<Article className="text-amber-500" />}
+        actions={
+          <button
+            onClick={() => setEditingPost('new')}
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded-[3px] text-xs font-semibold shadow-sm shadow-amber-500/20 transition-all active:scale-95 flex items-center gap-1.5 whitespace-nowrap shrink-0"
+          >
+            <Add fontSize="small" />
+            Create New Post
+          </button>
+        }
+      />
 
       <div className="bg-[#131722] border border-white/10 rounded shadow-xl overflow-hidden">
         <div className="px-6 py-4 border-b border-white/10 bg-[#131722] flex justify-between items-center">

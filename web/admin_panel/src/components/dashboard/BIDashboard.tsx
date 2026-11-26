@@ -18,6 +18,7 @@ import {
     DirectionsCar,
     Star
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 const valueFormatter = (number: number) =>
     `KES ${Intl.NumberFormat('us').format(number).toString()}`;
@@ -47,20 +48,17 @@ export const BIDashboard: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <TrendingUp className="text-amber-500" />
-                        Business Intelligence
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Global performance metrics and growth analytics.</p>
-                </div>
-                <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-xs font-bold rounded-full border border-amber-200 dark:border-amber-800 flex items-center">
-                        Market Health: Initializing
+            <PageHeader
+                category="Command Center"
+                title="Business Intelligence"
+                subtitle="Global performance metrics, revenue trajectories, and growth analytics."
+                icon={<TrendingUp className="text-amber-500" />}
+                badge={
+                    <span className="px-2.5 py-1 bg-amber-500/10 text-amber-400 text-xs font-semibold rounded-[3px] border border-amber-500/20">
+                        Market Health: 99.4%
                     </span>
-                </div>
-            </div>
+                }
+            />
 
             <Grid numItems={1} numItemsSm={2} numItemsLg={5} className="gap-4">
                 <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">

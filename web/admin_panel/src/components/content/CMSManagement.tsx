@@ -10,6 +10,7 @@ import {
     QuestionAnswer,
     Search
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const CMSManagement: React.FC = () => {
     const [faqs, setFaqs] = useState<any[]>([]);
@@ -79,37 +80,36 @@ export const CMSManagement: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Article className="text-amber-600 dark:text-amber-400" />
-                        CMS Management
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Manage static pages, FAQs, and app content.</p>
-                </div>
-                <button
-                    onClick={handleAdd}
-                    className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0"
-                >
-                    <Add fontSize="small" />
-                    Add New {activeTab === 'FAQ' ? 'FAQ' : 'Page'}
-                </button>
-            </div>
+            <PageHeader
+                category="Growth & Platform"
+                title="CMS Management"
+                subtitle="Manage static pages, FAQs, and app content."
+                icon={<Article className="text-amber-500" />}
+                actions={
+                    <button
+                        onClick={handleAdd}
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded-[3px] text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0"
+                    >
+                        <Add fontSize="small" />
+                        Add New {activeTab === 'FAQ' ? 'FAQ' : 'Page'}
+                    </button>
+                }
+            />
 
-            <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden min-h-[500px]">
+            <div className="bg-[#131722] shadow-sm rounded-[4px] border border-white/10 overflow-hidden min-h-[500px]">
                 {/* Tabs */}
-                <div className="border-b border-slate-200 dark:border-white/10">
+                <div className="border-b border-white/10 bg-white/[0.02]">
                     <div className="flex px-6 pt-4 gap-6">
                         <button
                             onClick={() => { setActiveTab('FAQ'); setEditingItem(null); }}
-                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'FAQ' ? 'border-amber-500 text-amber-600 dark:text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                            className={`pb-3 px-1 text-xs font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'FAQ' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'}`}
                         >
                             <Help fontSize="small" />
                             FAQs
                         </button>
                         <button
                             onClick={() => { setActiveTab('PAGE'); setEditingItem(null); }}
-                            className={`pb-4 px-1 text-sm font-medium border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAGE' ? 'border-amber-500 text-amber-600 dark:text-amber-400' : 'border-transparent text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-300'}`}
+                            className={`pb-3 px-1 text-xs font-semibold border-b-2 transition-colors flex items-center gap-2 ${activeTab === 'PAGE' ? 'border-amber-500 text-amber-400' : 'border-transparent text-slate-400 hover:text-slate-200'}`}
                         >
                             <Description fontSize="small" />
                             Legal & Pages
@@ -119,17 +119,18 @@ export const CMSManagement: React.FC = () => {
 
                 <div className="p-6">
                     {loading ? (
-                        <div className="flex items-center justify-center h-40 text-slate-400">Loading content...</div>
+                        <div className="flex items-center justify-center h-40 text-slate-400 text-xs">Loading content...</div>
                     ) : (
                         <div className="space-y-4">
                             {/* FAQ SEARCH */}
                             {activeTab === 'FAQ' && (
                                 <div className="relative mb-4">
-                                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                                    <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fontSize="small" />
                                     <input
                                         type="text"
                                         placeholder="Search FAQs..."
-                                        className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
+                                        style={{ paddingLeft: '2.75rem' }}
+                                        className="w-full !pl-11 pr-3 py-1.5 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-xs text-white focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500"
                                     />
                                 </div>
                             )}

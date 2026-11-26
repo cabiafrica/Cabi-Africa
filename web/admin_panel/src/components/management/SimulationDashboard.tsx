@@ -9,6 +9,7 @@ import {
     People,
     PlayArrow
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 import {
     AreaChart,
     Card,
@@ -56,17 +57,12 @@ export const SimulationDashboard: React.FC = () => {
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Science className="text-amber-500" />
-                        Marketplace Simulator
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">
-                        Predict outcomes of pricing strategy changes before applying them live.
-                    </p>
-                </div>
-            </div>
+            <PageHeader
+                category="Growth & Platform"
+                title="Marketplace Simulator"
+                subtitle="Predict outcomes of pricing strategy changes before applying them live."
+                icon={<Science className="text-amber-500" />}
+            />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Simulation Controls */}

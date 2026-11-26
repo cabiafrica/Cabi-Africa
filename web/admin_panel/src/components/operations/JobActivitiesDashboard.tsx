@@ -280,32 +280,37 @@ export function JobActivitiesDashboard() {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Box>
-          <Typography variant="h4" fontWeight="800" sx={{
-            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            WebkitBackgroundClip: 'text',
-            WebkitTextFillColor: 'transparent',
-            mb: 0.5
-          }}>
-            Job Activities
-          </Typography>
-          <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-            Live ride dispatch log, active routes, and trip settlements
-          </Typography>
+      <Box mb={3}>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <Box>
+            <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+              TRIPS & SAFETY
+            </Typography>
+            <Typography variant="h4" fontWeight="800" sx={{
+              color: '#ffffff',
+              mb: 0.5
+            }}>
+              Job Activities
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+              Live ride dispatch log, active routes, and trip settlements
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: 1.5 }}>
+            <Tooltip title="Refresh">
+              <IconButton onClick={fetchRides} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '3px', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
+                <Refresh fontSize="small" />
+              </IconButton>
+            </Tooltip>
+            <Tooltip title="Export to CSV">
+              <IconButton onClick={handleExport} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '3px', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
+                <Download fontSize="small" />
+              </IconButton>
+            </Tooltip>
+          </Box>
         </Box>
-        <Box sx={{ display: 'flex', gap: 1.5 }}>
-          <Tooltip title="Refresh">
-            <IconButton onClick={fetchRides} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
-              <Refresh />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Export to CSV">
-            <IconButton onClick={handleExport} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
-              <Download />
-            </IconButton>
-          </Tooltip>
-        </Box>
+        {/* Golden Gradient Separator */}
+        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
       </Box>
 
       {/* Statistics Cards */}

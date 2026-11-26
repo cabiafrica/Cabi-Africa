@@ -9,6 +9,7 @@ import {
     ErrorOutline,
     FilterList
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const FraudDetectionDashboard: React.FC = () => {
     const [alerts, setAlerts] = useState<any[]>([]);
@@ -35,29 +36,28 @@ export const FraudDetectionDashboard: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Security className="text-red-600 dark:text-red-500" />
-                        Fraud Detection Center
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Real-time monitoring of suspicious activities and anomalies.</p>
-                </div>
-                <div className="flex gap-2">
-                    <button
-                        onClick={() => setFilter('ALL')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'ALL' ? 'bg-amber-500 text-black border-amber-500 shadow-sm' : 'bg-white dark:bg-[#131722] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-amber-500/50'}`}
-                    >
-                        All Alerts
-                    </button>
-                    <button
-                        onClick={() => setFilter('HIGH')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'HIGH' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-white dark:bg-[#131722] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:text-red-500'}`}
-                    >
-                        High Severity
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                category="Command Center"
+                title="Fraud Alerts & Security Center"
+                subtitle="Real-time monitoring of suspicious activities, anomaly scoring, and account freezes."
+                icon={<Security className="text-amber-500" />}
+                actions={
+                    <div className="flex gap-2">
+                        <button
+                            onClick={() => setFilter('ALL')}
+                            className={`px-3.5 py-1.5 rounded-[3px] text-xs font-semibold transition-all border ${filter === 'ALL' ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black border-amber-500 shadow-sm shadow-amber-500/20' : 'bg-white/5 text-slate-300 border-white/10 hover:bg-white/10'}`}
+                        >
+                            All Alerts
+                        </button>
+                        <button
+                            onClick={() => setFilter('HIGH')}
+                            className={`px-3.5 py-1.5 rounded-[3px] text-xs font-semibold transition-all border ${filter === 'HIGH' ? 'bg-rose-600 text-white border-rose-600 shadow-sm' : 'bg-white/5 text-slate-300 border-white/10 hover:text-rose-400'}`}
+                        >
+                            High Severity
+                        </button>
+                    </div>
+                }
+            />
 
             {/* Stats Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

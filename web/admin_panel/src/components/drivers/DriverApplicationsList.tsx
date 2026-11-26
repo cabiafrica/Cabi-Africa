@@ -142,13 +142,14 @@ export const DriverApplicationsList: React.FC = () => {
 
       <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden space-y-4">
         {/* Controls Header */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-4 py-3 border-b border-white/10 bg-white/[0.02] flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="w-full sm:w-auto relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fontSize="small" />
             <input
               type="text"
               placeholder="Search name or email..."
-              className="w-full sm:w-64 pl-9 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded-lg bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+              style={{ paddingLeft: '2.75rem' }}
+              className="w-full sm:w-64 !pl-11 pr-3 py-1.5 border border-white/10 rounded-[3px] bg-[#0a0a0a] text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
             />

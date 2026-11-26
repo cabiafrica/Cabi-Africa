@@ -196,54 +196,64 @@ export const OccurrenceList = () => {
     <Fade in={true} timeout={800}>
       <Box p={{ xs: 2, md: 4 }} sx={{ maxWidth: '1600px', margin: '0 auto' }}>
         {/* Header Section */}
-        <Box display="flex" justifyContent="space-between" alignItems="flex-end" mb={4}>
-          <Box>
-            <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 0.5, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
-              Occurrence Book
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 400 }}>
-              Security Command & Incident Audit Trail
-            </Typography>
-          </Box>
-          
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Box sx={{ 
-              display: 'flex', 
-              alignItems: 'center', 
-              bgcolor: 'rgba(255,255,255,0.03)', 
-              borderRadius: '12px', 
-              px: 2, 
-              border: '1px solid rgba(255,255,255,0.08)',
-              width: '300px',
-              transition: 'all 0.3s',
-              '&:focus-within': { borderColor: '#F59E0B', boxShadow: '0 0 15px rgba(245, 158, 11, 0.15)' }
-            }}>
-              <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: 20 }} />
-              <InputBase 
-                placeholder="Search by OB#, Title..." 
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{
-                  color: 'white',
-                  fontSize: '0.875rem',
-                  width: '100%',
-                  '& input::placeholder': { color: '#64748b', opacity: 1 }
-                }}
-              />
+        <Box mb={3}>
+          <Box display="flex" justifyContent="space-between" alignItems="flex-end">
+            <Box>
+              <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+                TRIPS & SAFETY
+              </Typography>
+              <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 0.5, color: '#ffffff' }}>
+                Occurrence Book
+              </Typography>
+              <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 400 }}>
+                Security Command & Incident Audit Trail
+              </Typography>
             </Box>
-            <IconButton 
-              onClick={(e) => setFilterAnchorEl(e.currentTarget)}
-              sx={{ 
-                bgcolor: activeSecondaryFilters > 0 ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)', 
-                border: activeSecondaryFilters > 0 ? '1px solid #F59E0B' : '1px solid rgba(255,255,255,0.1)', 
-                color: activeSecondaryFilters > 0 ? '#F59E0B' : 'white',
-                transition: 'all 0.2s',
-              }}
-            >
-              <Badge badgeContent={activeSecondaryFilters} color="warning">
-                <FilterIcon />
-              </Badge>
-            </IconButton>
+            
+            <Box sx={{ display: 'flex', gap: 2 }}>
+              <Box sx={{ 
+                display: 'flex', 
+                alignItems: 'center', 
+                bgcolor: '#0a0a0a', 
+                borderRadius: '3px', 
+                px: 2, 
+                border: '1px solid rgba(255,255,255,0.08)',
+                width: '300px',
+                transition: 'all 0.3s',
+                '&:focus-within': { borderColor: '#F59E0B', boxShadow: '0 0 15px rgba(245, 158, 11, 0.15)' }
+              }}>
+                <SearchIcon sx={{ color: '#94a3b8', mr: 1.5, fontSize: 18 }} />
+                <InputBase 
+                  placeholder="Search by OB#, Title..." 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  sx={{
+                    color: 'white',
+                    fontSize: '0.8125rem',
+                    width: '100%',
+                    '& input::placeholder': { color: '#64748b', opacity: 1 }
+                  }}
+                />
+              </Box>
+              <IconButton 
+                onClick={(e) => setFilterAnchorEl(e.currentTarget)}
+                sx={{ 
+                  bgcolor: activeSecondaryFilters > 0 ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)', 
+                  border: activeSecondaryFilters > 0 ? '1px solid #F59E0B' : '1px solid rgba(255,255,255,0.1)', 
+                  color: activeSecondaryFilters > 0 ? '#F59E0B' : 'white',
+                  borderRadius: '3px',
+                  transition: 'all 0.2s',
+                }}
+              >
+                <Badge badgeContent={activeSecondaryFilters} color="warning">
+                  <FilterIcon />
+                </Badge>
+              </IconButton>
+            </Box>
+          </Box>
+          {/* Golden Gradient Separator */}
+          <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
+        </Box>
 
             {/* Filter Menu Popover */}
             <Menu
@@ -342,8 +352,6 @@ export const OccurrenceList = () => {
                 </>
               )}
             </Menu>
-          </Box>
-        </Box>
 
         {/* Status Quick Filter Chips */}
         <Stack direction="row" spacing={1.5} mb={3}>

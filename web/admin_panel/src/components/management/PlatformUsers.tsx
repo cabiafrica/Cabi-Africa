@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 import { adminService, PlatformUser } from '../../services/adminService';
 import { UserPaymentHistory } from '../users/UserPaymentHistory';
 import { UserDetails } from '../users/UserDetails';
+import { PageHeader } from '../common/PageHeader';
 
 export const UserManagementDashboard: React.FC = () => {
     const [users, setUsers] = useState<PlatformUser[]>([]);
@@ -94,38 +95,52 @@ export const UserManagementDashboard: React.FC = () => {
     }
 
     return (
-        <div className="bg-white dark:bg-card-dark shadow rounded-lg overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-slate-50 dark:bg-surface-dark">
-                <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100">User Management</h2>
+        <div className="space-y-6">
+            <PageHeader
+                category="Fleet & People"
+                title="All Platform Users"
+                subtitle="Directory of registered riders, drivers, and corporate accounts."
+                icon={<Users className="w-6 h-6 text-amber-500" />}
+                badge={
+                    <span className="px-2.5 py-1 rounded-[3px] bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
+                        {users.length} Users
+                    </span>
+                }
+            />
 
-                {selectedUserIds.length > 0 ? (
-                    <div className="flex items-center gap-2 bg-amber-50 dark:bg-amber-900/20 px-4 py-2 rounded">
-                        <span className="text-sm font-medium text-amber-800 dark:text-amber-200">{selectedUserIds.length} Selected</span>
-                        <div className="h-4 w-px bg-amber-200 dark:bg-amber-700"></div>
-                        <select
-                            onChange={(e) => handleBulkAction(e.target.value as any)}
-                            className="bg-white dark:bg-card-dark border border-amber-200 dark:border-amber-700/50 text-sm rounded shadow-sm focus:outline-none text-slate-900 dark:text-slate-100"
-                            defaultValue=""
-                        >
-                            <option value="" disabled>Bulk Actions...</option>
-                            <option value="suspend">Suspend Selected</option>
-                            <option value="activate">Activate Selected</option>
-                            <option value="delete">Delete Selected</option>
-                        </select>
-                    </div>
-                ) : (
-                    <div className="relative w-full md:w-64">
-                        <input
-                            type="text"
-                            placeholder="Search by name or email..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-white/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm"
-                        />
-                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
-                    </div>
-                )}
-            </div>
+            <div className="bg-[#131722] shadow-sm rounded-[4px] border border-white/10 overflow-hidden">
+                <div className="px-5 py-3.5 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/[0.02]">
+                    <h2 className="text-xs font-semibold text-slate-400 uppercase tracking-wider">User Directory</h2>
+
+                    {selectedUserIds.length > 0 ? (
+                        <div className="flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 px-3 py-1.5 rounded-[3px]">
+                            <span className="text-xs font-semibold text-amber-400">{selectedUserIds.length} Selected</span>
+                            <div className="h-4 w-px bg-amber-500/30"></div>
+                            <select
+                                onChange={(e) => handleBulkAction(e.target.value as any)}
+                                className="bg-[#0a0a0a] border border-white/10 text-xs rounded-[3px] px-2 py-1 text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+                                defaultValue=""
+                            >
+                                <option value="" disabled>Bulk Actions...</option>
+                                <option value="suspend">Suspend Selected</option>
+                                <option value="activate">Activate Selected</option>
+                                <option value="delete">Delete Selected</option>
+                            </select>
+                        </div>
+                    ) : (
+                        <div className="relative w-full md:w-72">
+                            <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                                type="text"
+                                placeholder="Search by name or email..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{ paddingLeft: '2.75rem' }}
+                                className="w-full !pl-11 pr-3 py-1.5 border border-white/10 rounded-[3px] focus:outline-none focus:ring-1 focus:ring-amber-500 bg-[#0a0a0a] text-white placeholder-slate-500 text-xs"
+                            />
+                        </div>
+                    )}
+                </div>
 
             <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
@@ -191,5 +206,6 @@ export const UserManagementDashboard: React.FC = () => {
                 </table>
             </div>
         </div>
+    </div>
     );
 };

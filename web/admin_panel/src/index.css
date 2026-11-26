@@ -93,22 +93,35 @@ body {
   @apply btn border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500;
 }
 
+/* Ensure inputs with leading icons have proper breathing room */
+.has-leading-icon,
+.pl-10 {
+  padding-left: 2.5rem !important;
+}
+.pl-11 {
+  padding-left: 2.75rem !important;
+}
+.pl-12 {
+  padding-left: 3rem !important;
+}
+
 /* Base styles for inputs matching user login forms - clean, well padded, high contrast */
 @layer base {
-
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  input[type="date"],
-  input[type="time"],
-  input[type="datetime-local"],
-  textarea,
-  select {
-    @apply px-4 py-3 sm:py-3.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
+  :where(
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    textarea,
+    select
+  ) {
+    @apply px-4 py-2.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
   }
 }
 

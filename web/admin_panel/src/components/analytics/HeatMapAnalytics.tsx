@@ -7,6 +7,7 @@ import {
     FilterList,
     Info
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const HeatMapAnalytics: React.FC = () => {
     const [points, setPoints] = useState<any[]>([]);
@@ -31,56 +32,54 @@ export const HeatMapAnalytics: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Whatshot className="text-orange-500" />
-                        Heat Map Analytics
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Visualize demand and supply density across regions.</p>
-                </div>
+            <PageHeader
+                category="Command Center"
+                title="Heat Map Analytics"
+                subtitle="Visualize demand and supply density across urban operational regions."
+                icon={<Whatshot className="text-amber-500" />}
+                actions={
+                    <div className="flex flex-col sm:flex-row gap-2.5">
+                        <div className="relative">
+                            <select
+                                aria-label="Filter service type"
+                                value={serviceId}
+                                onChange={(e) => setServiceId(e.target.value)}
+                                className="appearance-none pl-3 pr-8 py-1.5 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white text-xs font-semibold focus:ring-1 focus:ring-amber-500 outline-none shadow-sm min-w-[140px]"
+                            >
+                                {services.map(s => (
+                                    <option key={s.id} value={s.id}>{s.name}</option>
+                                ))}
+                            </select>
+                            <div className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                                <FilterList fontSize="small" />
+                            </div>
+                        </div>
 
-                <div className="flex flex-col sm:flex-row gap-3">
-                    <div className="relative">
-                        <select
-                            aria-label="Filter service type"
-                            value={serviceId}
-                            onChange={(e) => setServiceId(e.target.value)}
-                            className="appearance-none pl-4 pr-10 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white text-sm font-medium focus:ring-2 focus:ring-amber-500 outline-none shadow-sm min-w-[160px]"
-                        >
-                            {services.map(s => (
-                                <option key={s.id} value={s.id}>{s.name}</option>
-                            ))}
-                        </select>
-                        <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-slate-500">
-                            <FilterList fontSize="small" />
+                        <div className="bg-[#0a0a0a] p-0.5 rounded-[3px] border border-white/10 flex">
+                            <button
+                                onClick={() => setType('DEMAND')}
+                                className={`flex items-center gap-1.5 px-3 py-1 rounded-[2px] text-xs font-semibold transition-all ${type === 'DEMAND'
+                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20'
+                                        : 'text-slate-400 hover:text-white'
+                                    }`}
+                            >
+                                <People fontSize="small" />
+                                Demand
+                            </button>
+                            <button
+                                onClick={() => setType('SUPPLY')}
+                                className={`flex items-center gap-1.5 px-3 py-1 rounded-[2px] text-xs font-semibold transition-all ${type === 'SUPPLY'
+                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20'
+                                        : 'text-slate-400 hover:text-white'
+                                    }`}
+                            >
+                                <DirectionsCar fontSize="small" />
+                                Supply
+                            </button>
                         </div>
                     </div>
-
-                    <div className="bg-slate-100 dark:bg-card-dark p-1 rounded-lg flex shadow-inner">
-                        <button
-                            onClick={() => setType('DEMAND')}
-                            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-bold transition-all ${type === 'DEMAND'
-                                    ? 'bg-white dark:bg-slate-700 shadow text-red-600 dark:text-red-400'
-                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                                }`}
-                        >
-                            <People fontSize="small" />
-                            Demand
-                        </button>
-                        <button
-                            onClick={() => setType('SUPPLY')}
-                            className={`flex items-center gap-2 px-4 py-1.5 rounded-md text-sm font-bold transition-all ${type === 'SUPPLY'
-                                    ? 'bg-white dark:bg-slate-700 shadow text-green-600 dark:text-green-400'
-                                    : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200'
-                                }`}
-                        >
-                            <DirectionsCar fontSize="small" />
-                            Supply
-                        </button>
-                    </div>
-                </div>
-            </div>
+                }
+            />
 
             <div className="relative aspect-[16/9] lg:aspect-[21/9] bg-slate-900 rounded-xl border border-slate-700 shadow-2xl overflow-hidden group">
 

@@ -10,6 +10,7 @@ import {
     AttachMoney,
     Warning
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const CityManagementDashboard: React.FC = () => {
     const [kpis, setKPIs] = useState<any>(null);
@@ -58,21 +59,18 @@ export const CityManagementDashboard: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <LocationCity className="text-amber-500" />
-                        City Management: Nairobi
-                    </h1>
-                    <p className="text-slate-400 mt-1 text-sm">Real-time city performance and configuration.</p>
-                </div>
-                <div className="flex gap-2">
-                    <span className="px-3 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded text-xs font-bold flex items-center gap-1.5">
-                        <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            <PageHeader
+                category="Growth & Platform"
+                title="City Management: Nairobi"
+                subtitle="Real-time city performance, driver availability, and live dispatch configuration."
+                icon={<LocationCity className="text-amber-500" />}
+                badge={
+                    <span className="px-2.5 py-1 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-[3px] text-xs font-semibold flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                         OPERATIONAL
                     </span>
-                </div>
-            </div>
+                }
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {cards.map((card, idx) => (

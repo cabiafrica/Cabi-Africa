@@ -4,6 +4,7 @@ import {
   AlertCircle, Users, FileText, ChevronRight, Filter, Printer 
 } from 'lucide-react';
 import { dispatchApiClient } from '../../services/dispatchApiClient';
+import { PageHeader } from '../common/PageHeader';
 
 interface CostCenter {
   id: string;
@@ -138,69 +139,62 @@ export const CorporateBillingConsole: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      {/* Header Banner */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-card-dark p-6 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-        <div>
-          <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400 font-semibold text-xs tracking-wider uppercase">
-            <Building2 className="w-4 h-4" />
-            <span>Corporate Account Centralized Billing & Compliance</span>
+      {/* Harmonized Page Header with Golden Separator */}
+      <PageHeader
+        category="Finance & Sacco"
+        title="Corporate Billing Console"
+        subtitle="Manage cost centers, departmental limits (+10% buffer), and generate 16% KRA VAT consolidated monthly tax invoices."
+        icon={<Building2 className="w-6 h-6" />}
+        actions={
+          <div className="flex items-center gap-2.5">
+            <label htmlFor="corporate-client-select" className="sr-only">
+              Select Corporate Client
+            </label>
+            <select
+              id="corporate-client-select"
+              aria-label="Select Corporate Client"
+              value={selectedCompanyId}
+              onChange={(e) => setSelectedCompanyId(e.target.value)}
+              className="px-3 py-1.5 text-xs font-semibold rounded-[3px] bg-[#0a0a0a] border border-white/10 text-white focus:outline-none focus:ring-1 focus:ring-amber-500"
+            >
+              <option value="cabi_hq">Cabi Africa Global Ltd</option>
+              <option value="safaricom">Safaricom PLC</option>
+              <option value="equity_bank">Equity Group Holdings</option>
+              <option value="kplc">Kenya Power & Lighting Co.</option>
+            </select>
+
+            <button
+              onClick={() => {
+                setActionMessage('Synced real-time cost-center telemetry with core ledger.');
+                setTimeout(() => setActionMessage(null), 3500);
+              }}
+              className="px-3.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-[3px] transition-all shadow-sm shadow-amber-500/20 whitespace-nowrap shrink-0 active:scale-95"
+            >
+              Sync Ledger
+            </button>
           </div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white mt-1">
-            Corporate Invoicing & Departmental Quotas
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">
-            Manage cost centers, departmental limits (+10% buffer), and generate 16% KRA VAT consolidated monthly tax invoices.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <label htmlFor="corporate-client-select" className="sr-only">
-            Select Corporate Client
-          </label>
-          <select
-            id="corporate-client-select"
-            aria-label="Select Corporate Client"
-            value={selectedCompanyId}
-            onChange={(e) => setSelectedCompanyId(e.target.value)}
-            className="px-3 py-2 text-xs font-semibold rounded-lg bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-emerald-500"
-          >
-            <option value="cabi_hq">Cabi Africa Global Ltd</option>
-            <option value="safaricom">Safaricom PLC</option>
-            <option value="equity_bank">Equity Group Holdings</option>
-            <option value="kplc">Kenya Power & Lighting Co.</option>
-          </select>
-
-          <button
-            onClick={() => {
-              setActionMessage('Synced real-time cost-center telemetry with core ledger.');
-              setTimeout(() => setActionMessage(null), 3500);
-            }}
-            className="px-4 py-2 text-xs font-bold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-lg transition-all shadow-md shadow-amber-500/20 whitespace-nowrap shrink-0"
-          >
-            Sync Ledger
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {actionMessage && (
-        <div className="p-4 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl text-emerald-800 dark:text-emerald-300 text-sm flex items-center justify-between">
+        <div className="p-3.5 bg-emerald-950/40 border border-emerald-800/80 rounded-[4px] text-emerald-300 text-xs flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
             <span>{actionMessage}</span>
           </div>
-          <button onClick={() => setActionMessage(null)} className="text-emerald-600 hover:text-emerald-900 font-bold">×</button>
+          <button onClick={() => setActionMessage(null)} className="text-emerald-400 hover:text-emerald-200 font-bold text-sm">×</button>
         </div>
       )}
 
       {/* KPI Cards Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Total Monthly Spend</span>
-            <DollarSign className="w-4 h-4 text-emerald-500" />
+            <DollarSign className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">
               KES {totalSpent.toLocaleString()}
             </span>
           </div>
@@ -209,28 +203,28 @@ export const CorporateBillingConsole: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>KRA 16% VAT Remittance</span>
-            <Receipt className="w-4 h-4 text-blue-500" />
+            <Receipt className="w-4 h-4 text-amber-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">
               KES {pendingVatRemittance.toLocaleString()}
             </span>
           </div>
-          <div className="text-[11px] text-blue-600 font-medium mt-1">
+          <div className="text-[11px] text-amber-400/90 font-medium mt-1">
             Current Billing Cycle Compliance
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Authorized Employees</span>
             <Users className="w-4 h-4 text-amber-500" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">
               {totalEmployees}
             </span>
           </div>
@@ -239,36 +233,34 @@ export const CorporateBillingConsole: React.FC = () => {
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-4 rounded-[4px] border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-[11px] font-semibold uppercase tracking-wider">
             <span>Over-Quota Approvals</span>
-            <AlertCircle className="w-4 h-4 text-emerald-500" />
+            <AlertCircle className="w-4 h-4 text-emerald-400" />
           </div>
-          <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-2xl font-extrabold text-slate-900 dark:text-white">
+          <div className="mt-2.5 flex items-baseline gap-2">
+            <span className="text-2xl font-bold text-white">
               0
             </span>
           </div>
-          <div className="text-[11px] text-emerald-600 font-medium mt-1">
+          <div className="text-[11px] text-emerald-400 font-medium mt-1">
             All trips within 10% emergency buffer
           </div>
         </div>
       </div>
 
       {/* Cost Center Allocation Section */}
-      <div className="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/10 p-6 shadow-sm space-y-4">
-        <div className="flex justify-between items-center">
-          <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
-              Departmental Cost Centers & Quotas
-            </h3>
-            <p className="text-xs text-slate-400">
-              Trips exceeding budget by 10% automatically timeout in 15 minutes and fallback to personal payment.
-            </p>
-          </div>
+      <div className="bg-[#131722] rounded-[4px] border border-white/10 p-5 shadow-sm space-y-4">
+        <div>
+          <h3 className="text-sm font-bold text-white">
+            Departmental Cost Centers & Quotas
+          </h3>
+          <p className="text-xs text-slate-400 mt-0.5">
+            Trips exceeding budget by 10% automatically timeout in 15 minutes and fallback to personal payment.
+          </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
           {costCenters.map(cc => {
             const usagePercent = Math.min((cc.currentSpent / cc.monthlyBudget) * 100, 100);
             const isNearExceeded = usagePercent >= 90;
@@ -276,28 +268,28 @@ export const CorporateBillingConsole: React.FC = () => {
             return (
               <div 
                 key={cc.id}
-                className="p-4 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/5 space-y-3"
+                className="p-3.5 rounded-[4px] border border-white/10 bg-white/[0.02] space-y-2.5"
               >
                 <div className="flex justify-between items-start">
                   <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white">{cc.name}</div>
+                    <div className="text-xs font-bold text-white">{cc.name}</div>
                     <div className="text-[10px] text-slate-400 font-mono mt-0.5">Code: {cc.code} • {cc.employeeCount} Members</div>
                   </div>
-                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${
-                    isNearExceeded ? 'bg-amber-100 text-amber-800' : 'bg-emerald-100 text-emerald-800'
+                  <span className={`text-[10px] font-bold px-2 py-0.5 rounded-[2px] ${
+                    isNearExceeded ? 'bg-amber-950/60 text-amber-300 border border-amber-800/60' : 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/60'
                   }`}>
                     {usagePercent.toFixed(0)}% Used
                   </span>
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex justify-between text-[11px] text-slate-500">
+                  <div className="flex justify-between text-[11px] text-slate-400">
                     <span>Spent: KES {cc.currentSpent.toLocaleString()}</span>
                     <span>Cap: KES {cc.monthlyBudget.toLocaleString()}</span>
                   </div>
-                  <div className="w-full bg-slate-200 dark:bg-white/10 h-2 rounded-full overflow-hidden">
+                  <div className="w-full bg-white/10 h-1.5 rounded-[2px] overflow-hidden">
                     <div 
-                      className={`h-full rounded-full ${isNearExceeded ? 'bg-amber-500' : 'bg-emerald-500'}`}
+                      className={`h-full rounded-[2px] ${isNearExceeded ? 'bg-gradient-to-r from-amber-500 to-amber-600' : 'bg-emerald-500'}`}
                       style={{ width: `${usagePercent}%` }}
                     />
                   </div>
@@ -309,62 +301,62 @@ export const CorporateBillingConsole: React.FC = () => {
       </div>
 
       {/* Monthly Consolidated Tax Invoices */}
-      <div className="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm">
-        <div className="p-5 border-b border-slate-200 dark:border-white/10 flex justify-between items-center">
+      <div className="bg-[#131722] rounded-[4px] border border-white/10 overflow-hidden shadow-sm">
+        <div className="p-4 border-b border-white/10 flex justify-between items-center">
           <div>
-            <h3 className="text-base font-bold text-slate-900 dark:text-white">
+            <h3 className="text-sm font-bold text-white">
               KRA-Compliant Consolidated Tax Invoices
             </h3>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 mt-0.5">
               Aggregated monthly billing with 16% VAT itemization for corporate tax filing.
             </p>
           </div>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
-            <thead className="bg-slate-50 dark:bg-white/5 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/10">
+          <table className="w-full text-left text-xs text-slate-300">
+            <thead className="bg-white/[0.02] text-[11px] uppercase tracking-wider text-slate-400 border-b border-white/10">
               <tr>
-                <th className="px-5 py-3">Invoice Number</th>
-                <th className="px-5 py-3">Billing Period</th>
-                <th className="px-5 py-3">Net Trips Subtotal</th>
-                <th className="px-5 py-3">KRA 16% VAT</th>
-                <th className="px-5 py-3">Total Payable</th>
-                <th className="px-5 py-3">Status</th>
-                <th className="px-5 py-3 text-right">Actions</th>
+                <th className="px-4 py-3">Invoice Number</th>
+                <th className="px-4 py-3">Billing Period</th>
+                <th className="px-4 py-3">Net Trips Subtotal</th>
+                <th className="px-4 py-3">KRA 16% VAT</th>
+                <th className="px-4 py-3">Total Payable</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3 text-right">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-white/10">
+            <tbody className="divide-y divide-white/10">
               {invoices.map(inv => (
-                <tr key={inv.id} className="hover:bg-slate-50/50 dark:hover:bg-white/5 transition-colors">
-                  <td className="px-5 py-3.5 font-mono text-xs font-semibold text-slate-900 dark:text-white whitespace-nowrap">
+                <tr key={inv.id} className="hover:bg-white/[0.02] transition-colors">
+                  <td className="px-4 py-3 font-mono text-xs font-semibold text-white whitespace-nowrap">
                     {inv.invoiceNumber}
                   </td>
-                  <td className="px-5 py-3.5 text-xs whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs whitespace-nowrap text-slate-300">
                     {inv.billingPeriod}
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-medium whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs font-medium whitespace-nowrap text-slate-300">
                     KES {inv.subtotal.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5 text-xs text-blue-600 font-semibold whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs text-amber-400 font-semibold whitespace-nowrap">
                     KES {inv.vatAmount.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5 text-xs font-bold text-slate-900 dark:text-white whitespace-nowrap">
+                  <td className="px-4 py-3 text-xs font-bold text-white whitespace-nowrap">
                     KES {inv.totalPayable.toLocaleString()}
                   </td>
-                  <td className="px-5 py-3.5 whitespace-nowrap">
-                    <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold whitespace-nowrap ${
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className={`px-2.5 py-0.5 rounded-[2px] text-[10px] font-bold whitespace-nowrap ${
                       inv.status === 'PAID'
-                        ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
-                        : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
+                        ? 'bg-emerald-950/60 text-emerald-300 border border-emerald-800/60'
+                        : 'bg-amber-950/60 text-amber-300 border border-amber-800/60'
                     }`}>
                       {inv.status.replace(/_/g, ' ')}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-right whitespace-nowrap">
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
                     <button
                       onClick={() => setActiveInvoicePreview(inv)}
-                      className="px-3 py-1.5 rounded-lg text-xs font-bold bg-slate-100 dark:bg-white/10 hover:bg-emerald-600 hover:text-white transition-colors whitespace-nowrap"
+                      className="px-3 py-1.5 rounded-[3px] text-xs font-semibold bg-white/5 hover:bg-amber-500 hover:text-black border border-white/10 transition-colors whitespace-nowrap"
                     >
                       Preview & Print
                     </button>
@@ -376,58 +368,58 @@ export const CorporateBillingConsole: React.FC = () => {
         </div>
       </div>
 
-      {/* Formal KRA Tax Invoice Preview Modal */}
+      {/* Formal KRA Tax Invoice Preview Modal (Dark Terminal Gold) */}
       {activeInvoicePreview && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-          <div className="bg-white rounded-2xl max-w-xl w-full p-6 text-slate-900 shadow-2xl max-h-[90vh] overflow-y-auto space-y-6">
-            <div className="flex justify-between items-start border-b border-slate-200 pb-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
+          <div className="bg-[#131722] rounded-[4px] max-w-xl w-full p-6 text-white border border-white/10 shadow-2xl max-h-[90vh] overflow-y-auto space-y-5">
+            <div className="flex justify-between items-start border-b border-white/10 pb-4">
               <div>
-                <div className="text-xl font-bold text-slate-900">CABI AFRICA GLOBAL LTD</div>
-                <div className="text-xs text-slate-500">KRA PIN: P051283921X • VAT Registered</div>
-                <div className="text-xs text-slate-500">HQ: Delta Corner Tower, Westlands, Nairobi</div>
+                <div className="text-lg font-bold text-white tracking-wide">CABI AFRICA GLOBAL LTD</div>
+                <div className="text-xs text-amber-500 font-mono mt-0.5">KRA PIN: P051283921X • VAT Registered</div>
+                <div className="text-xs text-slate-400">HQ: Delta Corner Tower, Westlands, Nairobi</div>
               </div>
               <button
                 onClick={() => setActiveInvoicePreview(null)}
-                className="text-slate-400 hover:text-slate-600 font-bold text-lg"
+                className="text-slate-400 hover:text-white font-bold text-lg"
               >
                 ×
               </button>
             </div>
 
-            <div className="flex justify-between items-start text-xs">
+            <div className="flex justify-between items-start text-xs bg-white/[0.02] p-3 rounded-[3px] border border-white/10">
               <div>
-                <div className="font-bold uppercase tracking-wider text-slate-400">Billed To</div>
-                <div className="font-bold text-slate-900 text-sm mt-0.5">{activeInvoicePreview.companyName}</div>
-                <div className="text-slate-600">Attn: Finance & Operations Department</div>
-                <div className="text-slate-600">Period: {activeInvoicePreview.billingPeriod}</div>
+                <div className="font-bold uppercase tracking-wider text-slate-400 text-[10px]">Billed To</div>
+                <div className="font-bold text-white text-sm mt-0.5">{activeInvoicePreview.companyName}</div>
+                <div className="text-slate-400">Attn: Finance & Operations Department</div>
+                <div className="text-slate-400">Period: {activeInvoicePreview.billingPeriod}</div>
               </div>
               <div className="text-right">
-                <div className="font-bold uppercase tracking-wider text-slate-400">Invoice Details</div>
-                <div className="font-mono font-bold mt-0.5">{activeInvoicePreview.invoiceNumber}</div>
-                <div className="text-slate-600">Issue Date: {activeInvoicePreview.issuedAt}</div>
-                <div className="text-slate-600">Due Date: {activeInvoicePreview.dueDate}</div>
+                <div className="font-bold uppercase tracking-wider text-slate-400 text-[10px]">Invoice Details</div>
+                <div className="font-mono font-bold text-white mt-0.5">{activeInvoicePreview.invoiceNumber}</div>
+                <div className="text-slate-400">Issue Date: {activeInvoicePreview.issuedAt}</div>
+                <div className="text-slate-400">Due Date: {activeInvoicePreview.dueDate}</div>
               </div>
             </div>
 
             {/* Line items */}
-            <div className="border border-slate-200 rounded-lg overflow-hidden text-xs">
+            <div className="border border-white/10 rounded-[3px] overflow-hidden text-xs">
               <table className="w-full text-left">
-                <thead className="bg-slate-100 text-slate-700 uppercase tracking-wider text-[10px]">
+                <thead className="bg-white/[0.03] text-slate-400 uppercase tracking-wider text-[10px] border-b border-white/10">
                   <tr>
                     <th className="p-3">Department / Cost Center</th>
                     <th className="p-3 text-right">Rides</th>
                     <th className="p-3 text-right">Subtotal</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-200">
+                <tbody className="divide-y divide-white/10">
                   {costCenters.map(cc => (
                     <tr key={cc.id}>
                       <td className="p-3">
-                        <div className="font-semibold">{cc.name}</div>
-                        <div className="text-[10px] text-slate-400">{cc.code}</div>
+                        <div className="font-semibold text-white">{cc.name}</div>
+                        <div className="text-[10px] text-slate-400 font-mono">{cc.code}</div>
                       </td>
-                      <td className="p-3 text-right">{Math.floor(cc.currentSpent / 950)}</td>
-                      <td className="p-3 text-right font-medium">KES {cc.currentSpent.toLocaleString()}</td>
+                      <td className="p-3 text-right text-slate-300">{Math.floor(cc.currentSpent / 950)}</td>
+                      <td className="p-3 text-right font-medium text-white">KES {cc.currentSpent.toLocaleString()}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -435,33 +427,33 @@ export const CorporateBillingConsole: React.FC = () => {
             </div>
 
             {/* Total breakdown */}
-            <div className="border-t border-slate-200 pt-3 space-y-1.5 text-xs">
+            <div className="border-t border-white/10 pt-3 space-y-1.5 text-xs">
               <div className="flex justify-between">
-                <span className="text-slate-500">Gross Ride Total (Excl. VAT):</span>
-                <span className="font-medium">KES {activeInvoicePreview.subtotal.toLocaleString()}</span>
+                <span className="text-slate-400">Gross Ride Total (Excl. VAT):</span>
+                <span className="font-medium text-white">KES {activeInvoicePreview.subtotal.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-blue-600">
+              <div className="flex justify-between text-amber-400">
                 <span className="font-semibold">KRA Value Added Tax (16%):</span>
                 <span className="font-bold">KES {activeInvoicePreview.vatAmount.toLocaleString()}</span>
               </div>
-              <div className="flex justify-between text-sm font-bold border-t border-slate-200 pt-2 text-slate-900">
+              <div className="flex justify-between text-sm font-bold border-t border-white/10 pt-2 text-white">
                 <span>Total Amount Due:</span>
-                <span className="text-emerald-600">KES {activeInvoicePreview.totalPayable.toLocaleString()}</span>
+                <span className="text-amber-400">KES {activeInvoicePreview.totalPayable.toLocaleString()}</span>
               </div>
             </div>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200">
+            <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-white/10">
               <button
                 type="button"
                 onClick={() => setActiveInvoicePreview(null)}
-                className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-900"
+                className="px-3.5 py-1.5 text-xs font-semibold text-slate-400 hover:text-white"
               >
                 Close
               </button>
               <button
                 type="button"
                 onClick={handlePrint}
-                className="px-4 py-2 text-xs font-bold bg-slate-900 hover:bg-black text-white rounded-lg transition-colors flex items-center gap-1.5"
+                className="px-3.5 py-1.5 text-xs font-semibold bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded-[3px] transition-all shadow-sm shadow-amber-500/20 flex items-center gap-1.5"
               >
                 <Printer className="w-3.5 h-3.5" />
                 Print / Export PDF

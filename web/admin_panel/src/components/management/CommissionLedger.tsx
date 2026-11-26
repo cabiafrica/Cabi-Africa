@@ -11,6 +11,7 @@ import {
     NavigateNext,
     NavigateBefore
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 export const CommissionLedger: React.FC = () => {
     const [entries, setEntries] = useState<CommissionLedgerEntry[]>([]);
@@ -61,38 +62,32 @@ export const CommissionLedger: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <AccountBalanceWallet className="text-amber-600 dark:text-amber-400" />
-                        Commission Ledger
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Track financial transactions and commission history.</p>
-                </div>
-
-                <div className="flex bg-white dark:bg-card-dark rounded-lg shadow-sm border border-slate-200 dark:border-white/10 p-1">
-                    <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-white/10">
-                        Total Records
-                    </div>
-                    <div className="px-4 py-2 text-sm font-bold text-slate-900 dark:text-white">
-                        {total}
-                    </div>
-                </div>
-            </div>
+            <PageHeader
+                category="Finance & Sacco"
+                title="Commission Ledger"
+                subtitle="Track financial transactions and commission history."
+                icon={<AccountBalanceWallet className="text-amber-500" />}
+                badge={
+                    <span className="px-2.5 py-1 rounded-[3px] bg-white/5 border border-white/10 text-xs font-semibold text-slate-300">
+                        {total} Total Records
+                    </span>
+                }
+            />
 
             {/* Filter Bar */}
-            <div className="bg-white dark:bg-card-dark p-4 rounded-xl shadow-sm border border-slate-200 dark:border-white/10 transition-all">
+            <div className="bg-[#131722] p-4 rounded-[4px] shadow-sm border border-white/10 transition-all">
                 <div className="flex flex-col lg:flex-row items-end lg:items-center gap-4">
 
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                         <div className="relative">
-                            <label className="block text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 ml-1">Driver ID</label>
+                            <label className="block text-xs font-semibold text-slate-400 mb-1 ml-1">Driver ID</label>
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fontSize="small" />
                                 <input
                                     type="text"
-                                    placeholder="Search..."
-                                    className="w-full pl-9 pr-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-slate-100 text-sm focus:ring-2 focus:ring-amber-500 outline-none"
+                                    placeholder="Search driver ID..."
+                                    style={{ paddingLeft: '2.75rem' }}
+                                    className="w-full !pl-11 pr-3 py-1.5 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white text-xs focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500"
                                     value={driverId}
                                     onChange={e => setDriverId(e.target.value)}
                                 />

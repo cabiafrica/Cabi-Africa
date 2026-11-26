@@ -9,6 +9,7 @@ import {
   PersonOff
 } from '@mui/icons-material';
 import { adminService } from '../services/adminService';
+import { PageHeader } from './common/PageHeader';
 
 interface SuspendedUser {
   id: string;
@@ -65,33 +66,28 @@ export const SuspendedAccountManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <PersonOff className="text-red-600 dark:text-red-400" />
-            Suspended Accounts
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Review and manage account suspensions and bans.</p>
-        </div>
-        <div className="flex bg-white dark:bg-card-dark rounded-lg shadow-sm border border-slate-200 dark:border-white/10 p-1">
-          <div className="px-4 py-2 text-sm font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-white/10">
-            Total Suspended
-          </div>
-          <div className="px-4 py-2 text-sm font-bold text-red-600 dark:text-red-400">
-            {suspendedUsers.length}
-          </div>
-        </div>
-      </div>
+      <PageHeader
+        category="Fleet & People"
+        title="Suspended Accounts"
+        subtitle="Review and manage account suspensions and bans."
+        icon={<PersonOff className="text-amber-500" />}
+        badge={
+          <span className="px-2.5 py-1 rounded-[3px] bg-rose-500/10 border border-rose-500/20 text-xs font-semibold text-rose-400">
+            {suspendedUsers.length} Suspended
+          </span>
+        }
+      />
 
-      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
+      <div className="bg-[#131722] shadow-sm rounded-[4px] border border-white/10 overflow-hidden">
         {/* Toolbar */}
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex flex-col sm:flex-row justify-between items-center gap-4">
+        <div className="px-5 py-3.5 border-b border-white/10 bg-white/[0.02] flex flex-col sm:flex-row justify-between items-center gap-4">
           <div className="relative w-full sm:w-80">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" fontSize="small" />
             <input
               type="text"
               placeholder="Search by name or phone..."
-              className="w-full pl-9 pr-3 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
+              style={{ paddingLeft: '2.75rem' }}
+              className="w-full !pl-11 pr-3 py-1.5 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-xs text-white placeholder-slate-500 focus:ring-1 focus:ring-amber-500 outline-none"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

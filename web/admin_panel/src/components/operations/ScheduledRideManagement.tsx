@@ -125,20 +125,21 @@ export const ScheduledRideManagement: React.FC = () => {
     return (
         <Box sx={{ p: { xs: 2, md: 0 }, color: 'text.primary' }}>
             {/* Header Section */}
-            <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-                <Box>
-                    <Typography variant="h4" fontWeight="800" sx={{
-                        background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-                        WebkitBackgroundClip: 'text',
-                        WebkitTextFillColor: 'transparent',
-                        mb: 1
-                    }}>
-                        Scheduled Rides
-                    </Typography>
-                    <Typography variant="body1" sx={{ color: '#94a3b8' }}>
-                        Manage upcoming bookings and assignments
-                    </Typography>
-                </Box>
+            <Box mb={3}>
+                <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
+                    TRIPS & SAFETY
+                </Typography>
+                <Typography variant="h4" fontWeight="800" sx={{
+                    color: '#ffffff',
+                    mb: 0.5
+                }}>
+                    Scheduled Rides
+                </Typography>
+                <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+                    Manage upcoming bookings, assignment dispatches, and scheduling queues
+                </Typography>
+                {/* Golden Gradient Separator */}
+                <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
             </Box>
 
             {/* Stats Cards */}
