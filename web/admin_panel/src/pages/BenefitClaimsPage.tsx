@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PageHeader } from '../components/common/PageHeader';
 import { 
   Box, 
   Button, 
@@ -139,20 +140,21 @@ export const BenefitClaimsPage: React.FC = () => {
   return (
     <Fade in={true} timeout={800}>
       <Box p={4}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={3}>
-          <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
-              Operator Benefit Claims Review
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <FileIcon sx={{ fontSize: 18, color: '#FFD700' }} />
-              Audit and authorize self-reported driver benefits & unlocking milestones
-            </Typography>
-          </Box>
-          <IconButton onClick={fetchClaims} sx={{ color: '#FFD700', border: '1px solid rgba(255,215,0,0.3)' }}>
-            <RefreshIcon />
-          </IconButton>
-        </Box>
+        <PageHeader
+          category="Growth & Platform"
+          title="Operator Benefit Claims Review"
+          subtitle="Audit and authorize self-reported driver benefits & unlocking milestones."
+          icon={<FileIcon />}
+          actions={
+            <button
+              onClick={fetchClaims}
+              className="btn-secondary flex items-center justify-center p-2 rounded-[3px] border border-white/10 text-amber-400 hover:bg-amber-500/10"
+              title="Refresh Claims"
+            >
+              <RefreshIcon fontSize="small" />
+            </button>
+          }
+        />
 
         <Box sx={{ borderBottom: 1, borderColor: 'rgba(255,255,255,0.1)', mb: 4 }}>
           <Tabs 

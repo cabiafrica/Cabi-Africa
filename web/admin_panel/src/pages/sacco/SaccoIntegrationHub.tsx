@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useCallback } from 'react';
+import { PageHeader } from '../../components/common/PageHeader';
 import {
   Building2,
   Wifi,
@@ -981,40 +982,34 @@ export default function SaccoIntegrationHub() {
   const [tab, setTab] = useState<TabKey>('partner');
 
   return (
-    <div className="p-8 max-w-7xl mx-auto space-y-8 text-white font-sans">
-      {/* Page Header */}
-      <div className="border-b border-white/10 pb-6">
-        <h2 className="text-3xl font-black text-white tracking-tighter flex items-center gap-3">
-          <Building2 className="w-8 h-8 text-brand-yellow" />
-          Financial Services & Sacco Integration Hub
-        </h2>
-        <p className="text-gray-400 mt-2 text-sm max-w-3xl">
-          Connect Cabi Africa to independent external Saccos, Insurance carriers, and Investment funds. 
-          Orchestrate driver consent, stackable incentives, and 15% capped trip earnings remittances with guaranteed minimum 65% driver take-home.
-        </p>
-      </div>
-
+    <div className="p-8 max-w-7xl mx-auto space-y-6 text-white font-sans">
+      <PageHeader
+        category="Growth & Platform"
+        title="Financial Services & Sacco Integration Hub"
+        subtitle="Connect Cabi Africa to independent external Saccos, Insurance carriers, and Investment funds with guaranteed driver earnings protections."
+        icon={<Building2 className="w-6 h-6 text-amber-500" />}
+      />
 
       {/* Tabs */}
-      <div className="flex gap-1 p-1 bg-white/5 rounded-xl border border-white/10 w-fit">
+      <div className="flex gap-1.5 p-1 bg-[#131722] rounded-[3px] border border-white/10 w-fit">
         {TABS.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setTab(key)}
-            className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-bold transition-all ${
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-[3px] text-xs font-semibold transition-all ${
               tab === key
-                ? 'bg-brand-yellow text-black'
-                : 'text-gray-400 hover:text-white'
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold shadow-sm shadow-amber-500/20'
+                : 'text-slate-400 hover:text-white hover:bg-white/5'
             }`}
           >
-            <Icon className="w-4 h-4" />
+            <Icon className="w-3.5 h-3.5" />
             {label}
           </button>
         ))}
       </div>
 
       {/* Tab Content */}
-      <div>
+      <div className="mt-4">
         {tab === 'partner' && <PartnerTab />}
         {tab === 'financial' && <FinancialTab />}
         {tab === 'drivers' && <DriversTab />}

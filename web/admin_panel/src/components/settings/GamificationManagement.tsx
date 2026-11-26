@@ -15,6 +15,7 @@ import {
     TrendingUp
 } from '@mui/icons-material';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@tremor/react';
+import { PageHeader } from '../common/PageHeader';
 
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.cabi.africa/api';
 
@@ -60,6 +61,7 @@ const AVAILABLE_PRIVILEGES = [
 ];
 
 export const GamificationManagement: React.FC = () => {
+    const [selectedTab, setSelectedTab] = useState(0);
     const [loading, setLoading] = useState(false);
     const [saccoLoading, setSaccoLoading] = useState(false);
     const [config, setConfig] = useState<GamificationConfig>({
@@ -200,105 +202,108 @@ export const GamificationManagement: React.FC = () => {
 
     return (
         <div className="space-y-6 max-w-7xl mx-auto">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <EmojiEvents className="text-amber-500" />
-                        Gamification & Loyalty
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Configure rewards, tiers, and point systems.</p>
-                </div>
-                <button
-                    onClick={handleSave}
-                    disabled={loading}
-                    className={`flex items-center gap-1.5 ${saveSuccess ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black'} disabled:opacity-50 px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 transition-all active:scale-95`}
-                >
-                    {loading ? <div className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : saveSuccess ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
-                    {saveSuccess ? 'Configuration Saved!' : 'Save Configuration'}
-                </button>
-            </div>
+            <PageHeader
+                category="Growth & Platform"
+                title="Gamification & Driver Motivation"
+                subtitle="Configure loyalty rewards, performance tiers, Sacco integration, and points matrix."
+                icon={<EmojiEvents />}
+                actions={
+                    <button
+                        onClick={handleSave}
+                        disabled={loading}
+                        className={`flex items-center gap-1.5 ${saveSuccess ? 'bg-emerald-600 text-white' : 'btn-primary'} disabled:opacity-50 px-3.5 py-1.5 rounded-[3px] text-xs font-semibold shadow-sm transition-all active:scale-95`}
+                    >
+                        {loading ? <div className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : saveSuccess ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
+                        {saveSuccess ? 'Configuration Saved!' : 'Save Configuration'}
+                    </button>
+                }
+            />
 
             {saveSuccess && (
-                <div className="p-4 rounded bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-300 flex items-center gap-2">
+                <div className="p-4 rounded-[3px] bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-300 flex items-center gap-2">
                     <CheckCircle className="w-5 h-5 text-emerald-400" />
                     <span>Gamification and loyalty rules saved successfully to the system database.</span>
                 </div>
             )}
 
             {saveError && (
-                <div className="p-4 rounded bg-rose-500/10 border border-rose-500/30 text-sm text-rose-300">
+                <div className="p-4 rounded-[3px] bg-rose-500/10 border border-rose-500/30 text-sm text-rose-300">
                     ⚠️ {saveError}
                 </div>
             )}
 
-            <TabGroup>
-                <TabList className="flex gap-2 border-b border-white/10 overflow-x-auto pb-1 mb-6">
-                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
-                        Rating Rules
-                    </Tab>
-                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
-                        Badge Tiers
-                    </Tab>
-                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
-                        Privilege Matrix
-                    </Tab>
-                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
-                        Loan & Repayment
-                    </Tab>
-                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
-                        Sacco System
-                    </Tab>
+            <TabGroup index={selectedTab} onIndexChange={setSelectedTab}>
+                <TabList className="flex gap-2 border-b border-white/10 overflow-x-auto pb-2 mb-6">
+                    {[
+                        { label: 'Rating Rules', icon: <Star sx={{ fontSize: 16 }} /> },
+                        { label: 'Badge Tiers', icon: <MilitaryTech sx={{ fontSize: 16 }} /> },
+                        { label: 'Privilege Matrix', icon: <WorkspacePremium sx={{ fontSize: 16 }} /> },
+                        { label: 'Loan & Repayment', icon: <AccountBalanceWallet sx={{ fontSize: 16 }} /> },
+                        { label: 'Sacco System', icon: <DirectionsCar sx={{ fontSize: 16 }} /> },
+                    ].map((tab, idx) => (
+                        <Tab
+                            key={tab.label}
+                            className={`px-3.5 py-1.5 text-xs font-semibold rounded-[3px] flex items-center gap-1.5 transition-all outline-none cursor-pointer border ${
+                                selectedTab === idx
+                                    ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500'
+                                    : 'text-slate-400 hover:text-white hover:bg-white/5 border-white/10'
+                            }`}
+                        >
+                            {tab.icon}
+                            <span>{tab.label}</span>
+                        </Tab>
+                    ))}
                 </TabList>
 
                 <TabPanels>
                     {/* RATING RULES */}
                     <TabPanel>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 p-6">
-                                <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                    <Star className="text-yellow-400" /> Star Rating → Points
+                            <div className="bg-[#131722] rounded-[3px] shadow-sm border border-white/10 p-6">
+                                <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                    <Star className="text-amber-400" /> Star Rating → Points Conversion
                                 </h3>
                                 <div className="space-y-3">
                                     {config.ratingRules.map((rule) => (
-                                        <div key={rule.stars} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-100 dark:border-slate-600">
+                                        <div key={rule.stars} className="flex items-center justify-between p-3 bg-[#0a0a0a] rounded-[3px] border border-white/5">
                                             <div className="flex items-center gap-3">
                                                 <div className="flex">
-                                                    {[...Array(rule.stars)].map((_, i) => <Star key={i} fontSize="small" className="text-yellow-400" />)}
+                                                    {[...Array(rule.stars)].map((_, i) => <Star key={i} fontSize="small" className="text-amber-400" />)}
                                                 </div>
-                                                <span className="font-medium text-slate-700 dark:text-slate-200">{rule.stars} Star</span>
+                                                <span className="font-medium text-slate-200">{rule.stars} Star</span>
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <input
                                                     type="number"
                                                     value={rule.pointsAwarded}
                                                     onChange={(e) => handleRatingChange(rule.stars, parseInt(e.target.value) || 0)}
-                                                    className="w-20 px-2 py-1 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded text-center font-bold text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none"
+                                                    className="w-20 px-2 py-1 bg-[#131722] border border-white/10 rounded-[3px] text-center font-bold text-white focus:outline-none"
                                                 />
-                                                <span className="text-xs text-slate-500 uppercase font-bold">Pts</span>
+                                                <span className="text-xs text-slate-400 uppercase font-bold">Pts</span>
                                             </div>
                                         </div>
                                     ))}
                                 </div>
                             </div>
 
-                            <div className="bg-[#131722] rounded shadow-sm border border-white/10 p-6">
+                            <div className="bg-[#131722] rounded-[3px] shadow-sm border border-white/10 p-6">
                                 <h3 className="font-bold text-amber-400 mb-4 flex items-center gap-2">
                                     <CardGiftcard /> Spin the Wheel Bonus
                                 </h3>
-                                <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">
+                                <p className="text-slate-400 text-sm mb-6">
                                     Incentivize consistency by offering a bonus chance game after a streak of perfect ratings.
                                 </p>
-                                <div className="flex flex-col gap-2 p-4 bg-white/60 dark:bg-black/20 rounded-lg border border-white/50 dark:border-white/5">
-                                    <label className="text-sm font-semibold text-slate-700 dark:text-slate-300">Trigger Threshold</label>
+                                <div className="flex flex-col gap-2 p-4 bg-[#0a0a0a] rounded-[3px] border border-white/5">
+                                    <label className="text-sm font-semibold text-slate-300">Trigger Threshold</label>
                                     <div className="flex items-center gap-3">
                                         <input
                                             type="number"
                                             value={config.spinWheelThreshold}
                                             onChange={(e) => setConfig({ ...config, spinWheelThreshold: parseInt(e.target.value) || 1 })}
                                             min={1}
-                                            className="w-24 px-3 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg font-bold text-slate-900 dark:text-white"
+                                            className="w-24 px-3 py-2 bg-[#131722] border border-white/10 rounded-[3px] font-bold text-white"
                                         />
-                                        <span className="text-sm text-slate-600 dark:text-slate-400">consecutive 5-star ratings</span>
+                                        <span className="text-sm text-slate-400">consecutive 5-star ratings</span>
                                     </div>
                                 </div>
                             </div>
@@ -309,39 +314,39 @@ export const GamificationManagement: React.FC = () => {
                     <TabPanel>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                             {config.badges.map((badge) => (
-                                <div key={badge.id} className={`relative rounded border p-6 flex flex-col ${badge.id === 'PLATINUM' ? 'border-amber-500 shadow-lg shadow-amber-500/10' : 'border-white/10'
+                                <div key={badge.id} className={`relative rounded-[3px] border p-6 flex flex-col ${badge.id === 'PLATINUM' ? 'border-amber-500/80 shadow-lg shadow-amber-500/10' : 'border-white/10'
                                     } bg-[#131722]`}>
                                     {badge.id === 'PLATINUM' && (
-                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wider">
+                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded-[3px] uppercase tracking-wider">
                                             Top Tier
                                         </div>
                                     )}
 
                                     <div className="flex items-center justify-between mb-4 mt-2">
-                                        <div className={`p-2 rounded ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
+                                        <div className={`p-2 rounded-[3px] ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
                                             <MilitaryTech className={badge.color === 'yellow' ? 'text-yellow-500' : badge.color === 'orange' ? 'text-orange-500' : badge.color === 'slate' ? 'text-slate-400' : 'text-amber-400'} />
                                         </div>
-                                        <span className={`text-xs font-bold px-2 py-1 rounded border capitalize ${getBadgeColorClass(badge.color)}`}>
+                                        <span className={`text-xs font-bold px-2 py-1 rounded-[3px] border capitalize ${getBadgeColorClass(badge.color)}`}>
                                             {badge.name}
                                         </span>
                                     </div>
 
                                     <div className="mb-4">
-                                        <label className="text-xs font-bold text-slate-500 uppercase mb-1 block">Entry Points</label>
+                                        <label className="text-xs font-bold text-slate-400 uppercase mb-1 block">Entry Points</label>
                                         <input
                                             type="number"
                                             value={badge.minPoints}
                                             onChange={(e) => handleBadgeChange(badge.id, 'minPoints', parseInt(e.target.value) || 0)}
-                                            className="w-full px-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-200 dark:border-white/10 rounded font-mono font-bold"
+                                            className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-[3px] font-mono font-bold text-white"
                                         />
                                     </div>
 
                                     <div className="flex-1">
-                                        <label className="text-xs font-bold text-slate-500 uppercase mb-2 block">Privileges</label>
+                                        <label className="text-xs font-bold text-slate-400 uppercase mb-2 block">Privileges</label>
                                         <ul className="text-xs space-y-1">
                                             {badge.privileges.slice(0, 4).map(p => (
-                                                <li key={p} className="flex items-center gap-1.5 text-slate-600 dark:text-slate-300">
-                                                    <CheckCircle fontSize="inherit" className="text-green-500" style={{ fontSize: 10 }} />
+                                                <li key={p} className="flex items-center gap-1.5 text-slate-300">
+                                                    <CheckCircle fontSize="inherit" className="text-amber-400" style={{ fontSize: 10 }} />
                                                     <span className="truncate">{AVAILABLE_PRIVILEGES.find(ap => ap.id === p)?.label}</span>
                                                 </li>
                                             ))}
@@ -357,27 +362,27 @@ export const GamificationManagement: React.FC = () => {
 
                     {/* PRIVILEGE MATRIX */}
                     <TabPanel>
-                        <div className="bg-white dark:bg-card-dark rounded-xl shadow border border-slate-200 dark:border-white/10 overflow-hidden">
+                        <div className="bg-[#131722] rounded-[3px] border border-white/10 overflow-hidden">
                             <div className="overflow-x-auto">
                                 <table className="w-full text-sm">
-                                    <thead className="bg-slate-50 dark:bg-surface-dark border-b border-slate-200 dark:border-white/10">
+                                    <thead className="bg-[#0a0a0a] border-b border-white/10">
                                         <tr>
-                                            <th className="px-6 py-4 text-left font-bold text-slate-700 dark:text-slate-200">Privilege</th>
-                                            <th className="px-6 py-4 text-left font-bold text-slate-700 dark:text-slate-200">Type</th>
+                                            <th className="px-6 py-4 text-left font-bold text-slate-200">Privilege</th>
+                                            <th className="px-6 py-4 text-left font-bold text-slate-200">Type</th>
                                             {config.badges.map(b => (
-                                                <th key={b.id} className="px-6 py-4 text-center font-bold text-slate-700 dark:text-slate-200">
-                                                    <span className={`px-2 py-1 rounded text-xs ${getBadgeColorClass(b.color)}`}>{b.name}</span>
+                                                <th key={b.id} className="px-6 py-4 text-center font-bold text-slate-200">
+                                                    <span className={`px-2 py-1 rounded-[3px] text-xs ${getBadgeColorClass(b.color)}`}>{b.name}</span>
                                                 </th>
                                             ))}
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-slate-100 dark:divide-slate-700">
+                                    <tbody className="divide-y divide-white/5">
                                         {AVAILABLE_PRIVILEGES.map(priv => (
-                                            <tr key={priv.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                                                <td className="px-6 py-3 font-medium text-slate-900 dark:text-white">{priv.label}</td>
+                                            <tr key={priv.id} className="hover:bg-white/5 transition-colors">
+                                                <td className="px-6 py-3 font-medium text-white">{priv.label}</td>
                                                 <td className="px-6 py-3">
-                                                    <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide ${priv.type === 'driver' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' :
-                                                            priv.type === 'passenger' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
+                                                    <span className={`px-2 py-0.5 rounded-[3px] text-[10px] uppercase font-bold tracking-wide ${priv.type === 'driver' ? 'bg-amber-500/10 text-amber-400 border border-amber-500/20' :
+                                                            priv.type === 'passenger' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' :
                                                                 'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                                                         }`}>
                                                         {priv.type}
@@ -389,7 +394,7 @@ export const GamificationManagement: React.FC = () => {
                                                             type="checkbox"
                                                             checked={badge.privileges.includes(priv.id)}
                                                             onChange={() => togglePrivilege(badge.id, priv.id)}
-                                                            className="w-5 h-5 text-amber-500 rounded border-slate-600 focus:ring-amber-500 cursor-pointer accent-amber-500 bg-[#0a0a0a]"
+                                                            className="w-4 h-4 text-amber-500 rounded-[2px] border-white/20 focus:ring-amber-500 cursor-pointer accent-amber-500 bg-[#0a0a0a]"
                                                         />
                                                     </td>
                                                 ))}
@@ -400,20 +405,20 @@ export const GamificationManagement: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="mt-6 bg-white dark:bg-card-dark p-6 rounded-xl shadow-sm border border-slate-200 dark:border-white/10">
-                            <h3 className="font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
-                                <AccountBalanceWallet className="text-green-500" /> Passenger Loyalty
+                        <div className="mt-6 bg-[#131722] p-6 rounded-[3px] shadow-sm border border-white/10">
+                            <h3 className="font-bold text-white mb-4 flex items-center gap-2">
+                                <AccountBalanceWallet className="text-amber-400" /> Passenger Loyalty Points
                             </h3>
                             <div className="flex items-center gap-3">
-                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Earn 1 Point for every</span>
+                                <span className="text-sm font-medium text-slate-300">Earn 1 Point for every</span>
                                 <input
                                     type="number"
                                     value={config.passengerSpendRate}
                                     onChange={(e) => setConfig({ ...config, passengerSpendRate: parseInt(e.target.value) || 1 })}
                                     min={1}
-                                    className="w-32 px-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded font-bold"
+                                    className="w-32 px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-[3px] font-bold text-white"
                                 />
-                                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">KES spent</span>
+                                <span className="text-sm font-medium text-slate-300">KES spent</span>
                             </div>
                         </div>
                     </TabPanel>
@@ -423,28 +428,28 @@ export const GamificationManagement: React.FC = () => {
                         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                             <div className="col-span-2 space-y-4">
                                 {config.badges.map((badge) => (
-                                    <div key={badge.id} className="p-4 bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 rounded-lg flex items-center justify-between">
+                                    <div key={badge.id} className="p-4 bg-[#131722] border border-white/10 rounded-[3px] flex items-center justify-between">
                                         <div className="flex items-center gap-4">
-                                            <div className={`p-2 rounded-full ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
-                                                <MilitaryTech fontSize="large" className={badge.color === 'yellow' ? 'text-yellow-600' : 'text-slate-600'} />
+                                            <div className={`p-2 rounded-[3px] ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
+                                                <MilitaryTech fontSize="large" className={badge.color === 'yellow' ? 'text-amber-400' : 'text-slate-400'} />
                                             </div>
                                             <div>
-                                                <h4 className="font-bold text-slate-900 dark:text-white">{badge.name} Tier</h4>
-                                                <p className="text-xs text-slate-500 dark:text-slate-400">Min Points: {badge.minPoints}</p>
+                                                <h4 className="font-bold text-white">{badge.name} Tier</h4>
+                                                <p className="text-xs text-slate-400">Min Points: {badge.minPoints}</p>
                                             </div>
                                         </div>
 
                                         <div className="flex items-center gap-3">
                                             <div className="text-right mr-2">
-                                                <div className="text-xs font-semibold text-slate-500 uppercase">Deduction Rate</div>
-                                                <div className="text-xs text-slate-400">from earnings</div>
+                                                <div className="text-xs font-semibold text-slate-400 uppercase">Deduction Rate</div>
+                                                <div className="text-xs text-slate-500">from earnings</div>
                                             </div>
                                             <div className="relative">
                                                 <input
                                                     type="number"
                                                     value={badge.loanDeductionRate}
                                                     onChange={(e) => handleBadgeChange(badge.id, 'loanDeductionRate', parseInt(e.target.value) || 0)}
-                                                    className="w-20 px-3 py-2 bg-slate-50 dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded font-mono text-lg font-bold text-right pr-8"
+                                                    className="w-20 px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-[3px] font-mono text-lg font-bold text-right pr-8 text-white"
                                                 />
                                                 <span className="absolute right-3 top-1/2 -translate-y-1/2 font-bold text-slate-400">%</span>
                                             </div>
@@ -453,11 +458,11 @@ export const GamificationManagement: React.FC = () => {
                                 ))}
                             </div>
 
-                            <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-100 dark:border-amber-900/30 p-6 rounded-xl h-fit">
-                                <h3 className="font-bold text-amber-800 dark:text-amber-200 mb-4 flex items-center gap-2">
+                            <div className="bg-[#131722] border border-amber-500/20 p-6 rounded-[3px] h-fit">
+                                <h3 className="font-bold text-amber-400 mb-4 flex items-center gap-2">
                                     <Info /> Safety Mechanism
                                 </h3>
-                                <ul className="text-sm text-amber-700 dark:text-amber-300 space-y-3 list-disc pl-4">
+                                <ul className="text-sm text-slate-300 space-y-3 list-disc pl-4">
                                     <li>Repayment is automatic and deducted from each trip earning.</li>
                                     <li>Only legitimate earnings are processed for deduction.</li>
                                     <li>If a driver's rating drops below 3 stars, loan access is temporarily suspended.</li>
@@ -470,105 +475,110 @@ export const GamificationManagement: React.FC = () => {
                     {/* Sacco SYSTEM */}
                     <TabPanel>
                         <div className="space-y-6">
-                            <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-6 text-white">
-                                <h3 className="text-xl font-bold flex items-center gap-2">
-                                    <DirectionsCar /> Gamified Sacco Ecosystem
-                                </h3>
-                                <p className="text-green-100 mt-1">
-                                    Driver tiers with commission reallocation, priority dispatch, and integrated savings
-                                </p>
+                            <div className="bg-[#131722] border border-amber-500/30 rounded-[3px] p-6 text-white flex flex-col md:flex-row md:items-center justify-between gap-4">
+                                <div>
+                                    <h3 className="text-xl font-bold flex items-center gap-2 text-amber-400">
+                                        <DirectionsCar /> Gamified Sacco Ecosystem
+                                    </h3>
+                                    <p className="text-slate-400 mt-1 text-sm">
+                                        Driver tiers with commission reallocation, priority dispatch, and integrated savings
+                                    </p>
+                                </div>
+                                <span className="text-xs font-bold px-2.5 py-1 rounded-[3px] bg-amber-500/10 text-amber-400 border border-amber-500/30 shrink-0 self-start md:self-auto">
+                                    SACCO TIER ENGINE ACTIVE
+                                </span>
                             </div>
 
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                                <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-4">
+                                <div className="bg-[#131722] border border-white/10 rounded-[3px] p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <EmojiEmotions className="text-orange-500" />
-                                        <span className="font-bold text-orange-800200">ROOK dark:text-orange-IE</span>
+                                        <EmojiEmotions className="text-amber-400" />
+                                        <span className="font-bold text-white text-sm">ROOKIE</span>
                                     </div>
-                                    <p className="text-sm text-orange-700 dark:text-orange-300">First 50 trips</p>
-                                    <div className="mt-3 text-xs font-semibold text-orange-600 dark:text-orange-400">+3% Sacco Bonus</div>
+                                    <p className="text-sm text-slate-400">First 50 trips</p>
+                                    <div className="mt-3 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-[3px] w-fit">+3% Sacco Bonus</div>
                                 </div>
 
-                                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                                <div className="bg-[#131722] border border-white/10 rounded-[3px] p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <Star className="text-amber-500" />
-                                        <span className="font-bold text-amber-800 dark:text-amber-200">STAR DRIVER</span>
+                                        <Star className="text-amber-400" />
+                                        <span className="font-bold text-white text-sm">STAR DRIVER</span>
                                     </div>
-                                    <p className="text-sm text-amber-700 dark:text-amber-300">100+ trips, 4.5+ rating</p>
-                                    <div className="mt-3 text-xs font-semibold text-amber-600 dark:text-amber-400">+Commission Rebate</div>
+                                    <p className="text-sm text-slate-400">100+ trips, 4.5+ rating</p>
+                                    <div className="mt-3 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-[3px] w-fit">+Commission Rebate</div>
                                 </div>
 
-                                <div className="bg-[#131722] border border-white/10 rounded p-4">
+                                <div className="bg-[#131722] border border-amber-500/30 rounded-[3px] p-4">
                                     <div className="flex items-center gap-2 mb-2">
                                         <WorkspacePremium className="text-amber-400" />
-                                        <span className="font-bold text-amber-300">ROAD MASTER</span>
+                                        <span className="font-bold text-amber-400 text-sm">ROAD MASTER</span>
                                     </div>
                                     <p className="text-sm text-slate-300">500+ trips, 4.7+ rating</p>
-                                    <div className="mt-3 text-xs font-semibold text-amber-400">+Priority Dispatch</div>
+                                    <div className="mt-3 text-xs font-semibold text-black bg-amber-400 px-2 py-0.5 rounded-[3px] w-fit font-bold">+Priority Dispatch</div>
                                 </div>
 
-                                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
+                                <div className="bg-[#131722] border border-amber-500/40 rounded-[3px] p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <EmojiEvents className="text-amber-500" />
-                                        <span className="font-bold text-amber-800 dark:text-amber-200">ELITE</span>
+                                        <EmojiEvents className="text-amber-400" />
+                                        <span className="font-bold text-amber-300 text-sm">ELITE</span>
                                     </div>
-                                    <p className="text-sm text-amber-700 dark:text-amber-300">Top 10% performers</p>
-                                    <div className="mt-3 text-xs font-semibold text-amber-600 dark:text-amber-400">+All Benefits</div>
+                                    <p className="text-sm text-slate-300">Top 10% performers</p>
+                                    <div className="mt-3 text-xs font-semibold text-amber-400 bg-amber-500/10 border border-amber-500/20 px-2 py-0.5 rounded-[3px] w-fit">+All Benefits</div>
                                 </div>
                             </div>
 
-                            <div className="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
-                                <div className="p-4 bg-slate-50 dark:bg-surface-dark border-b border-slate-200 dark:border-white/10">
-                                    <h4 className="font-bold text-slate-900 dark:text-white">Commission Structure</h4>
+                            <div className="bg-[#131722] rounded-[3px] border border-white/10 overflow-hidden">
+                                <div className="p-4 bg-[#0a0a0a] border-b border-white/10">
+                                    <h4 className="font-bold text-white text-sm">Commission Structure & Sacco Reallocation</h4>
                                 </div>
                                 <div className="p-6">
                                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                                        <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg">
-                                            <div className="text-2xl font-bold text-red-600">20%</div>
-                                            <div className="text-sm text-slate-600 dark:text-slate-400">Platform Commission</div>
+                                        <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded-[3px]">
+                                            <div className="text-2xl font-bold text-rose-400">20%</div>
+                                            <div className="text-xs text-slate-400 mt-1">Platform Commission</div>
                                         </div>
-                                        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                                            <div className="text-2xl font-bold text-amber-600">80%</div>
-                                            <div className="text-sm text-slate-600 dark:text-slate-400">Driver Share</div>
+                                        <div className="p-4 bg-[#0a0a0a] border border-amber-500/20 rounded-[3px]">
+                                            <div className="text-2xl font-bold text-amber-400">80%</div>
+                                            <div className="text-xs text-slate-400 mt-1">Driver Share</div>
                                         </div>
-                                        <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg">
-                                            <div className="text-2xl font-bold text-green-600">2%</div>
-                                            <div className="text-sm text-slate-600 dark:text-slate-400">Sacco Admin</div>
+                                        <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded-[3px]">
+                                            <div className="text-2xl font-bold text-emerald-400">2%</div>
+                                            <div className="text-xs text-slate-400 mt-1">Sacco Admin Fund</div>
                                         </div>
-                                        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg">
-                                            <div className="text-2xl font-bold text-amber-600">3%</div>
-                                            <div className="text-sm text-slate-600 dark:text-slate-400">Badge Bonus</div>
+                                        <div className="p-4 bg-[#0a0a0a] border border-amber-500/20 rounded-[3px]">
+                                            <div className="text-2xl font-bold text-amber-300">3%</div>
+                                            <div className="text-xs text-slate-400 mt-1">Badge Bonus Pool</div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="bg-amber-50 dark:bg-amber-900/10 border border-amber-200 dark:border-amber-800 rounded-xl p-6">
-                                <h4 className="font-bold text-amber-800 dark:text-amber-200 mb-3 flex items-center gap-2">
-                                    <TrendingUp /> Safety Mechanisms
+                            <div className="bg-[#131722] border border-amber-500/20 rounded-[3px] p-6">
+                                <h4 className="font-bold text-amber-400 mb-3 flex items-center gap-2 text-sm">
+                                    <TrendingUp fontSize="small" /> Sacco Guardrails & Safety Mechanisms
                                 </h4>
-                                <ul className="text-sm text-amber-700 dark:text-amber-300 space-y-2">
+                                <ul className="text-sm text-slate-300 space-y-2.5">
                                     <li className="flex items-center gap-2">
-                                        <CheckCircle fontSize="small" className="text-green-500" />
-                                        50% cap on total deductions to protect driver earnings
+                                        <CheckCircle fontSize="small" className="text-amber-400 shrink-0" />
+                                        50% cap on total deductions to protect driver net take-home earnings
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <CheckCircle fontSize="small" className="text-green-500" />
-                                        Grace period (50 trips) for new drivers to earn first badge
+                                        <CheckCircle fontSize="small" className="text-amber-400 shrink-0" />
+                                        Grace period (50 trips) for newly onboarded drivers to earn first badge
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <CheckCircle fontSize="small" className="text-green-500" />
-                                        Multi-metric validation to prevent badge gaming
+                                        <CheckCircle fontSize="small" className="text-amber-400 shrink-0" />
+                                        Multi-metric telemetry validation to prevent synthetic trip gaming
                                     </li>
                                     <li className="flex items-center gap-2">
-                                        <CheckCircle fontSize="small" className="text-green-500" />
-                                        Automatic tier review after every 50 completed trips
+                                        <CheckCircle fontSize="small" className="text-amber-400 shrink-0" />
+                                        Automatic SACCO tier review audit after every 50 completed trips
                                     </li>
                                 </ul>
                             </div>
 
                             <div className="flex justify-end">
-                                <button onClick={handleSave} className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all">
+                                <button onClick={handleSave} className="btn-primary flex items-center gap-1.5 px-3.5 py-1.5 rounded-[3px] text-xs font-semibold">
                                     <Save fontSize="small" />
                                     Sync to Database
                                 </button>

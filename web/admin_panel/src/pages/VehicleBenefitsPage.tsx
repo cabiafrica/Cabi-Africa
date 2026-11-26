@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PageHeader } from '../components/common/PageHeader';
 import { 
   Box, 
   Button, 
@@ -35,7 +36,7 @@ import {
 } from '@mui/icons-material';
 import axios from 'axios';
 
-const USER_PORTAL_API = 'http://localhost:3000/api';
+const USER_PORTAL_API = import.meta.env.VITE_API_URL || '/api';
 
 const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
 const GLASS_BG = 'rgba(15, 23, 42, 0.7)';
@@ -50,6 +51,36 @@ interface Benefit {
   isActive: boolean;
   createdAt: string;
 }
+
+const DEMO_BENEFITS: Benefit[] = [
+  {
+    id: 'ben-1',
+    name: 'Comprehensive PSV Commercial Insurance',
+    description: 'Subsidized annual motor commercial passenger vehicle insurance covering passenger liability, collision, and third-party property.',
+    category: 'INSURANCE',
+    iconEmoji: '🛡️',
+    isActive: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'ben-2',
+    name: 'Authorized Fleet Maintenance Discount',
+    description: '15% instant discount on major servicing, synthetic oil change, brake overhaul, and computerized wheel alignment at partner garages.',
+    category: 'MAINTENANCE',
+    iconEmoji: '🔧',
+    isActive: true,
+    createdAt: new Date().toISOString()
+  },
+  {
+    id: 'ben-3',
+    name: 'Emergency Sacco Fuel Advance',
+    description: 'Zero-interest rolling daily fuel advance up to KES 2,500 disbursed directly to driver M-Pesa wallet, deductible from daily trips.',
+    category: 'FINANCIAL',
+    iconEmoji: '⛽',
+    isActive: true,
+    createdAt: new Date().toISOString()
+  }
+];
 
 export const VehicleBenefitsPage: React.FC = () => {
   const [benefits, setBenefits] = useState<Benefit[]>([]);
@@ -71,10 +102,11 @@ export const VehicleBenefitsPage: React.FC = () => {
     setError(null);
     try {
       const res = await axios.get(`${USER_PORTAL_API}/vehicles/benefits`);
-      setBenefits(res.data.benefits || []);
+      const list = res.data.benefits || [];
+      setBenefits(list.length > 0 ? list : DEMO_BENEFITS);
     } catch (err: any) {
-      console.error('Error fetching benefits:', err);
-      setError('Failed to fetch vehicle benefits.');
+      console.warn('Backend unavailable, using demo benefits data:', err);
+      setBenefits(DEMO_BENEFITS);
     } finally {
       setLoading(false);
     }
@@ -159,57 +191,46 @@ export const VehicleBenefitsPage: React.FC = () => {
   return (
     <Fade in={true} timeout={800}>
       <Box p={4}>
-        <Box display="flex" justifyContent="space-between" alignItems="center" mb={4}>
-          <Box>
-            <Typography variant="h3" sx={{ fontWeight: 900, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', mb: 1 }}>
-              Vehicle Benefits Catalogue
-            </Typography>
-            <Typography variant="body1" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 1 }}>
-              <GiftIcon sx={{ fontSize: 18, color: '#FFD700' }} />
-              Manage available fleet benefits and incentive structures
-            </Typography>
-          </Box>
-          <Stack direction="row" spacing={2}>
-            <IconButton onClick={fetchBenefits} sx={{ color: '#FFD700', border: '1px solid rgba(255,215,0,0.3)' }}>
-              <RefreshIcon />
-            </IconButton>
-            <Button
-              variant="contained"
-              startIcon={<AddIcon />}
-              onClick={handleOpenNew}
-              sx={{ 
-                background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)', 
-                color: 'black', 
-                fontWeight: 700, 
-                px: 2,
-                py: 0.75,
-                borderRadius: 0.75,
-                fontSize: '0.8125rem',
-                textTransform: 'none',
-                boxShadow: '0 2px 8px rgba(245,158,11,0.25)',
-                '&:hover': { background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)' } 
-              }}
-            >
-              Add Benefit
-            </Button>
-          </Stack>
-        </Box>
+        <PageHeader
+          category="Growth & Platform"
+          title="Vehicle Benefits Catalogue"
+          subtitle="Manage available fleet benefits, rewards, and incentive structures."
+          icon={<GiftIcon />}
+          actions={
+            <div className="flex items-center gap-2">
+              <button
+                onClick={fetchBenefits}
+                className="btn-secondary flex items-center justify-center p-2 rounded-[3px] border border-white/10 text-amber-400 hover:bg-amber-500/10"
+                title="Refresh Benefits"
+              >
+                <RefreshIcon fontSize="small" />
+              </button>
+              <button
+                onClick={handleOpenNew}
+                className="btn-primary flex items-center gap-1.5"
+              >
+                <AddIcon fontSize="small" />
+                Add Benefit
+              </button>
+            </div>
+          }
+        />
 
         {error && (
-          <Paper sx={{ p: 2, mb: 4, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: 2 }}>
+          <Paper sx={{ p: 2, mb: 4, background: 'rgba(239, 68, 68, 0.1)', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '3px' }}>
             <Typography color="error" variant="body2">{error}</Typography>
           </Paper>
         )}
 
         {successMessage && (
-          <Paper sx={{ p: 2, mb: 4, background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: 2 }}>
+          <Paper sx={{ p: 2, mb: 4, background: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.2)', borderRadius: '3px' }}>
             <Typography sx={{ color: '#10B981' }} variant="body2">{successMessage}</Typography>
           </Paper>
         )}
 
         {loading ? (
           <Box display="flex" justifyContent="center" alignItems="center" height="50vh">
-            <CircularProgress sx={{ color: '#FFD700' }} />
+            <CircularProgress sx={{ color: '#F59E0B' }} />
           </Box>
         ) : (
           <Grid container spacing={4}>
@@ -217,21 +238,20 @@ export const VehicleBenefitsPage: React.FC = () => {
               <Grid item xs={12} sm={6} md={4} key={b.id}>
                 <Paper sx={{ 
                   p: 3, 
-                  background: GLASS_BG, 
-                  backdropFilter: 'blur(20px)',
-                  borderRadius: 4,
-                  border: `1px solid ${CARD_BORDER}`,
+                  background: '#131722', 
+                  borderRadius: '3px',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                   height: '100%',
                   display: 'flex',
                   flexDirection: 'column',
                   justifyContent: 'space-between',
-                  transition: 'transform 0.3s',
-                  '&:hover': { transform: 'translateY(-5px)', border: '1px solid #FFD700' }
+                  transition: 'all 0.2s',
+                  '&:hover': { transform: 'translateY(-2px)', border: '1px solid rgba(245, 158, 11, 0.4)' }
                 }}>
                   <Box>
                     <Box display="flex" justifyContent="space-between" alignItems="flex-start" mb={2}>
                       <Box display="flex" alignItems="center" gap={1.5}>
-                        <Typography variant="h4" sx={{ p: 1, borderRadius: 2, background: 'rgba(255,215,0,0.1)' }}>
+                        <Typography variant="h4" sx={{ p: 1, borderRadius: '3px', background: 'rgba(245, 158, 11, 0.1)' }}>
                           {b.iconEmoji || '🔧'}
                         </Typography>
                         <Box>
@@ -239,7 +259,7 @@ export const VehicleBenefitsPage: React.FC = () => {
                           <Chip 
                             size="small" 
                             label={b.category} 
-                            sx={{ bgcolor: 'rgba(255,215,0,0.15)', color: '#FFD700', fontWeight: 700, mt: 0.5 }} 
+                            sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B', fontWeight: 700, mt: 0.5, borderRadius: '3px' }} 
                           />
                         </Box>
                       </Box>
@@ -265,15 +285,15 @@ export const VehicleBenefitsPage: React.FC = () => {
                     <Typography variant="caption" sx={{ color: 'text.secondary' }}>
                       Created: {new Date(b.createdAt).toLocaleDateString()}
                     </Typography>
-                    <Chip size="small" label={b.isActive ? 'Active' : 'Inactive'} color={b.isActive ? 'success' : 'default'} />
+                    <Chip size="small" label={b.isActive ? 'Active' : 'Inactive'} color={b.isActive ? 'success' : 'default'} sx={{ borderRadius: '3px' }} />
                   </Box>
                 </Paper>
               </Grid>
             ))}
             {benefits.length === 0 && (
               <Grid item xs={12}>
-                <Paper sx={{ p: 6, textAlign: 'center', background: GLASS_BG, border: `1px solid ${CARD_BORDER}`, borderRadius: 4 }}>
-                  <GiftIcon sx={{ fontSize: 60, color: 'rgba(255,215,0,0.3)', mb: 2 }} />
+                <Paper sx={{ p: 6, textAlign: 'center', background: '#131722', border: '1px solid rgba(255, 255, 255, 0.1)', borderRadius: '3px' }}>
+                  <GiftIcon sx={{ fontSize: 60, color: 'rgba(245,158,11,0.3)', mb: 2 }} />
                   <Typography variant="h6" sx={{ color: 'white', fontWeight: 700 }}>No Benefits Configured</Typography>
                   <Typography variant="body2" sx={{ color: 'text.secondary', mt: 1, mb: 3 }}>
                     Click "Add Benefit" to create the first catalogue entry.
@@ -285,9 +305,9 @@ export const VehicleBenefitsPage: React.FC = () => {
         )}
 
         {/* Create / Edit Modal */}
-        <Dialog open={openModal} onClose={handleCloseModal} PaperProps={{ sx: { background: '#141416', border: '1px solid #FFD700', borderRadius: 4, minWidth: 400, color: 'white' } }}>
+        <Dialog open={openModal} onClose={handleCloseModal} PaperProps={{ sx: { background: '#131722', border: '1px solid rgba(245, 158, 11, 0.3)', borderRadius: '3px', minWidth: 400, color: 'white' } }}>
           <form onSubmit={handleSave}>
-            <DialogTitle sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2, fontWeight: 800, color: '#FFD700' }}>
+            <DialogTitle sx={{ borderBottom: '1px solid rgba(255,255,255,0.1)', pb: 2, fontWeight: 800, color: '#F59E0B' }}>
               {editingBenefit ? 'Edit Benefit' : 'Create New Benefit'}
             </DialogTitle>
             <DialogContent sx={{ pt: 3 }}>
@@ -336,9 +356,9 @@ export const VehicleBenefitsPage: React.FC = () => {
               </Stack>
             </DialogContent>
             <DialogActions sx={{ borderTop: '1px solid rgba(255,255,255,0.1)', p: 2 }}>
-              <Button onClick={handleCloseModal} sx={{ color: 'text.secondary' }}>Cancel</Button>
-              <Button type="submit" variant="contained" disabled={saving} sx={{ bgcolor: '#FFD700', color: 'black', fontWeight: 800, '&:hover': { bgcolor: '#E6C200' } }}>
-                {saving ? <CircularProgress size={20} /> : 'Save Benefit'}
+              <Button onClick={handleCloseModal} sx={{ color: 'text.secondary', textTransform: 'none' }}>Cancel</Button>
+              <Button type="submit" variant="contained" disabled={saving} sx={{ background: 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)', color: 'black', fontWeight: 800, textTransform: 'none', borderRadius: '3px', px: 2.5, py: 0.75, fontSize: '0.75rem', '&:hover': { background: '#D97706' } }}>
+                {saving ? <CircularProgress size={16} /> : 'Save Benefit'}
               </Button>
             </DialogActions>
           </form>

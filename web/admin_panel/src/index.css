@@ -121,8 +121,18 @@ body {
     textarea,
     select
   ) {
-    @apply px-4 py-2.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
+    @apply px-4 py-2.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none transition-all duration-200 shadow-sm;
   }
+}
+
+/* Form input focus state: 50% reduced thickness & softened executive gold halo */
+input:focus,
+textarea:focus,
+select:focus,
+:where(input, textarea, select):focus {
+  outline: none !important;
+  border-color: rgba(245, 158, 11, 0.65) !important;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 6px rgba(245, 158, 11, 0.12) !important;
 }
 
 /* Chart text adjustments for Dark Mode */

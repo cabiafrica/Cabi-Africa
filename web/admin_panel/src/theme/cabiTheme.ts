@@ -256,8 +256,12 @@ export const cabiTheme = createTheme({
           '&:hover .MuiOutlinedInput-notchedOutline': {
             borderColor: 'rgba(255, 255, 255, 0.18)',
           },
+          '&.Mui-focused': {
+            boxShadow: '0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 6px rgba(245, 158, 11, 0.12)',
+          },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#F59E0B',
+            borderColor: 'rgba(245, 158, 11, 0.65)',
+            borderWidth: '1px',
           },
         },
         input: {
