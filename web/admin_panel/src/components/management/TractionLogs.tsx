@@ -61,7 +61,7 @@ export const TractionLogs: React.FC = () => {
     const getTypeConfig = (type: string) => {
         switch (type) {
             case 'RIDE': return { icon: <History />, color: 'text-amber-600 dark:text-amber-400' };
-            case 'COMMISSION': return { icon: <ReceiptLong />, color: 'text-cyan-600 dark:text-cyan-400' };
+            case 'COMMISSION': return { icon: <ReceiptLong />, color: 'text-amber-500' };
             case 'PAYOUT': return { icon: <Payments />, color: 'text-emerald-600 dark:text-emerald-400' };
             case 'REFUND': return { icon: <AccountBalance />, color: 'text-orange-600 dark:text-orange-400' };
             default: return { icon: <History />, color: 'text-slate-600' };
@@ -129,7 +129,7 @@ export const TractionLogs: React.FC = () => {
                                         <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors group">
                                             <td className="px-6 py-4 whitespace-nowrap">
                                                 <div className="flex flex-col">
-                                                    <span className="font-mono text-sm font-bold text-cyan-600 dark:text-cyan-400">{log.id}</span>
+                                                    <span className="font-mono text-sm font-bold text-amber-400">{log.id}</span>
                                                     <span className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[200px]" title={log.description}>{log.description}</span>
                                                 </div>
                                             </td>

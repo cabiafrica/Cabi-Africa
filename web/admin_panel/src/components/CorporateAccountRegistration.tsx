@@ -78,7 +78,7 @@ export const CorporateAccountRegistration: React.FC = () => {
           <button 
             type="submit" 
             disabled={isSubmitting}
-            className="bg-amber-500 text-black px-6 py-2 rounded hover:bg-cyan-700 disabled:bg-cyan-400"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-6 py-2.5 rounded font-bold transition-all shadow-md shadow-amber-500/20 disabled:opacity-50"
           >
             {isSubmitting ? 'Creating Account...' : 'Create Corporate Account'}
           </button>

@@ -60,7 +60,7 @@ export const cabiTheme = createTheme({
     fontFamily: ['Inter', 'system-ui', '-apple-system', 'sans-serif'].join(','),
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 3,
   },
   components: {
     MuiCssBaseline: {
@@ -93,7 +93,7 @@ export const cabiTheme = createTheme({
           backgroundColor: '#131722',
           backgroundImage: 'none',
           border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: 14,
+          borderRadius: 4,
           color: '#f8fafc',
         },
       },
@@ -104,7 +104,7 @@ export const cabiTheme = createTheme({
           backgroundColor: '#131722',
           backgroundImage: 'none',
           border: '1px solid rgba(255, 255, 255, 0.08)',
-          borderRadius: 12,
+          borderRadius: 3,
         },
       },
     },
@@ -144,7 +144,7 @@ export const cabiTheme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 10,
+          borderRadius: 3,
           textTransform: 'none',
           fontWeight: 600,
         },
@@ -194,7 +194,7 @@ export const cabiTheme = createTheme({
           backgroundColor: '#131722',
           backgroundImage: 'none',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: 16,
+          borderRadius: 4,
           color: '#f8fafc',
         },
       },
@@ -205,7 +205,7 @@ export const cabiTheme = createTheme({
           backgroundColor: '#131722',
           backgroundImage: 'none',
           border: '1px solid rgba(255, 255, 255, 0.1)',
-          borderRadius: 12,
+          borderRadius: 3,
           color: '#f8fafc',
         },
       },
@@ -231,7 +231,7 @@ export const cabiTheme = createTheme({
       styleOverrides: {
         root: {
           backgroundColor: 'rgba(255, 255, 255, 0.03)',
-          borderRadius: 10,
+          borderRadius: 3,
           color: '#f8fafc',
           '& .MuiOutlinedInput-notchedOutline': {
             borderColor: 'rgba(255, 255, 255, 0.08)',
@@ -254,7 +254,7 @@ export const cabiTheme = createTheme({
     MuiChip: {
       styleOverrides: {
         root: {
-          borderRadius: 8,
+          borderRadius: 3,
           fontWeight: 600,
         },
       },

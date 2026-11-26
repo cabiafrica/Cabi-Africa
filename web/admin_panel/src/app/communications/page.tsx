@@ -161,21 +161,21 @@ export default function CommunicationsPage() {
                 {/* Featured Content Section */}
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
                     {/* Section Header */}
-                    <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white p-6">
+                    <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-black p-6">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h2 className="text-2xl font-bold">What's New - {isExperiment ? 'A/B Test' : 'Featured Content'}</h2>
-                                <p className="text-cyan-100 mt-1">
+                                <p className="text-black/80 mt-1">
                                     Manage the content displayed on user home screens
                                 </p>
                             </div>
                             <div className="flex items-center space-x-4">
-                                <label className="flex items-center space-x-2 cursor-pointer bg-cyan-800 bg-opacity-50 px-3 py-1 rounded-full hover:bg-opacity-75 transition">
+                                <label className="flex items-center space-x-2 cursor-pointer bg-black/20 px-3 py-1 rounded hover:bg-black/30 transition">
                                     <input
                                         type="checkbox"
                                         checked={isExperiment}
                                         onChange={(e) => setIsExperiment(e.target.checked)}
-                                        className="form-checkbox text-cyan-400"
+                                        className="form-checkbox text-amber-500 accent-amber-500"
                                     />
                                     <span className="text-sm font-medium">Enable A/B Testing</span>
                                 </label>
@@ -426,7 +426,7 @@ export default function CommunicationsPage() {
                                 <button
                                     onClick={handlePublish}
                                     disabled={!activeData.title || !activeData.destinationLink}
-                                    className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-800 transition-all font-bold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+                                    className="px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded font-bold shadow-lg shadow-amber-500/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2 transition-all"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />

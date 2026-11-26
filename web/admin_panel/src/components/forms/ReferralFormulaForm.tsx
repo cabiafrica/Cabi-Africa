@@ -66,27 +66,27 @@ export function ReferralFormulaForm() {
     }
   };
 
-  const inputStyles = "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-cyan-500 focus:ring-cyan-500 sm:text-sm";
+  const inputStyles = "mt-1 block w-full rounded border border-white/10 bg-[#0a0a0a] text-white shadow-sm focus:border-amber-500 focus:ring-amber-500 sm:text-sm p-2.5 outline-none";
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 shadow rounded-lg">
+    <form onSubmit={handleSubmit} className="space-y-6 bg-[#131722] p-8 shadow-xl rounded border border-white/10 text-white">
       <div>
-        <h3 className="text-lg font-medium leading-6 text-gray-900">Fee Distribution</h3>
-        <p className="mt-1 text-sm text-gray-500">
+        <h3 className="text-lg font-bold leading-6 text-white">Fee Distribution</h3>
+        <p className="mt-1 text-sm text-slate-400">
           Set the percentage of the fee that goes to each referral level. The total should not exceed 100%.
         </p>
       </div>
 
-      {isLoading && <p className="text-gray-500">Loading...</p>}
+      {isLoading && <p className="text-slate-400">Loading...</p>}
 
-      {error && <div className="rounded-md bg-red-50 p-4"><p className="text-sm text-red-700">{error}</p></div>}
+      {error && <div className="rounded bg-rose-500/10 border border-rose-500/20 p-4"><p className="text-sm text-rose-400">{error}</p></div>}
 
-      {success && <div className="rounded-md bg-green-50 p-4"><p className="text-sm text-green-700">{success}</p></div>}
+      {success && <div className="rounded bg-emerald-500/10 border border-emerald-500/20 p-4"><p className="text-sm text-emerald-400">{success}</p></div>}
 
       <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
         {levels.map((value, index) => (
           <div key={index} className="sm:col-span-2">
-            <label htmlFor={`level-${index}`} className="block text-sm font-medium text-gray-700">
+            <label htmlFor={`level-${index}`} className="block text-sm font-medium text-slate-300">
               Level {index + 1} (%)
             </label>
             <input
@@ -102,9 +102,11 @@ export function ReferralFormulaForm() {
         ))}
       </div>
 
-      <div className="flex justify-between items-center pt-5 border-t border-gray-200">
-        <p className={`text-sm font-medium ${total > 100 ? 'text-red-600' : 'text-gray-700'}`}>Total: {total.toFixed(2)}%</p>
-        <button type="submit" disabled={isLoading || total > 100} className="rounded-md border border-transparent bg-cyan-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-cyan-700 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed">{isLoading ? 'Saving...' : 'Save Configuration'}</button>
+      <div className="flex justify-between items-center pt-5 border-t border-white/10">
+        <p className={`text-sm font-medium ${total > 100 ? 'text-rose-400' : 'text-slate-300'}`}>Total: {total.toFixed(2)}%</p>
+        <button type="submit" disabled={isLoading || total > 100} className="rounded bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-2.5 px-6 text-sm font-bold shadow-md shadow-amber-500/20 disabled:opacity-50 transition-all">
+          {isLoading ? 'Saving...' : 'Save Configuration'}
+        </button>
       </div>
     </form>
   );

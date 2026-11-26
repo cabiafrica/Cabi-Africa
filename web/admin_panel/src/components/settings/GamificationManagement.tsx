@@ -211,41 +211,41 @@ export const GamificationManagement: React.FC = () => {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className={`flex items-center gap-2 ${saveSuccess ? 'bg-green-600' : 'bg-cyan-600 hover:bg-cyan-700'} disabled:opacity-50 text-white px-6 py-2.5 rounded-lg font-bold shadow-lg transition-transform hover:scale-105 active:scale-95`}
+                    className={`flex items-center gap-2 ${saveSuccess ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black'} disabled:opacity-50 px-6 py-2.5 rounded font-bold shadow-lg shadow-amber-500/20 transition-transform hover:scale-105 active:scale-95`}
                 >
-                    {loading ? <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : saveSuccess ? <CheckCircle /> : <Save />}
+                    {loading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : saveSuccess ? <CheckCircle /> : <Save />}
                     {saveSuccess ? 'Configuration Saved!' : 'Save Configuration'}
                 </button>
             </div>
 
             {saveSuccess && (
-                <div className="p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/20 border border-emerald-200 dark:border-emerald-800/40 text-sm text-emerald-800 dark:text-emerald-300 flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-emerald-600" />
+                <div className="p-4 rounded bg-emerald-500/10 border border-emerald-500/30 text-sm text-emerald-300 flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-emerald-400" />
                     <span>Gamification and loyalty rules saved successfully to the system database.</span>
                 </div>
             )}
 
             {saveError && (
-                <div className="p-4 rounded-xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800/40 text-sm text-red-800 dark:text-red-300">
+                <div className="p-4 rounded bg-rose-500/10 border border-rose-500/30 text-sm text-rose-300">
                     ⚠️ {saveError}
                 </div>
             )}
 
             <TabGroup>
-                <TabList className="flex gap-2 border-b border-slate-200 dark:border-white/10 overflow-x-auto pb-1 mb-6">
-                    <Tab className="ui-selected:border-cyan-500 ui-selected:text-cyan-600 dark:ui-selected:text-cyan-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                <TabList className="flex gap-2 border-b border-white/10 overflow-x-auto pb-1 mb-6">
+                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Rating Rules
                     </Tab>
-                    <Tab className="ui-selected:border-cyan-500 ui-selected:text-cyan-600 dark:ui-selected:text-cyan-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Badge Tiers
                     </Tab>
-                    <Tab className="ui-selected:border-cyan-500 ui-selected:text-cyan-600 dark:ui-selected:text-cyan-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Privilege Matrix
                     </Tab>
-                    <Tab className="ui-selected:border-cyan-500 ui-selected:text-cyan-600 dark:ui-selected:text-cyan-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Loan & Repayment
                     </Tab>
-                    <Tab className="ui-selected:border-cyan-500 ui-selected:text-cyan-600 dark:ui-selected:text-cyan-400 px-4 py-2 text-sm font-medium text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
+                    <Tab className="ui-selected:border-amber-500 ui-selected:text-amber-400 px-4 py-2 text-sm font-medium text-slate-400 hover:text-slate-200 border-b-2 border-transparent transition-colors outline-none">
                         Sacco System
                     </Tab>
                 </TabList>
@@ -281,8 +281,8 @@ export const GamificationManagement: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-gradient-to-br from-cyan-50 to-amber-50 dark:from-slate-800 dark:to-slate-900 rounded-xl shadow-sm border border-cyan-100 dark:border-white/10 p-6">
-                                <h3 className="font-bold text-cyan-900 dark:text-cyan-200 mb-4 flex items-center gap-2">
+                            <div className="bg-[#131722] rounded shadow-sm border border-white/10 p-6">
+                                <h3 className="font-bold text-amber-400 mb-4 flex items-center gap-2">
                                     <CardGiftcard /> Spin the Wheel Bonus
                                 </h3>
                                 <p className="text-slate-600 dark:text-slate-400 text-sm mb-6">
@@ -309,17 +309,17 @@ export const GamificationManagement: React.FC = () => {
                     <TabPanel>
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mt-2">
                             {config.badges.map((badge) => (
-                                <div key={badge.id} className={`relative rounded-xl border-2 p-6 flex flex-col ${badge.id === 'PLATINUM' ? 'border-cyan-400 dark:border-cyan-500 shadow-lg' : 'border-slate-200 dark:border-white/10'
-                                    } bg-white dark:bg-card-dark`}>
+                                <div key={badge.id} className={`relative rounded border p-6 flex flex-col ${badge.id === 'PLATINUM' ? 'border-amber-500 shadow-lg shadow-amber-500/10' : 'border-white/10'
+                                    } bg-[#131722]`}>
                                     {badge.id === 'PLATINUM' && (
-                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                                        <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-amber-500 text-black text-[10px] font-bold px-3 py-1 rounded uppercase tracking-wider">
                                             Top Tier
                                         </div>
                                     )}
 
                                     <div className="flex items-center justify-between mb-4 mt-2">
-                                        <div className={`p-2 rounded-lg ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
-                                            <MilitaryTech className={badge.color === 'yellow' ? 'text-yellow-600' : badge.color === 'orange' ? 'text-orange-600' : badge.color === 'slate' ? 'text-slate-600' : 'text-cyan-600'} />
+                                        <div className={`p-2 rounded ${getBadgeColorClass(badge.color).split(' ')[0]}`}>
+                                            <MilitaryTech className={badge.color === 'yellow' ? 'text-yellow-500' : badge.color === 'orange' ? 'text-orange-500' : badge.color === 'slate' ? 'text-slate-400' : 'text-amber-400'} />
                                         </div>
                                         <span className={`text-xs font-bold px-2 py-1 rounded border capitalize ${getBadgeColorClass(badge.color)}`}>
                                             {badge.name}
@@ -378,7 +378,7 @@ export const GamificationManagement: React.FC = () => {
                                                 <td className="px-6 py-3">
                                                     <span className={`px-2 py-0.5 rounded text-[10px] uppercase font-bold tracking-wide ${priv.type === 'driver' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' :
                                                             priv.type === 'passenger' ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300' :
-                                                                'bg-cyan-100 text-cyan-700 dark:bg-cyan-900/30 dark:text-cyan-300'
+                                                                'bg-amber-500/10 text-amber-400 border border-amber-500/20'
                                                         }`}>
                                                         {priv.type}
                                                     </span>
@@ -389,7 +389,7 @@ export const GamificationManagement: React.FC = () => {
                                                             type="checkbox"
                                                             checked={badge.privileges.includes(priv.id)}
                                                             onChange={() => togglePrivilege(badge.id, priv.id)}
-                                                            className="w-5 h-5 text-cyan-600 rounded border-slate-300 focus:ring-cyan-500 cursor-pointer accent-cyan-600"
+                                                            className="w-5 h-5 text-amber-500 rounded border-slate-600 focus:ring-amber-500 cursor-pointer accent-amber-500 bg-[#0a0a0a]"
                                                         />
                                                     </td>
                                                 ))}
@@ -498,13 +498,13 @@ export const GamificationManagement: React.FC = () => {
                                     <div className="mt-3 text-xs font-semibold text-amber-600 dark:text-amber-400">+Commission Rebate</div>
                                 </div>
 
-                                <div className="bg-cyan-50 dark:bg-cyan-900/20 border border-cyan-200 dark:border-cyan-800 rounded-xl p-4">
+                                <div className="bg-[#131722] border border-white/10 rounded p-4">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <WorkspacePremium className="text-cyan-500" />
-                                        <span className="font-bold text-cyan-800 dark:text-cyan-200">ROAD MASTER</span>
+                                        <WorkspacePremium className="text-amber-400" />
+                                        <span className="font-bold text-amber-300">ROAD MASTER</span>
                                     </div>
-                                    <p className="text-sm text-cyan-700 dark:text-cyan-300">500+ trips, 4.7+ rating</p>
-                                    <div className="mt-3 text-xs font-semibold text-cyan-600 dark:text-cyan-400">+Priority Dispatch</div>
+                                    <p className="text-sm text-slate-300">500+ trips, 4.7+ rating</p>
+                                    <div className="mt-3 text-xs font-semibold text-amber-400">+Priority Dispatch</div>
                                 </div>
 
                                 <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4">

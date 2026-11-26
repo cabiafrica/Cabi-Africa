@@ -64,41 +64,41 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
         </div>
 
         <div>
-          <h4 className="text-lg font-semibold text-gray-800 mb-3">Permissions</h4>
-          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
+          <h4 className="text-lg font-semibold text-white mb-3">Permissions</h4>
+          <div className="bg-[#0a0a0a] border border-white/10 rounded p-4 max-h-[400px] overflow-y-auto custom-scrollbar">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {availablePermissions.map(perm => (
-                <label key={perm.id} className={`flex items-start p-3 rounded-lg border cursor-pointer transition-colors ${selectedPermissions.has(perm.id) ? 'bg-amber-50 border-amber-200 ring-1 ring-amber-500' : 'bg-white border-gray-200 hover:bg-gray-50'}`}>
+                <label key={perm.id} className={`flex items-start p-3 rounded border cursor-pointer transition-colors ${selectedPermissions.has(perm.id) ? 'bg-amber-500/10 border-amber-500/40 ring-1 ring-amber-500/50' : 'bg-[#131722] border-white/10 hover:bg-white/5'}`}>
                   <input
                     type="checkbox"
                     checked={selectedPermissions.has(perm.id)}
                     onChange={() => handlePermissionToggle(perm.id)}
-                    className="mt-0.5 h-4 w-4 text-amber-600 focus:ring-amber-500 border-gray-300 rounded"
+                    className="mt-0.5 h-4 w-4 text-amber-500 focus:ring-amber-500 border-white/20 rounded accent-amber-500 bg-[#0a0a0a]"
                   />
                   <div className="ml-3">
-                    <span className="block text-sm font-medium text-gray-900 font-mono">{perm.id}</span>
-                    <span className="block text-xs text-gray-500 mt-0.5">{perm.description}</span>
+                    <span className="block text-sm font-medium text-white font-mono">{perm.id}</span>
+                    <span className="block text-xs text-slate-400 mt-0.5">{perm.description}</span>
                   </div>
                 </label>
               ))}
             </div>
           </div>
-          <p className="text-xs text-gray-500 mt-2">Select the permissions that users with this role should have by default.</p>
+          <p className="text-xs text-slate-400 mt-2">Select the permissions that users with this role should have by default.</p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-lg font-medium transition-colors"
+            className="bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 px-6 py-2.5 rounded font-medium transition-colors text-sm"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-6 py-2.5 rounded font-bold transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 text-sm"
           >
             {isLoading ? 'Saving...' : 'Save Role'}
           </button>

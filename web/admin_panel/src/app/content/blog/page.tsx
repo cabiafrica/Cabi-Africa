@@ -503,15 +503,15 @@ export default function BlogManagementPage() {
                     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
                         <div className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
                             {/* Modal Header */}
-                            <div className="bg-gradient-to-r from-cyan-600 to-cyan-700 text-white p-6 rounded-t-2xl">
+                            <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-black p-6 rounded-t">
                                 <div className="flex items-center justify-between">
                                     <div>
                                         <h2 className="text-2xl font-bold">Promote Blog Post</h2>
-                                        <p className="text-cyan-100 mt-1">Send to users via in-app message</p>
+                                        <p className="text-black/80 mt-1">Send to users via in-app message</p>
                                     </div>
                                     <button
                                         onClick={() => setIsPromoting(false)}
-                                        className="text-white hover:bg-cyan-800 rounded-lg p-2 transition-colors"
+                                        className="text-black hover:bg-black/10 rounded p-2 transition-colors"
                                     >
                                         <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -523,10 +523,10 @@ export default function BlogManagementPage() {
                             {/* Modal Body */}
                             <div className="p-6 space-y-6">
                                 {/* Post Preview */}
-                                <div className="bg-gradient-to-br from-cyan-50 to-cyan-100 rounded-lg p-4 border-2 border-cyan-200">
-                                    <p className="text-xs text-cyan-600 font-semibold uppercase mb-2">Post to Promote</p>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-2">{promotionPost.title}</h3>
-                                    <p className="text-sm text-gray-600 mb-3">{promotionPost.excerpt}</p>
+                                <div className="bg-[#131722] rounded p-4 border border-amber-500/30">
+                                    <p className="text-xs text-amber-500 font-semibold uppercase mb-2">Post to Promote</p>
+                                    <h3 className="text-lg font-bold text-white mb-2">{promotionPost.title}</h3>
+                                    <p className="text-sm text-slate-300 mb-3">{promotionPost.excerpt}</p>
                                     <div className="flex items-center space-x-2 text-xs text-cyan-700">
                                         <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1" />
@@ -668,7 +668,7 @@ export default function BlogManagementPage() {
                                 </button>
                                 <button
                                     onClick={handleSendPromotion}
-                                    className="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 text-white rounded-lg hover:from-cyan-700 hover:to-cyan-800 transition-all font-bold shadow-lg flex items-center space-x-2"
+                                    className="px-8 py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded font-bold shadow-lg shadow-amber-500/20 transition-all flex items-center space-x-2"
                                 >
                                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />

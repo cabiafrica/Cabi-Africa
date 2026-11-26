@@ -59,7 +59,7 @@ export const SimulationDashboard: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <Science className="text-cyan-600 dark:text-cyan-400" />
+                        <Science className="text-amber-500" />
                         Marketplace Simulator
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">
@@ -70,14 +70,14 @@ export const SimulationDashboard: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Simulation Controls */}
-                <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700 h-fit lg:col-span-1">
-                    <Title className="mb-4 dark:text-white">Simulation Parameters</Title>
+                <Card className="!bg-[#131722] !border !border-white/10 rounded h-fit lg:col-span-1 shadow-lg">
+                    <Title className="mb-4 text-white">Simulation Parameters</Title>
 
                     <div className="space-y-6">
                         <div>
                             <Flex className="mb-2">
-                                <Text className="dark:text-slate-300">Base Fare Adjustment</Text>
-                                <Text className="font-bold dark:text-white">{fareIncrease > 0 ? '+' : ''}{fareIncrease}%</Text>
+                                <Text className="text-slate-300">Base Fare Adjustment</Text>
+                                <Text className="font-bold text-white">{fareIncrease > 0 ? '+' : ''}{fareIncrease}%</Text>
                             </Flex>
                             <input
                                 type="range"
@@ -86,7 +86,7 @@ export const SimulationDashboard: React.FC = () => {
                                 max="50"
                                 value={fareIncrease}
                                 onChange={(e) => setFareIncrease(Number(e.target.value))}
-                                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-cyan-600"
+                                className="w-full h-2 bg-slate-800 rounded appearance-none cursor-pointer accent-amber-500"
                             />
                             <div className="flex justify-between text-xs text-slate-400 mt-1">
                                 <span>-50%</span>
@@ -97,8 +97,8 @@ export const SimulationDashboard: React.FC = () => {
 
                         <div>
                             <Flex className="mb-2">
-                                <Text className="dark:text-slate-300">Surge Cap Multiplier</Text>
-                                <Text className="font-bold dark:text-white">{surgeCap.toFixed(1)}x</Text>
+                                <Text className="text-slate-300">Surge Cap Multiplier</Text>
+                                <Text className="font-bold text-white">{surgeCap.toFixed(1)}x</Text>
                             </Flex>
                             <input
                                 type="range"
@@ -108,7 +108,7 @@ export const SimulationDashboard: React.FC = () => {
                                 step="0.1"
                                 value={surgeCap}
                                 onChange={(e) => setSurgeCap(Number(e.target.value))}
-                                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                                className="w-full h-2 bg-slate-800 rounded appearance-none cursor-pointer accent-amber-500"
                             />
                             <div className="flex justify-between text-xs text-slate-400 mt-1">
                                 <span>1.0x</span>
@@ -119,8 +119,8 @@ export const SimulationDashboard: React.FC = () => {
 
                         <div>
                             <Flex className="mb-2">
-                                <Text className="dark:text-slate-300">Driver Incentive Boost</Text>
-                                <Text className="font-bold dark:text-white">{incentiveBoost}%</Text>
+                                <Text className="text-slate-300">Driver Incentive Boost</Text>
+                                <Text className="font-bold text-white">{incentiveBoost}%</Text>
                             </Flex>
                             <input
                                 type="range"
@@ -129,7 +129,7 @@ export const SimulationDashboard: React.FC = () => {
                                 max="100"
                                 value={incentiveBoost}
                                 onChange={(e) => setIncentiveBoost(Number(e.target.value))}
-                                className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-green-500"
+                                className="w-full h-2 bg-slate-800 rounded appearance-none cursor-pointer accent-emerald-500"
                             />
                             <div className="flex justify-between text-xs text-slate-400 mt-1">
                                 <span>0%</span>
@@ -138,14 +138,14 @@ export const SimulationDashboard: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-slate-100 dark:border-white/10">
+                        <div className="pt-4 border-t border-white/10">
                             <button
                                 onClick={handleRun}
                                 disabled={loading}
-                                className="w-full bg-cyan-600 hover:bg-cyan-700 text-white py-3 rounded-lg font-bold shadow-lg shadow-cyan-900/20 active:scale-95 transition-all flex items-center justify-center gap-2"
+                                className="w-full bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-3 rounded font-bold shadow-lg shadow-amber-500/20 active:scale-95 transition-all flex items-center justify-center gap-2"
                             >
                                 {loading ? (
-                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
                                 ) : (
                                     <><PlayArrow /> Run Simulation</>
                                 )}
@@ -157,48 +157,48 @@ export const SimulationDashboard: React.FC = () => {
                 {/* Results Section */}
                 <div className="lg:col-span-2 space-y-6">
                     {!result ? (
-                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-slate-50 dark:bg-card-dark/50 rounded-xl border-2 border-dashed border-slate-200 dark:border-white/10">
-                            <Science fontSize="large" className="text-slate-300 dark:text-slate-600 mb-4 scale-150" />
-                            <h3 className="text-lg font-bold text-slate-700 dark:text-slate-300">Ready to Simulate</h3>
-                            <p className="text-slate-500 dark:text-slate-400 max-w-sm mt-2">
+                        <div className="h-full flex flex-col items-center justify-center text-center p-12 bg-[#131722]/60 rounded border-2 border-dashed border-white/10">
+                            <Science fontSize="large" className="text-amber-500/40 mb-4 scale-150" />
+                            <h3 className="text-lg font-bold text-white">Ready to Simulate</h3>
+                            <p className="text-slate-400 max-w-sm mt-2 text-sm">
                                 Adjust parameters on the left and click "Run Simulation" to see AI-projected outcomes for revenue and demand.
                             </p>
                         </div>
                     ) : (
                         <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-                            <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700 border-l-4 border-cyan-500">
-                                <Title className="dark:text-white mb-2">30-Day Projection Overview</Title>
-                                <Text className="dark:text-slate-400 mb-6">Estimated impact based on historical data and elasticity models.</Text>
+                            <Card className="!bg-[#131722] !border !border-white/10 rounded border-l-4 border-l-amber-500 shadow-lg">
+                                <Title className="text-white mb-2">30-Day Projection Overview</Title>
+                                <Text className="text-slate-400 mb-6">Estimated impact based on historical data and elasticity models.</Text>
 
                                 <Grid numItems={1} numItemsSm={3} className="gap-6">
-                                    <div className="p-4 bg-slate-50 dark:bg-surface-dark/50 rounded-lg">
+                                    <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded">
                                         <Flex justifyContent="start" alignItems="center" className="gap-2 mb-1">
-                                            <AttachMoney fontSize="small" className="text-slate-500" />
-                                            <Text className="text-slate-500 uppercase text-xs font-bold tracking-wider">Revenue</Text>
+                                            <AttachMoney fontSize="small" className="text-amber-400" />
+                                            <Text className="text-slate-400 uppercase text-xs font-bold tracking-wider">Revenue</Text>
                                         </Flex>
-                                        <Metric className="dark:text-white text-2xl">${result.projectedRevenue.toLocaleString()}</Metric>
+                                        <Metric className="text-white text-2xl">${result.projectedRevenue.toLocaleString()}</Metric>
                                         <BadgeDelta deltaType={getDeltaType(result.revenueChange)} className="mt-2">
                                             {result.revenueChange > 0 ? '+' : ''}{result.revenueChange}%
                                         </BadgeDelta>
                                     </div>
 
-                                    <div className="p-4 bg-slate-50 dark:bg-surface-dark/50 rounded-lg">
+                                    <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded">
                                         <Flex justifyContent="start" alignItems="center" className="gap-2 mb-1">
-                                            <People fontSize="small" className="text-slate-500" />
-                                            <Text className="text-slate-500 uppercase text-xs font-bold tracking-wider">Driver Earnings</Text>
+                                            <People fontSize="small" className="text-amber-400" />
+                                            <Text className="text-slate-400 uppercase text-xs font-bold tracking-wider">Driver Earnings</Text>
                                         </Flex>
-                                        <Metric className="dark:text-white text-2xl">${result.projectedDriverEarnings.toLocaleString()}</Metric>
+                                        <Metric className="text-white text-2xl">${result.projectedDriverEarnings.toLocaleString()}</Metric>
                                         <BadgeDelta deltaType={getDeltaType(result.driverEarningsChange)} className="mt-2">
                                             {result.driverEarningsChange > 0 ? '+' : ''}{result.driverEarningsChange}%
                                         </BadgeDelta>
                                     </div>
 
-                                    <div className="p-4 bg-slate-50 dark:bg-surface-dark/50 rounded-lg">
+                                    <div className="p-4 bg-[#0a0a0a] border border-white/5 rounded">
                                         <Flex justifyContent="start" alignItems="center" className="gap-2 mb-1">
-                                            <TrendingUp fontSize="small" className="text-slate-500" />
-                                            <Text className="text-slate-500 uppercase text-xs font-bold tracking-wider">Ride Volume</Text>
+                                            <TrendingUp fontSize="small" className="text-amber-400" />
+                                            <Text className="text-slate-400 uppercase text-xs font-bold tracking-wider">Ride Volume</Text>
                                         </Flex>
-                                        <Metric className="dark:text-white text-2xl">{result.projectedRides.toLocaleString()}</Metric>
+                                        <Metric className="text-white text-2xl">{result.projectedRides.toLocaleString()}</Metric>
                                         <BadgeDelta deltaType={getDeltaType(result.demandChange)} className="mt-2">
                                             {result.demandChange > 0 ? '+' : ''}{result.demandChange}%
                                         </BadgeDelta>
@@ -207,32 +207,32 @@ export const SimulationDashboard: React.FC = () => {
                             </Card>
 
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                                    <Title className="dark:text-white mb-4">Driver Retention Probability</Title>
+                                <Card className="!bg-[#131722] !border !border-white/10 rounded shadow-lg">
+                                    <Title className="text-white mb-4">Driver Retention Probability</Title>
                                     <Flex className="mb-2">
-                                        <Text className="dark:text-slate-300">High Retention Zone</Text>
-                                        <Text className="font-bold text-green-600">85%</Text>
+                                        <Text className="text-slate-300">High Retention Zone</Text>
+                                        <Text className="font-bold text-emerald-400">85%</Text>
                                     </Flex>
                                     <ProgressBar value={85} color="emerald" className="mt-2" />
-                                    <Text className="text-xs text-slate-500 mt-3">
+                                    <Text className="text-xs text-slate-400 mt-3">
                                         Incentive boost of {incentiveBoost}% likely improves retention by ~12%.
                                     </Text>
                                 </Card>
 
-                                <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                                    <Title className="dark:text-white mb-4">Passenger Churn Risk</Title>
+                                <Card className="!bg-[#131722] !border !border-white/10 rounded shadow-lg">
+                                    <Title className="text-white mb-4">Passenger Churn Risk</Title>
                                     <Flex className="mb-2">
-                                        <Text className="dark:text-slate-300">Churn Likelihood</Text>
-                                        <Text className={`font-bold ${fareIncrease > 10 ? 'text-red-500' : 'text-slate-600 dark:text-slate-300'}`}>
+                                        <Text className="text-slate-300">Churn Likelihood</Text>
+                                        <Text className={`font-bold ${fareIncrease > 10 ? 'text-red-400' : 'text-slate-300'}`}>
                                             {fareIncrease > 10 ? 'High' : 'Low'}
                                         </Text>
                                     </Flex>
                                     <ProgressBar
                                         value={Math.max(10, Math.min(100, 20 + fareIncrease * 1.5))}
-                                        color={fareIncrease > 10 ? 'rose' : 'blue'}
+                                        color={fareIncrease > 10 ? 'rose' : 'amber'}
                                         className="mt-2"
                                     />
-                                    <Text className="text-xs text-slate-500 mt-3">
+                                    <Text className="text-xs text-slate-400 mt-3">
                                         Price sensitivity analysis suggests churn risk increases significantly above +15% fare hike.
                                     </Text>
                                 </Card>

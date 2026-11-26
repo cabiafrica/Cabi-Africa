@@ -90,7 +90,7 @@ export const UserDetails: React.FC<UserDetailsProps> = ({ userId, onBack }) => {
                     <button
                         onClick={handleImpersonate}
                         disabled={impersonating}
-                        className="bg-cyan-600 hover:bg-cyan-700 text-white px-3 py-1.5 rounded shadow flex items-center gap-2 disabled:opacity-50 text-sm"
+                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold px-3 py-1.5 rounded shadow flex items-center gap-2 disabled:opacity-50 text-sm"
                     >
                         {impersonating ? 'Starting Session...' : '🕵️ Login as User'}
                     </button>

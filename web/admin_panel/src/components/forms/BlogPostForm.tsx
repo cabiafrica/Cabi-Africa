@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import ReactQuill from 'react-quill';
-import 'react-quill/dist/quill.snow.css'; // import styles
+import 'react-quill/dist/quill.snow.css';
 import { adminService, BlogPost } from '../../services/adminService';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -31,7 +31,7 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
       content,
       authorName,
       status,
-      summary: content.substring(0, 160).replace(/<[^>]+>/g, '') + '...', // Enhanced summary
+      summary: content.substring(0, 160).replace(/<[^>]+>/g, '') + '...',
       imageUrl,
     };
 
@@ -51,51 +51,53 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 max-w-4xl mx-auto">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">{post ? 'Edit' : 'Create'} Blog Post</h3>
+    <div className="bg-[#131722] p-6 rounded border border-white/10 shadow-2xl max-w-4xl mx-auto text-white">
+      <h3 className="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-3">
+        {post ? 'Edit' : 'Create'} Blog Post
+      </h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Title</label>
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">Title</label>
               <input
                 type="text"
                 value={title}
                 onChange={e => setTitle(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
-                placeholder="Enter a catchy title..."
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500 text-sm"
+                placeholder="Enter article title..."
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Author Name</label>
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">Author Name</label>
               <input
                 type="text"
                 value={authorName}
                 onChange={e => setAuthorName(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
-                placeholder="Author"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500 text-sm"
+                placeholder="e.g. Cabi Editorial Team"
               />
             </div>
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-1">Featured Image URL</label>
+              <label className="block text-sm font-semibold text-slate-300 mb-1.5">Featured Image URL</label>
               <input
                 type="url"
                 value={imageUrl}
                 onChange={e => setImageUrl(e.target.value)}
                 required
-                className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
-                placeholder="https://example.com/image.jpg"
+                className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none placeholder-slate-500 text-sm"
+                placeholder="https://example.com/banner.jpg"
               />
             </div>
           </div>
 
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-200 rounded-xl bg-gray-50 p-4">
-            <div className="text-xs font-bold uppercase tracking-widest text-gray-400 mb-2">Featured Image Preview</div>
+          <div className="flex flex-col items-center justify-center border-2 border-dashed border-white/10 rounded bg-[#0a0a0a]/50 p-4">
+            <div className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Featured Image Preview</div>
             {imageUrl ? (
-              <div className="relative w-full aspect-video rounded-lg overflow-hidden shadow-md">
+              <div className="relative w-full aspect-video rounded overflow-hidden shadow-md border border-white/10">
                 <img 
                   src={imageUrl} 
                   alt="Featured Preview" 
@@ -104,20 +106,20 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
                 />
               </div>
             ) : (
-              <div className="flex flex-col items-center text-gray-400">
+              <div className="flex flex-col items-center text-slate-500 py-6">
                 <span className="text-4xl mb-2">🖼️</span>
-                <span className="text-xs">Image will be cropped to 16:9</span>
+                <span className="text-xs">Image standard ratio 16:9</span>
               </div>
             )}
-            <p className="mt-3 text-[10px] text-gray-500 text-center">
-              All blog images maintain a standard 16:9 aspect ratio for consistency across the platform.
+            <p className="mt-3 text-[10px] text-slate-500 text-center">
+              All editorial banners maintain a standard 16:9 aspect ratio across the mobile and web portals.
             </p>
           </div>
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Content</label>
-          <div className="bg-white">
+          <label className="block text-sm font-semibold text-slate-300 mb-1.5">Article Content</label>
+          <div className="dark-quill rounded overflow-hidden">
             <ReactQuill
               theme="snow"
               value={content}
@@ -137,36 +139,36 @@ export const BlogPostForm: React.FC<Props> = ({ post, onSave, onCancel }) => {
         </div>
 
         <div className="pt-8">
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Workflow Status</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1.5">Workflow Status</label>
           <select
             value={status}
             onChange={e => setStatus(e.target.value as any)}
-            className="w-full md:w-64 border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900 font-medium"
+            className="w-full md:w-64 bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm font-medium"
           >
             <option value="DRAFT">📝 Draft (Internal Only)</option>
             <option value="PENDING_APPROVAL">⏳ Ready for Approval (Notify Manager)</option>
             {canPublish && <option value="PUBLISHED">🚀 Published (Live on Site)</option>}
           </select>
           {!canPublish && status === 'PUBLISHED' && (
-            <p className="mt-2 text-xs text-amber-600 font-medium italic">
+            <p className="mt-2 text-xs text-amber-400 font-medium italic">
               * Only Senior Managers can publish to the live site.
             </p>
           )}
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-lg font-medium transition-colors"
+            className="bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 px-6 py-2.5 rounded font-medium transition-colors text-sm"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-amber-500 hover:bg-amber-600 text-black px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-6 py-2.5 rounded font-bold transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 text-sm"
           >
             {isLoading ? 'Saving...' : 'Save Post'}
           </button>

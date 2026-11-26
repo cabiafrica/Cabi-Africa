@@ -14,9 +14,9 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
   const [rules, setRules] = useState<BadgeRule[]>(badge?.rules || []);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleRuleChange = (index: number, field: keyof BadgeRule, value: any) => {
+  const handleRuleChange = (index: number, field: keyof BadgeRule, val: any) => {
     const newRules = [...rules];
-    (newRules[index] as any)[field] = field === 'value' ? parseFloat(value) : value;
+    (newRules[index] as any)[field] = field === 'value' ? parseFloat(val) : val;
     setRules(newRules);
   };
 
@@ -48,52 +48,52 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-xl shadow-lg border border-gray-100 max-w-2xl mx-auto">
-      <h3 className="text-2xl font-bold text-gray-800 mb-6 border-b pb-2">{badge ? 'Edit' : 'Create'} Badge</h3>
+    <div className="bg-[#131722] p-6 rounded border border-white/10 shadow-2xl max-w-2xl mx-auto text-white">
+      <h3 className="text-2xl font-bold text-white mb-6 border-b border-white/10 pb-3">{badge ? 'Edit' : 'Create'} Badge</h3>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Badge Name</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1.5">Badge Name</label>
           <input
             type="text"
             value={name}
             onChange={e => setName(e.target.value)}
             required
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
+            className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm placeholder-slate-500"
             placeholder="e.g. Top Rated Driver"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Description</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1.5">Description</label>
           <textarea
             value={description}
             onChange={e => setDescription(e.target.value)}
             rows={3}
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
+            className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm placeholder-slate-500"
             placeholder="Describe the criteria and benefits..."
           />
         </div>
 
         <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Badge Value (Optional)</label>
+          <label className="block text-sm font-semibold text-slate-300 mb-1.5">Badge Value (Optional)</label>
           <input
             type="number"
             value={value || ''}
             onChange={e => setValue(parseFloat(e.target.value))}
-            className="w-full border-gray-300 rounded-lg shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2.5 border text-gray-900"
+            className="w-full bg-[#0a0a0a] border border-white/10 rounded text-white p-2.5 focus:border-amber-500 focus:ring-1 focus:ring-amber-500 outline-none text-sm placeholder-slate-500"
             placeholder="e.g. 100"
           />
-          <p className="text-xs text-gray-500 mt-1">Numeric value associated with this badge (e.g., points, priority level).</p>
+          <p className="text-xs text-slate-400 mt-1">Numeric value associated with this badge (e.g., points, priority level).</p>
         </div>
 
         <div>
           <div className="flex justify-between items-center mb-3">
-            <h4 className="text-lg font-semibold text-gray-800">Qualification Rules</h4>
+            <h4 className="text-lg font-semibold text-white">Qualification Rules</h4>
             <button
               type="button"
               onClick={addRule}
-              className="text-sm text-cyan-600 hover:text-cyan-800 font-medium"
+              className="text-sm text-amber-400 hover:text-amber-300 font-medium"
             >
               + Add Rule
             </button>
@@ -101,62 +101,65 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
 
           <div className="space-y-3">
             {rules.map((rule, index) => (
-              <div key={index} className="flex gap-3 items-center bg-gray-50 p-3 rounded-lg border border-gray-200">
+              <div key={index} className="flex gap-3 items-center bg-[#0a0a0a] p-3 rounded border border-white/10">
                 <select
                   value={rule.metric}
                   onChange={e => handleRuleChange(index, 'metric', e.target.value)}
-                  className="flex-1 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
+                  className="flex-1 text-sm bg-[#131722] border border-white/10 rounded text-white p-2 focus:border-amber-500 outline-none"
                 >
                   <option value="averageRating">Average Rating</option>
-                  <option value="completedTrips">Completed Trips</option>
-                  <option value="totalEarnings">Total Earnings</option>
+                  <option value="totalTrips">Total Trips</option>
+                  <option value="acceptanceRate">Acceptance Rate</option>
+                  <option value="cancellationRate">Cancellation Rate</option>
                 </select>
+
                 <select
                   value={rule.operator}
                   onChange={e => handleRuleChange(index, 'operator', e.target.value)}
-                  className="w-24 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
+                  className="w-24 text-sm bg-[#131722] border border-white/10 rounded text-white p-2 focus:border-amber-500 outline-none"
                 >
-                  <option value="GT">&gt;</option>
-                  <option value="GTE">&ge;</option>
-                  <option value="LT">&lt;</option>
-                  <option value="LTE">&le;</option>
-                  <option value="EQ">=</option>
+                  <option value="GTE">&gt;=</option>
+                  <option value="LTE">&lt;=</option>
+                  <option value="EQ">==</option>
                 </select>
+
                 <input
                   type="number"
-                  step="0.1"
+                  step="0.01"
                   value={rule.value}
                   onChange={e => handleRuleChange(index, 'value', e.target.value)}
-                  className="w-28 text-sm border-gray-300 rounded-md shadow-sm focus:ring-cyan-500 focus:border-cyan-500 p-2 border"
-                  required
+                  className="w-28 text-sm bg-[#131722] border border-white/10 rounded text-white p-2 focus:border-amber-500 outline-none"
+                  placeholder="Value"
                 />
+
                 <button
                   type="button"
                   onClick={() => removeRule(index)}
-                  className="text-red-500 hover:text-red-700 ml-2"
-                  title="Remove Rule"
+                  className="text-rose-400 hover:text-rose-300 p-1"
                 >
-                  🗑️
+                  ✕
                 </button>
               </div>
             ))}
-            {rules.length === 0 && <p className="text-sm text-gray-500 italic text-center py-2">No rules added. This badge will be manual assignment only?</p>}
+            {rules.length === 0 && (
+              <p className="text-sm text-slate-500 italic">No rules specified. Badge will be manual assignment only.</p>
+            )}
           </div>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-100">
+        <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="bg-white text-gray-700 border border-gray-300 hover:bg-gray-50 px-6 py-2.5 rounded-lg font-medium transition-colors"
+            className="bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 px-6 py-2.5 rounded font-medium transition-colors text-sm"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-cyan-600 hover:bg-cyan-700 text-white px-6 py-2.5 rounded-lg font-medium transition-colors shadow-sm disabled:opacity-50"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-6 py-2.5 rounded font-bold transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 text-sm"
           >
             {isLoading ? 'Saving...' : 'Save Badge'}
           </button>

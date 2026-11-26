@@ -72,7 +72,7 @@ body {
 
 /* Card component */
 .card {
-  @apply bg-white dark:bg-card-dark rounded-xl shadow-lg p-6 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100;
+  @apply bg-[#131722] rounded shadow-lg p-6 border border-white/10 text-slate-100;
 }
 
 /* Button component */
@@ -103,7 +103,7 @@ body {
   input[type="datetime-local"],
   textarea,
   select {
-    @apply px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-card-dark text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
+    @apply px-4 py-3 sm:py-3.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all duration-300 shadow-sm;
   }
 }
 
@@ -119,4 +119,38 @@ body {
 
 .dark .recharts-legend-item-text {
   color: #f8fafc !important;
+}
+
+/* ReactQuill Dark Mode Harmonization */
+.dark-quill .ql-toolbar.ql-snow {
+  background-color: #0a0a0a;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
+}
+.dark-quill .ql-toolbar.ql-snow .ql-stroke {
+  stroke: #94a3b8 !important;
+}
+.dark-quill .ql-toolbar.ql-snow .ql-fill {
+  fill: #94a3b8 !important;
+}
+.dark-quill .ql-toolbar.ql-snow .ql-picker {
+  color: #94a3b8 !important;
+}
+.dark-quill .ql-toolbar.ql-snow .ql-picker-options {
+  background-color: #131722 !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  color: #f8fafc !important;
+}
+.dark-quill .ql-container.ql-snow {
+  background-color: #0a0a0a;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+  border-bottom-left-radius: 4px;
+  border-bottom-right-radius: 4px;
+  color: #f8fafc !important;
+  font-family: inherit;
+  font-size: 0.95rem;
+}
+.dark-quill .ql-editor.ql-blank::before {
+  color: #64748b !important;
 }

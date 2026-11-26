@@ -77,8 +77,8 @@ export default function EditDriverProfileModal({
         </div>
         {error && <p className="text-red-500 text-sm mt-4">{error}</p>}
         <div className="mt-6 flex justify-end space-x-3">
-          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md shadow-sm hover:bg-gray-50">Cancel</button>
-          <button type="submit" disabled={isLoading} className="px-4 py-2 text-sm font-medium text-white bg-cyan-600 border border-transparent rounded-md shadow-sm hover:bg-cyan-700 disabled:bg-gray-400">
+          <button type="button" onClick={onClose} className="px-4 py-2 text-sm font-medium text-slate-300 bg-white/5 border border-white/10 rounded shadow-sm hover:bg-white/10">Cancel</button>
+          <button type="submit" disabled={isLoading} className="px-4 py-2 text-sm font-bold text-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 border border-transparent rounded shadow-sm disabled:opacity-50">
             {isLoading ? 'Saving...' : 'Save Changes'}
           </button>
         </div>
