@@ -1,11 +1,96 @@
-:80, cabi.africa, www.cabi.africa, api.cabi.africa {
+# ==============================================================================
+# CABI AFRICA - PRODUCTION CADDY CONFIGURATION (AUTO-SSL & MULTI-DOMAIN)
+# ==============================================================================
+
+# 1. API Gateway
+api.cabi.africa {
     header {
         Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
         X-Content-Type-Options "nosniff"
-        X-Frame-Options "DENY"
-        X-XSS-Protection "1; mode=block"
+        X-Frame-Options "SAMEORIGIN"
         Referrer-Policy "strict-origin-when-cross-origin"
-        -Server
+    }
+
+    handle /health {
+        respond "Cabi Africa API Active" 200
+    }
+
+    handle /socket.io* {
+        reverse_proxy dispatch-service:3334
+    }
+
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
+    }
+
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes {
+        reverse_proxy dispatch-service:3334
+    }
+
+    handle {
+        reverse_proxy auth-gateway:3030
+    }
+}
+
+# 2. Super Admin Command Center
+admin.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    handle {
+        reverse_proxy admin-panel:8080
+    }
+}
+
+# 3. Live Dispatch Console
+dispatch.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
+    }
+
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
+    }
+
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes_dispatch path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes_dispatch {
+        reverse_proxy dispatch-service:3334
+    }
+
+    handle /api/* {
+        reverse_proxy auth-gateway:3030
+    }
+
+    handle /socket.io* {
+        reverse_proxy dispatch-service:3334
+    }
+
+    handle {
+        reverse_proxy dispatch-panel:8080
+    }
+}
+
+# 4. User Portal & Platform Root (Landing Page, Booking, WebSockets & Compliance)
+:80, cabi.africa, www.cabi.africa, app.cabi.africa {
+    header {
+        Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+        X-Content-Type-Options "nosniff"
+        X-Frame-Options "SAMEORIGIN"
+        Referrer-Policy "strict-origin-when-cross-origin"
     }
 
     request_body {
@@ -30,22 +115,44 @@
         respond `<!DOCTYPE html><html><head><title>CABI Africa - Privacy Policy</title><meta name="viewport" content="width=device-width,initial-scale=1"></head><body style="font-family:system-ui,sans-serif;max-width:700px;margin:40px auto;padding:20px;line-height:1.6"><h1>CABI Africa - Privacy Policy</h1><p>Last updated: November 2026</p><p>CABI FAST AFRICA LIMITED operates the CABI Go and CABI Drive mobile applications. This policy explains how we collect, use, and protect your personal information.</p><h2>1. Information We Collect</h2><p>• <strong>Account Info:</strong> Name, phone number, email address.<br>• <strong>Location Data:</strong> Real-time precise and approximate GPS coordinates to enable ride dispatch, live trip tracking, and navigation.<br>• <strong>Payment Info:</strong> Transaction records for ride payments.</p><h2>2. How We Use Information</h2><p>We use your data to match passengers with drivers, calculate fares, facilitate trip safety and SOS alerts, and provide customer support.</p><h2>3. Data Protection & Sharing</h2><p>All data is encrypted in transit using industry-standard TLS/SSL. We do not sell your personal data to third parties.</p><h2>4. Contact Us</h2><p>For questions or privacy requests, contact us at <a href="mailto:support@cabi.africa">support@cabi.africa</a>.</p></body></html>` 200
     }
 
-    @websockets {
-        header Connection *Upgrade*
-        header Upgrade websocket
+    # WebSockets & Socket.IO for Real-time Dispatch
+    handle /socket.io* {
+        reverse_proxy dispatch-service:3334
     }
-    reverse_proxy @websockets dispatch-service:3334
 
-    @socketio {
-        path /socket.io/*
+    # Verification Service (KYD / Document Verification)
+    @verification_routes path /api/v1/verification*
+    handle @verification_routes {
+        reverse_proxy verification-service:3003
     }
-    reverse_proxy @socketio dispatch-service:3334
 
-    handle_path /api/* {
+    # Dispatch & Real-Time Microservice Routes
+    @dispatch_routes_root path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
+    handle @dispatch_routes_root {
+        reverse_proxy dispatch-service:3334
+    }
+
+    # User Portal Next.js Internal API endpoints (Places Autocomplete, Contact, etc.)
+    @user_portal_api path /api/places* /api/contact* /api/appointments* /api/driver-leads* /api/driver-org* /api/concierge*
+    handle @user_portal_api {
+        reverse_proxy user-portal:8080
+    }
+
+    # Backend API endpoints
+    handle /api/* {
         reverse_proxy auth-gateway:3030
     }
 
+    # High-speed global CDN redirection for official mobile APK downloads
+    handle /downloads/Cabi-Drive* {
+        redir https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Drive-Official.apk 302
+    }
+    handle /downloads/Cabi-Go* {
+        redir https://github.com/cabiafrica/Cabi-Africa/releases/latest/download/Cabi-Go-Official.apk 302
+    }
+
+    # User Portal Frontend
     handle {
-        reverse_proxy auth-gateway:3030
+        reverse_proxy user-portal:8080
     }
 }
