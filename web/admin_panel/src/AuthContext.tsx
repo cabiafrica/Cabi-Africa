@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [syntaxTheme, setSyntaxTheme] = useState(() => localStorage.getItem('auditLog_syntaxTheme') || 'vscDarkPlus');
 
   useEffect(() => {
-    // On initial load, check localStorage for existing session
+    // On initial load, verify localStorage for legitimate verified session
     const token = localStorage.getItem('authToken');
     const userDataString = localStorage.getItem('authUser');
     if (token && userDataString) {
@@ -41,22 +41,47 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           return;
         }
       } catch (e) {
-        localStorage.clear();
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('authUser');
       }
     }
 
-    // Default Elevated Admin Session for Terminal Review
-    const defaultAdmin: AuthUser = {
-      id: 'ADM-84192',
-      email: 'security.command@cabi.africa',
-      fullName: 'Security Controller (ADM-84192)',
-      role: 'admin',
-      identityVerified: true,
-      permissions: ['*'],
+    // Zero-Trust: If not authenticated, ensure user is null so login gate is enforced
+    setUser(null);
+  }, []);
+
+  // Multi-tab synchronization
+  useEffect(() => {
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('cabi_admin_auth_channel');
+        channel.onmessage = (event) => {
+          if (event.data?.type === 'LOGOUT') {
+            setUser(null);
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('authUser');
+          } else if (event.data?.type === 'LOGIN' && event.data.user) {
+            setUser(event.data.user);
+          }
+        };
+        return () => {
+          channel.close();
+        };
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }, []);
+
+  // Storage listener fallback
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === 'authToken' && !e.newValue) {
+        setUser(null);
+      }
     };
-    localStorage.setItem('authToken', 'token-cabi-admin-demo-2026');
-    localStorage.setItem('authUser', JSON.stringify(defaultAdmin));
-    setUser(defaultAdmin);
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
   }, []);
 
   // Persist theme changes to localStorage
@@ -68,12 +93,30 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     localStorage.setItem('authToken', token);
     localStorage.setItem('authUser', JSON.stringify(userData));
     setUser(userData);
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('cabi_admin_auth_channel');
+        channel.postMessage({ type: 'LOGIN', user: userData });
+        channel.close();
+      }
+    } catch (e) {
+      // Ignore
+    }
   };
 
   const logout = () => {
     localStorage.removeItem('authToken');
     localStorage.removeItem('authUser');
     setUser(null);
+    try {
+      if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+        const channel = new BroadcastChannel('cabi_admin_auth_channel');
+        channel.postMessage({ type: 'LOGOUT' });
+        channel.close();
+      }
+    } catch (e) {
+      // Ignore
+    }
   };
 
   const updateUser = (userData: AuthUser) => {

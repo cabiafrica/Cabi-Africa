@@ -36,6 +36,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const isDriver = String(role || '').toUpperCase() === 'DRIVER';
+        const otpCode = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpExpires = new Date(Date.now() + 10 * 60 * 1000);
 
         const created = await prisma.user.create({
             data: {
@@ -44,6 +46,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 password: hashedPassword,
                 fullName: resolvedFullName,
                 role: isDriver ? 'DRIVER' : 'PASSENGER',
+                phoneOtpCode: otpCode,
+                phoneOtpExpires: otpExpires,
+                forgotEmailOtp: otpCode,
+                forgotEmailOtpExpires: otpExpires,
                 ...(isDriver
                     ? {
                           driverProfile: {

@@ -1,4 +1,5 @@
 import { Driver } from '../types';
+import MaskedPhone from './common/MaskedPhone';
 
 interface DriversListProps {
     drivers: Driver[];
@@ -61,7 +62,7 @@ const DriversList = ({ drivers }: DriversListProps) => {
                                 </div>
                                 <div>
                                     <h4 className="text-white font-semibold">{driver.name}</h4>
-                                    <p className="text-xs text-slate-400">{driver.phone}</p>
+                                    <MaskedPhone phone={driver.phone} />
                                 </div>
                             </div>
                             <span className={`text-xs font-medium px-3 py-1 rounded-full border ${getStatusColor(driver.status)}`}>

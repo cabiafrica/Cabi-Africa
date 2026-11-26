@@ -61,7 +61,10 @@ export class AdminRolesService {
     }
 
     async remove(id: string) {
-        await this.findOne(id);
+        const role = await this.findOne(id);
+        if (role.isSystem || role.name === 'SUPER_ADMIN' || role.name === 'ADMIN') {
+            throw new Error(`CRITICAL: System role '${role.name}' cannot be deleted.`);
+        }
         return this.prisma.role.delete({
             where: { id }
         });

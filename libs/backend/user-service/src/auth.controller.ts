@@ -1,8 +1,11 @@
 import { Controller, Post, Get, Put, Patch, Body, ValidationPipe, UnauthorizedException, BadRequestException, UseInterceptors, UploadedFiles, UploadedFile, Req } from '@nestjs/common';
 import { FileFieldsInterceptor, FileInterceptor } from '@nestjs/platform-express';
 import { Public } from '@cabi/backend/rbac';
+import { globalAuditTelemetry } from '@cabi/backend/common';
+import { LegacyRole } from '@prisma/client';
 import { UserService } from './user.service';
 import { RegisterUserDto } from './dto/register-user.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { IsNotEmpty, IsString } from 'class-validator';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
@@ -33,8 +36,12 @@ export class AuthController {
 
   @Post('verify-otp')
   @Public()
-  async verifyOtp(@Body(new ValidationPipe()) verifyOtpDto: any) {
-    return this.userService.verifyOtp(verifyOtpDto.phone, verifyOtpDto.otpCode);
+  async verifyOtp(@Body(new ValidationPipe()) verifyOtpDto: VerifyOtpDto) {
+    const identifier = verifyOtpDto.phone || verifyOtpDto.email || verifyOtpDto.identifier;
+    if (!identifier) {
+      throw new BadRequestException('Phone or email is required for OTP verification.');
+    }
+    return this.userService.verifyOtp(identifier, verifyOtpDto.otpCode);
   }
 
   @Post('login')
@@ -42,6 +49,20 @@ export class AuthController {
   async login(@Body(new ValidationPipe()) loginDto: LoginDto) {
     try {
       const user = await this.userService.login(loginDto.email, loginDto.password);
+
+      // Check if user has staff, admin, or dispatch panel access in any capacity
+      const hasStaffAccess =
+        user.role === LegacyRole.ADMIN ||
+        user.role === LegacyRole.DISPATCHER ||
+        (Array.isArray((user as any).permissions) && (user as any).permissions.some((p: string) => 
+          p.startsWith('ADMIN') || p.startsWith('DISPATCH') || p.startsWith('PEOPLE') || p === '*'
+        ));
+
+      if (hasStaffAccess) {
+        // Enforce dual-channel (Email + SMS) 2FA for anyone accessing in an admin or dispatch capacity
+        return await this.userService.initiateAdminLogin(loginDto.email, loginDto.password);
+      }
+
       const token = await this.userService.generateToken(user);
       return {
         message: 'Login successful.',
@@ -49,7 +70,11 @@ export class AuthController {
         token,
         user,
       };
-    } catch (error) {
+    } catch (error: any) {
+      globalAuditTelemetry.logAuthFailure(loginDto?.identifier || 'unknown', error?.message || 'Login failed').catch(() => {});
+      if (error instanceof UnauthorizedException) {
+        throw error;
+      }
       console.error('Login error:', error?.message || error);
       throw new UnauthorizedException('Invalid email/phone or password.');
     }
@@ -61,6 +86,7 @@ export class AuthController {
     try {
       return await this.userService.initiateAdminLogin(loginDto.email, loginDto.password);
     } catch (error: any) {
+      globalAuditTelemetry.logAuthFailure(loginDto?.email || 'unknown', error?.message || 'Admin login initiation failed').catch(() => {});
       throw new UnauthorizedException(error?.message || 'Invalid credentials.');
     }
   }
@@ -71,7 +97,12 @@ export class AuthController {
     if (!body?.challengeToken || !body?.otpCode) {
       throw new UnauthorizedException('Verification token and 6-digit code are required.');
     }
-    return this.userService.verifyAdminIdentity(body.challengeToken, body.otpCode);
+    try {
+      return await this.userService.verifyAdminIdentity(body.challengeToken, body.otpCode);
+    } catch (error: any) {
+      globalAuditTelemetry.logAuthFailure('admin-challenge-verification', error?.message || 'Admin 2FA verification failed').catch(() => {});
+      throw error;
+    }
   }
 
   @Post('admin/resend-otp')
@@ -120,6 +151,36 @@ export class AuthController {
       throw new BadRequestException('Email and security answers are required.');
     }
     return this.userService.recoverAccountWithSecurityQuestions(body.email, body.answers);
+  }
+
+  @Post('webauthn/challenge')
+  @Public()
+  async getWebAuthnChallenge(@Body() body: { identifier: string }) {
+    if (!body?.identifier) throw new BadRequestException('Identifier (email, ID, or phone) is required.');
+    return this.userService.generateWebAuthnChallenge(body.identifier);
+  }
+
+  @Post('webauthn/register')
+  @Public()
+  async registerWebAuthnCredential(@Body() body: { userId: string; credential: any }) {
+    if (!body?.userId || !body?.credential) throw new BadRequestException('User ID and credential are required.');
+    return this.userService.registerWebAuthnCredential(body.userId, body.credential);
+  }
+
+  @Post('webauthn/verify')
+  @Public()
+  async verifyWebAuthnAssertion(@Body() body: { identifier: string; credentialId: string; assertionResponse?: any }) {
+    if (!body?.identifier || !body?.credentialId) throw new BadRequestException('Identifier and credential ID are required.');
+    return this.userService.verifyWebAuthnAssertion(body.identifier, body.credentialId, body.assertionResponse);
+  }
+
+  @Post('webauthn/quick-unlock')
+  @Public()
+  async quickUnlockScreen(@Body() body: { userId: string; authSecret: string; authType: 'passkey' | 'pin' | 'password' }) {
+    if (!body?.userId || !body?.authSecret || !body?.authType) {
+      throw new BadRequestException('User ID, authentication secret, and type are required for quick unlock.');
+    }
+    return this.userService.quickUnlockScreen(body.userId, body.authSecret, body.authType);
   }
 
   @Post('forgot-password')

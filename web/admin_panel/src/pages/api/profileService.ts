@@ -53,3 +53,37 @@ export async function deleteAccount(userId: string, password: string): Promise<v
   });
   if (!response.ok) throw new Error('Failed to delete account');
 }
+
+export async function getWebAuthnChallenge(identifier: string): Promise<{ challenge: string }> {
+  const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+  const response = await fetch(`${API_BASE}/auth/webauthn/challenge`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ identifier }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || 'Failed to obtain WebAuthn challenge');
+  }
+  return response.json();
+}
+
+export async function registerWebAuthnCredential(userId: string, credential: any): Promise<any> {
+  const token = localStorage.getItem('token') || localStorage.getItem('auth_token');
+  const response = await fetch(`${API_BASE}/auth/webauthn/register`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    },
+    body: JSON.stringify({ userId, credential }),
+  });
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err.message || 'Failed to register WebAuthn credential');
+  }
+  return response.json();
+}

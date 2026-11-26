@@ -48,6 +48,7 @@ const MENU_ITEMS: MenuItem[] = [
 
 import { useAuth } from './AuthContext';
 import LoginPage from './components/LoginPage';
+import InactivitySentinel from './components/InactivitySentinel';
 import apiClient from './lib/apiClient';
 
 function App() {
@@ -322,6 +323,9 @@ function App() {
 
     return (
         <div className="flex h-screen bg-gradient-to-br from-brand-black via-surface-dark to-brand-black text-white selection:bg-brand-yellow selection:text-black">
+            {/* Zero-Trust 10-Minute Inactivity Sentinel */}
+            <InactivitySentinel timeoutMs={10 * 60 * 1000} warningMs={2 * 60 * 1000} />
+
             {/* Sidebar */}
             <aside className="w-72 bg-surface-dark/90 backdrop-blur-xl border-r border-white/10 flex-shrink-0 flex flex-col">
                 <div className="p-6 border-b border-white/10">

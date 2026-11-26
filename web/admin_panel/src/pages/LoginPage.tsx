@@ -36,6 +36,7 @@ export const LoginPage = () => {
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [inactivityNotice, setInactivityNotice] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
 
   // Onboarding Wizard State
@@ -64,6 +65,19 @@ export const LoginPage = () => {
   useEffect(() => {
     if (isAuthenticated) navigate('/', { replace: true });
   }, [isAuthenticated, navigate]);
+
+  // Check for inactivity auto-logout reason
+  useEffect(() => {
+    try {
+      const reason = localStorage.getItem('cabi_admin_logout_reason');
+      if (reason === 'inactivity' || searchParams.get('reason') === 'inactivity') {
+        setInactivityNotice('Your administrative session was securely terminated due to 10 minutes of inactivity. Please sign in again.');
+        localStorage.removeItem('cabi_admin_logout_reason');
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }, [searchParams]);
 
   // Load available security questions once
   useEffect(() => {
@@ -275,6 +289,13 @@ export const LoginPage = () => {
         </div>
 
         <div className="bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl">
+          {inactivityNotice && (
+            <div className="mb-4 p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs flex items-center gap-2">
+              <AlertCircle className="w-4 h-4 flex-shrink-0 text-amber-400" />
+              <span>{inactivityNotice}</span>
+            </div>
+          )}
+
           {error && (
             <div className="mb-4 p-3 rounded-xl bg-red-500/10 border border-red-500/20 text-red-400 text-xs flex items-center gap-2">
               <AlertCircle className="w-4 h-4 flex-shrink-0" />
@@ -585,7 +606,7 @@ export const LoginPage = () => {
                 <div>
                   <h2 className="text-sm font-bold text-white">Security Verification PIN</h2>
                   <p className="text-xs text-gray-400">
-                    Enter the 6-digit code dispatched in <span className="text-brand-yellow font-semibold">Email 2</span>
+                    Enter the 6-digit code dispatched to your <span className="text-brand-yellow font-semibold">Email & Phone (SMS)</span>
                   </p>
                 </div>
               </div>

@@ -3,6 +3,7 @@ import { Star, Phone, Car, DollarSign, TrendingUp, Award } from 'lucide-react';
 import SearchBar from './SearchBar';
 import AdvancedFilters, { FilterConfig } from './AdvancedFilters';
 import { DriverHistory } from '../types';
+import MaskedPhone from './common/MaskedPhone';
 
 interface DriverHistoryPageProps {
     drivers: DriverHistory[];
@@ -231,7 +232,7 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                         <div className="mt-4 pt-4 border-t border-slate-800">
                             <div className="flex items-center gap-2 text-sm text-slate-400">
                                 <Phone className="w-4 h-4" />
-                                <span>{driver.phone}</span>
+                                <MaskedPhone phone={driver.phone} className="text-sm text-slate-300" />
                             </div>
                         </div>
                     </div>
@@ -402,7 +403,7 @@ const DriverHistoryPage = ({ drivers }: DriverHistoryPageProps) => {
                                 <h4 className="text-sm font-semibold text-white">Contact Information</h4>
                                 <div className="flex items-center gap-2">
                                     <Phone className="w-4 h-4 text-slate-500" />
-                                    <span className="text-sm text-white">{selectedDriver.phone}</span>
+                                    <MaskedPhone phone={selectedDriver.phone} className="text-sm text-white" />
                                 </div>
                             </div>
 

@@ -17,14 +17,14 @@ export class AdminUsersController {
 
     @Post()
     @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
-    createAdminUser(@Body() body: { email: string; roles: string[] }) {
-        return this.usersService.create(body.email, body.roles);
+    createAdminUser(@Body() body: { email: string; roles: string[]; phone?: string }) {
+        return this.usersService.create(body.email, body.roles, body.phone);
     }
 
     @Put(':id/roles')
     @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
-    updateUserRoles(@Param('id') id: string, @Body() body: { roles: string[] }) {
-        return this.usersService.updateRoles(id, body.roles);
+    updateUserRoles(@Param('id') id: string, @Body() body: { roles: string[] }, @Req() req: any) {
+        return this.usersService.updateRoles(id, body.roles, req.user);
     }
 
     @Put(':id/permissions')

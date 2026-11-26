@@ -28,9 +28,20 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      // Optional: Redirect to login or clear token
-      // localStorage.removeItem('authToken');
-      // window.location.href = '/login';
+      localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
+      try {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          const channel = new BroadcastChannel('cabi_admin_auth_channel');
+          channel.postMessage({ type: 'LOGOUT' });
+          channel.close();
+        }
+      } catch (e) {
+        // Ignore broadcast errors
+      }
+      if (window.location.pathname !== '/login') {
+        window.location.href = '/login?reason=expired';
+      }
     }
     return Promise.reject(error);
   }

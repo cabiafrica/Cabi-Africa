@@ -275,8 +275,60 @@ export class NotificationService implements OnModuleInit {
 
   // --- EXISTING UTILITY METHODS PRESERVED ---
 
+  private formatPhoneNumber(phone: string): string {
+    let clean = (phone || '').trim().replace(/[\s-]/g, '');
+    if (clean.startsWith('0')) {
+      clean = `+254${clean.slice(1)}`;
+    } else if (clean.startsWith('254')) {
+      clean = `+${clean}`;
+    } else if (!clean.startsWith('+')) {
+      clean = `+${clean}`;
+    }
+    return clean;
+  }
+
   async sendSms(phoneNumber: string, message: string) {
-    console.log(`[NotificationService] 📱 Sending SMS to ${phoneNumber}: "${message}"`);
+    const formattedPhone = this.formatPhoneNumber(phoneNumber);
+    const username = process.env.AT_USERNAME;
+    const apiKey = process.env.AT_API_KEY;
+    const senderId = process.env.AT_SENDER_ID;
+
+    if (username && apiKey && username !== 'mock') {
+      try {
+        const isSandbox = username.toLowerCase() === 'sandbox';
+        const endpoint = isSandbox
+          ? 'https://api.sandbox.africastalking.com/version1/messaging'
+          : 'https://api.africastalking.com/version1/messaging';
+
+        const bodyParams = new URLSearchParams();
+        bodyParams.append('username', username);
+        bodyParams.append('to', formattedPhone);
+        bodyParams.append('message', message);
+        if (senderId && !isSandbox) {
+          bodyParams.append('from', senderId);
+        }
+
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            apiKey: apiKey,
+            'Content-Type': 'application/x-www-form-urlencoded',
+            Accept: 'application/json',
+          },
+          body: bodyParams.toString(),
+        });
+
+        const result = (await response.json().catch(() => ({}))) as any;
+        const messageId = result?.SMSMessageData?.Recipients?.[0]?.messageId || `at_${Date.now()}`;
+        this.logger.log(`[Africa's Talking SMS] Dispatched to ${formattedPhone}: HTTP ${response.status} (ID: ${messageId})`);
+        return { success: response.ok, messageId };
+      } catch (err: any) {
+        this.logger.warn(`[Africa's Talking SMS Fallback] Failed to ${formattedPhone}: ${err?.message}`);
+        return { success: false, error: err?.message, messageId: `err_${Date.now()}` };
+      }
+    }
+
+    console.log(`[NotificationService] 📱 Sending SMS to ${formattedPhone}: "${message}"`);
     return { success: true, messageId: `sms_${Date.now()}` };
   }
 
