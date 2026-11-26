@@ -1,6 +1,7 @@
 import * as crypto from 'crypto';
 import * as fs from 'fs';
 import * as path from 'path';
+import { globalAuditTelemetry } from '@cabi/backend/common';
 
 export interface AuditEvent {
   id: string;
@@ -27,9 +28,11 @@ export type AuditEventAction =
   | 'ADMIN_STEP_UP_ISSUED'
   | 'ACCOUNT_DELETED'
   | 'ROLES_UPDATED'
-  | 'PERMISSIONS_UPDATED';
+  | 'PERMISSIONS_UPDATED'
+  | 'PASSKEY_REGISTERED'
+  | 'BREAK_GLASS_TRIGGERED';
 
-interface AuditEventPayload {
+export interface AuditEventPayload {
   action: string;
   userId: string;
   userFullName?: string;
@@ -104,10 +107,19 @@ export const logAuditEvent = async (
   try {
     await fs.promises.mkdir(AUDIT_LOG_DIR, { recursive: true });
     await fs.promises.appendFile(AUDIT_LOG_FILE, JSON.stringify(event) + '\n', 'utf8');
-  } catch (err) {
-    // Fallback to console if filesystem is read-only
-    console.warn(`[AdminAudit] File append failed, logged to stdout:`, JSON.stringify(event));
+  } catch {
+    // Silently continue
   }
+
+  // Also emit to cryptographic structured audit telemetry stream
+  globalAuditTelemetry.logEvent({
+    category: 'SECURITY_EVENT',
+    severity: payload.action.includes('DELETED') || payload.action.includes('BREAK_GLASS') ? 'CRITICAL' : 'NOTICE',
+    action: payload.action,
+    actor: { userId: payload.userId, ipAddress: payload.ipAddress, userAgent: payload.userAgent },
+    resource: { type: 'ADMIN_PANEL_SYSTEM', id: payload.userId },
+    details: sanitizedDetails,
+  }).catch(() => {});
 
   return { success: true, eventId: event.id, entryHash };
 };

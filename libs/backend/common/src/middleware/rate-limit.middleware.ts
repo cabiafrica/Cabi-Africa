@@ -1,5 +1,6 @@
 import { Injectable, NestMiddleware } from '@nestjs/common';
 import { Request, Response, NextFunction } from 'express';
+import { globalAuditTelemetry } from '../lib/audit-telemetry.service';
 
 interface RateLimitRecord {
     count: number;
@@ -38,20 +39,31 @@ export class RateLimitMiddleware implements NestMiddleware {
         const forwarded = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim();
         const ip = forwarded || req.ip || req.socket.remoteAddress || 'unknown';
 
-        // Stricter limits for authentication and sensitive financial/OTP endpoints
+        // Stricter limits for authentication, OTP verification, biometric unlocks, and emergency overrides
         const path = req.originalUrl || req.url || '';
+
+        const isCriticalOtpRoute =
+            path.includes('/auth/verify-otp') ||
+            path.includes('/auth/admin/verify-identity') ||
+            path.includes('/auth/webauthn/quick-unlock') ||
+            path.includes('/auth/webauthn/verify') ||
+            path.includes('/admin/approvals/break-glass');
+
         const isSensitiveRoute =
+            isCriticalOtpRoute ||
             path.includes('/auth/login') ||
             path.includes('/auth/register') ||
-            path.includes('/auth/verify-otp') ||
             path.includes('/auth/forgot-password') ||
             path.includes('/auth/admin/initiate-login') ||
+            path.includes('/auth/admin/resend-otp') ||
+            path.includes('/auth/webauthn/challenge') ||
             path.includes('/forgot-email') ||
             path.includes('/stk-push');
 
-        const limit = isSensitiveRoute ? 20 : 120; // 20 req/min for auth/finance, 120 req/min for standard
+        const limit = isCriticalOtpRoute ? 5 : isSensitiveRoute ? 15 : 120;
         const windowMs = 60000; // 1 minute
-        const cacheKey = `${ip}:${isSensitiveRoute ? 'sensitive' : 'standard'}`;
+        const tierName = isCriticalOtpRoute ? 'critical' : isSensitiveRoute ? 'sensitive' : 'standard';
+        const cacheKey = `${ip}:${tierName}`;
 
         let client = this.clients.get(cacheKey);
 
@@ -71,10 +83,22 @@ export class RateLimitMiddleware implements NestMiddleware {
 
         if (client.count > limit) {
             res.setHeader('Retry-After', resetSeconds.toString());
+
+            if (isCriticalOtpRoute || isSensitiveRoute) {
+                globalAuditTelemetry.logAuthFailure(
+                    ip,
+                    `Rate limit exceeded on ${path} (${client.count} attempts in 60s, limit: ${limit})`,
+                    ip,
+                    req.headers['user-agent'] as string
+                ).catch(() => {});
+            }
+
             return res.status(429).json({
                 statusCode: 429,
                 error: 'Too Many Requests',
-                message: isSensitiveRoute
+                message: isCriticalOtpRoute
+                    ? 'Security alert: Too many verification attempts. Please wait 60 seconds before trying again.'
+                    : isSensitiveRoute
                     ? 'Too many authentication attempts. Please wait before retrying.'
                     : 'Rate limit exceeded, please try again later.',
                 retryAfterSeconds: resetSeconds,

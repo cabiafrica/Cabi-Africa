@@ -1,6 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException, Inject, forwardRef } from '@nestjs/common';
 import { PrismaService } from '@cabi/backend/database';
 import { NotificationService } from '@cabi/backend/notification-service';
+import { DualApprovalService } from './dual-approval.service';
+import { globalAuditTelemetry } from '@cabi/backend/common';
 import * as bcrypt from 'bcryptjs';
 import { AdminUser, Permission } from './admin.types'; // We'll define these types
 import { Permission as PrismaPermission } from '@prisma/client';
@@ -10,6 +12,8 @@ export class AdminUsersService {
     constructor(
         private readonly prisma: PrismaService,
         private readonly notificationService: NotificationService,
+        @Inject(forwardRef(() => DualApprovalService))
+        private readonly dualApprovalService?: DualApprovalService,
     ) { }
 
     async findAll(): Promise<AdminUser[]> {
@@ -61,12 +65,13 @@ export class AdminUsersService {
         };
     }
 
-    // Create Admin User with Dual-Email Dispatch & Temporary Credentials
-    async create(email: string, roleNames: string[]): Promise<AdminUser & { tempPassword?: string; verificationPin?: string }> {
+    // Create Admin User with Dual-Channel (Email + SMS) Dispatch & Temporary Credentials
+    async create(email: string, roleNames: string[], phone?: string): Promise<AdminUser & { tempPassword?: string; verificationPin?: string }> {
         const tempPassword = `Cabi#${Math.random().toString(36).substring(2, 7).toUpperCase()}!${Math.floor(10 + Math.random() * 90)}`;
         const verificationPin = `${Math.floor(100000 + Math.random() * 900000)}`;
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
-        const expiresAt = new Date(Date.now() + 24 * 60 * 60 * 1000);
+        // High-security 2-hour activation window for temporary administrative credentials
+        const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
 
         let user = await this.prisma.user.findUnique({ where: { email } });
         if (!user) {
@@ -75,12 +80,15 @@ export class AdminUsersService {
                     email,
                     password: hashedPassword,
                     fullName: email.split('@')[0],
-                    phone: `+2547${Math.floor(10000000 + Math.random() * 90000000)}`,
+                    phone: phone || `+2547${Math.floor(10000000 + Math.random() * 90000000)}`,
                     role: 'ADMIN',
                     isIdentityVerified: false,
                     isEmailVerified: false,
+                    isPhoneVerified: false,
                     forgotEmailOtp: verificationPin,
                     forgotEmailOtpExpires: expiresAt,
+                    phoneOtpCode: verificationPin,
+                    phoneOtpExpires: expiresAt,
                     privacySettings: {
                         isTemporaryPassword: true,
                         tempPasswordExpiresAt: expiresAt.toISOString(),
@@ -96,9 +104,14 @@ export class AdminUsersService {
                 data: {
                     password: hashedPassword,
                     role: 'ADMIN',
+                    phone: phone || user.phone,
                     isIdentityVerified: false,
+                    isEmailVerified: false,
+                    isPhoneVerified: false,
                     forgotEmailOtp: verificationPin,
                     forgotEmailOtpExpires: expiresAt,
+                    phoneOtpCode: verificationPin,
+                    phoneOtpExpires: expiresAt,
                     privacySettings: {
                         ...currentPrivacy,
                         isTemporaryPassword: true,
@@ -129,7 +142,7 @@ export class AdminUsersService {
       <p style="margin: 4px 0; color: #94a3b8; font-size: 12px;">TEMPORARY PASSWORD:</p>
       <p style="margin: 0; color: #F59E0B; font-size: 18px; font-weight: bold; font-family: monospace;">${tempPassword}</p>
     </div>
-    <p style="color: #ef4444; font-size: 12px; font-weight: 600; margin-bottom: 0;">⚠️ Security Notice: This temporary password expires in 24 hours. Rotation is mandatory upon sign-in.</p>
+    <p style="color: #ef4444; font-size: 12px; font-weight: 600; margin-bottom: 0;">⚠️ Security Notice: This temporary password expires in 2 hours. Rotation and security setup are mandatory upon sign-in.</p>
   </div>
   <p style="color: #64748b; font-size: 12px; text-align: center;">For security verification, your activation PIN has been sent separately in Email 2.</p>
 </div>
@@ -167,7 +180,13 @@ export class AdminUsersService {
             email2Html
         );
 
-        console.log(`[AdminUsersService] 🔐 Dual emails dispatched to ${email}: TempPass="${tempPassword}", VerificationPIN="${verificationPin}"`);
+        // 3. Send SMS: Security Verification PIN & Temp Password
+        if (user.phone) {
+            const smsText = `Cabi Africa Admin Account Provisioned. Security PIN: ${verificationPin}. Temp Password: ${tempPassword} (valid 2h). Sign in at: ${adminPanelUrl}/login`;
+            await this.notificationService.sendSms(user.phone, smsText);
+        }
+
+        console.log(`[AdminUsersService] 🔐 Dual-channel credentials dispatched to ${email} (SMS to ${user.phone}): TempPass="${tempPassword}", VerificationPIN="${verificationPin}"`);
 
         const createdUser = await this.findOne(user.id);
         return {
@@ -177,7 +196,34 @@ export class AdminUsersService {
         };
     }
 
-    async updateRoles(userId: string, roleNames: string[]) {
+    async updateRoles(userId: string, roleNames: string[], callerUser?: any) {
+        // Prevent Privilege Escalation: Non-SuperAdmins must pass through Dual-Authorization Queue
+        const isGrantingSuperAdmin = roleNames.some(r => r.toUpperCase() === 'SUPER_ADMIN');
+        if (isGrantingSuperAdmin && callerUser) {
+            const isCallerSuperAdmin =
+                callerUser.role?.toUpperCase() === 'SUPER_ADMIN' ||
+                (Array.isArray(callerUser.userRoles) && callerUser.userRoles.some((ur: any) => ur.role?.name?.toUpperCase() === 'SUPER_ADMIN'));
+            if (!isCallerSuperAdmin) {
+                if (this.dualApprovalService) {
+                    const approvalReq = await this.dualApprovalService.createRequest(
+                        callerUser,
+                        'ASSIGN_SUPER_ADMIN',
+                        userId,
+                        { roleNames },
+                        `Assign SUPER_ADMIN role to user ${userId}`
+                    );
+                    const user = await this.findOne(userId);
+                    return {
+                        ...user,
+                        pendingApproval: true,
+                        approvalId: approvalReq.id,
+                        message: 'SUPER_ADMIN assignment requires dual-authorization. Submitted to approval queue.'
+                    } as any;
+                }
+                throw new ForbiddenException('CRITICAL SECURITY ALERT: Only a verified Super Administrator can assign the SUPER_ADMIN role.');
+            }
+        }
+
         // 1. Get role IDs from names
         const roles = await this.prisma.role.findMany({
             where: { name: { in: roleNames } }
@@ -201,7 +247,16 @@ export class AdminUsersService {
             }
         });
 
-        return this.findOne(userId);
+        const updated = await this.findOne(userId);
+        globalAuditTelemetry.logRoleChange(
+            { userId: callerUser?.id, email: callerUser?.email, role: callerUser?.role },
+            userId,
+            (updated as any)?.email || userId,
+            existingRoles.map(r => r.name),
+            roleNames
+        ).catch(() => {});
+
+        return updated;
     }
 
     async updatePermissions(userId: string, grants: string[], revokes: string[], assignedById: string) {
@@ -227,6 +282,15 @@ export class AdminUsersService {
             }
         });
 
-        return this.findOne(userId);
+        const updated = await this.findOne(userId);
+        globalAuditTelemetry.logRoleChange(
+            { userId: callerUser?.id, email: callerUser?.email, role: callerUser?.role },
+            userId,
+            (updated as any)?.email || userId,
+            existingRoles.map(r => r.name),
+            roleNames
+        ).catch(() => {});
+
+        return updated;
     }
 }

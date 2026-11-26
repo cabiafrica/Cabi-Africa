@@ -3,6 +3,7 @@ import { Star, Phone, Mail, DollarSign, TrendingUp, CreditCard } from 'lucide-re
 import SearchBar from './SearchBar';
 import AdvancedFilters, { FilterConfig } from './AdvancedFilters';
 import { Passenger } from '../types';
+import MaskedPhone from './common/MaskedPhone';
 
 interface PassengerManagementPageProps {
     passengers: Passenger[];
@@ -260,7 +261,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                             <div className="space-y-2 pt-4 border-t border-slate-800">
                                 <div className="flex items-center gap-2 text-sm text-slate-400">
                                     <Phone className="w-4 h-4" />
-                                    <span>{passenger.phone}</span>
+                                    <MaskedPhone phone={passenger.phone} className="text-sm text-slate-300" />
                                 </div>
                                 <div className="flex items-center gap-2 text-sm text-slate-400">
                                     <Mail className="w-4 h-4" />
@@ -302,7 +303,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                         <div className="flex items-center gap-4 text-sm text-slate-400">
                                             <span className="flex items-center gap-1">
                                                 <Phone className="w-3 h-3" />
-                                                {passenger.phone}
+                                                <MaskedPhone phone={passenger.phone} className="text-xs text-slate-300" />
                                             </span>
                                             <span className="flex items-center gap-1">
                                                 <Mail className="w-3 h-3" />
@@ -379,7 +380,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                         </td>
                                         <td className="py-4 px-6">
                                             <div className="space-y-1">
-                                                <p className="text-sm text-slate-300">{passenger.phone}</p>
+                                                <MaskedPhone phone={passenger.phone} className="text-sm text-slate-300" />
                                                 <p className="text-xs text-slate-500">{passenger.email}</p>
                                             </div>
                                         </td>
@@ -529,7 +530,7 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
                                         <Phone className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-white">{selectedPassenger.phone}</span>
+                                        <MaskedPhone phone={selectedPassenger.phone} className="text-sm text-white" />
                                     </div>
                                     <div className="flex items-center gap-2">
                                         <Mail className="w-4 h-4 text-slate-500" />

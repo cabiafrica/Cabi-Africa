@@ -7,6 +7,7 @@ import { Header } from './components/layout/Header';
 import { CommandPalette, CommandItem } from './components/layout/CommandPalette';
 import { ProtectedRoute } from './components/common/ProtectedRoute';
 import { Admin2FAStepUpModal } from './components/modals/Admin2FAStepUpModal';
+import InactivitySentinel from './components/common/InactivitySentinel';
 import {
   LayoutDashboard, Radio, Flame, TrendingUp, ShieldAlert,
   Users, UserCog, FileCheck, FolderKanban, BarChart3, Building2, Ban,
@@ -33,6 +34,7 @@ const ReferralDashboard = lazy(() => import('./components/management/ReferralDas
 const AuditLogViewer = lazy(() => import('./components/viewers/AuditLogViewer').then(m => ({ default: m.AuditLogViewer })));
 const TractionLogs = lazy(() => import('./components/management/TractionLogs').then(m => ({ default: m.TractionLogs })));
 const SuspendedAccounts = lazy(() => import('./components/SuspendedAccountManagement').then(m => ({ default: m.SuspendedAccountManagement })));
+const DualApprovalDashboard = lazy(() => import('./components/management/DualApprovalDashboard').then(m => ({ default: m.DualApprovalDashboard })));
 const SosPenaltyConfig = lazy(() => import('./components/SosPenaltyConfig').then(m => ({ default: m.SosPenaltyConfig })));
 const SupportTicketManagement = lazy(() => import('./components/support/SupportTicketManagement').then(m => ({ default: m.SupportTicketManagement })));
 const ZoneManagement = lazy(() => import('./components/locations/ZoneManagement').then(m => ({ default: m.ZoneManagement })));
@@ -120,6 +122,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
       { icon: <FolderKanban className="w-4 h-4" />, label: 'Driver Groups', view: '/driver-groups', permission: 'ORGANIZATION_VIEW' },
       { icon: <BarChart3 className="w-4 h-4" />, label: 'Driver Performance', view: '/driver-performance', permission: 'DISPATCH_ANALYTICS_VIEW' },
       { icon: <Building2 className="w-4 h-4" />, label: 'Organizations', view: '/organizations', permission: 'ORGANIZATION_VIEW' },
+      { icon: <ShieldCheck className="w-4 h-4" />, label: 'Dual Approvals', view: '/dual-approvals', permission: 'GROUPS_ROLES_VIEW' },
       { icon: <Ban className="w-4 h-4" />, label: 'Suspended Accounts', view: '/suspended-accounts', permission: 'DRIVER_SUSPEND' },
     ]
   },
@@ -317,6 +320,8 @@ function App() {
 
   return (
     <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'dark bg-brand-black text-slate-100' : 'bg-slate-50 text-slate-900'}`}>
+      {/* Zero-Trust 10-Minute Inactivity Sentinel */}
+      <InactivitySentinel timeoutMs={10 * 60 * 1000} warningMs={2 * 60 * 1000} />
       <CommandPalette items={commandItems} isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
       <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-surface-dark border-r border-white/10 shadow-2xl transition-colors duration-200">
         <div className="p-8 border-b border-white/5 flex flex-col items-center text-center">
@@ -496,6 +501,7 @@ function App() {
               <Route path="/audit-log" element={<AuditLogViewer />} />
               <Route path="/sos-config" element={<SosPenaltyConfig />} />
               <Route path="/suspended-accounts" element={<SuspendedAccounts />} />
+              <Route path="/dual-approvals" element={<ProtectedRoute permission="GROUPS_ROLES_VIEW"><DualApprovalDashboard /></ProtectedRoute>} />
               <Route path="/traction-logs" element={<TractionLogs />} />
               <Route path="/support-tickets" element={<SupportTicketManagement />} />
               <Route path="/surge-zones" element={<ZoneManagement type="SURGE" />} />

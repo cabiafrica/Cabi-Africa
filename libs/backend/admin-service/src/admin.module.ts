@@ -1,4 +1,5 @@
-import { Module } from '@nestjs/common';
+import { Module, NestModule, MiddlewareConsumer } from '@nestjs/common';
+import { RateLimitMiddleware } from '@cabi/backend/common';
 
 import { AdminController } from './admin.controller';
 import { AdminService } from './admin.service';
@@ -31,6 +32,8 @@ import { OrganizationService } from './organization.service';
 import { AdminSecurityController } from './admin-security.controller';
 import { AdminSecurityService } from './admin-security.service';
 import { AdminSecurityGuard } from './admin-security.guard';
+import { DualApprovalController } from './dual-approval.controller';
+import { DualApprovalService } from './dual-approval.service';
 
 @Module({
   imports: [
@@ -47,12 +50,14 @@ import { AdminSecurityGuard } from './admin-security.guard';
     DriverApprovalController,
     BlogController,
     OrganizationController,
-    AdminSecurityController
+    AdminSecurityController,
+    DualApprovalController
   ],
   providers: [
     AdminService,
     AdminRolesService,
     AdminUsersService,
+    DualApprovalService,
     Admin2FAService,
     AdminSecurityService,
     AdminSecurityGuard,
@@ -91,4 +96,8 @@ import { AdminSecurityGuard } from './admin-security.guard';
     },
   ],
 })
-export class AdminModule { }
+export class AdminModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer.apply(RateLimitMiddleware).forRoutes('*');
+  }
+}

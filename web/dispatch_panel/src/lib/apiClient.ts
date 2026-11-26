@@ -27,8 +27,18 @@ apiClient.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem('authToken');
+      localStorage.removeItem('authUser');
+      try {
+        if (typeof window !== 'undefined' && 'BroadcastChannel' in window) {
+          const channel = new BroadcastChannel('cabi_dispatch_auth_channel');
+          channel.postMessage({ type: 'LOGOUT' });
+          channel.close();
+        }
+      } catch (e) {
+        // Ignore broadcast errors
+      }
       if (window.location.pathname !== '/login') {
-        window.location.href = '/login';
+        window.location.href = '/login?reason=expired';
       }
     }
     return Promise.reject(error);

@@ -35,7 +35,9 @@ import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { vscDarkPlus, solarizedlight, atomDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import HistoryIcon from '@mui/icons-material/History';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
-import { updateUserProfile, changePassword, enableTwoFactorAuth, verifyTwoFactorAuth, disableTwoFactorAuth, deleteAccount } from './api/profileService';
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import { isPlatformAuthenticatorAvailable, registerPasskeyCredential } from '../lib/webauthn';
+import { updateUserProfile, changePassword, enableTwoFactorAuth, verifyTwoFactorAuth, disableTwoFactorAuth, deleteAccount, getWebAuthnChallenge, registerWebAuthnCredential } from './api/profileService';
 import { logAuditEvent, fetchUserAuditEvents, AuditEvent } from '@/features/audit/api/auditService';
 
 const PasswordRequirement = ({ valid, text }: { valid: boolean; text: string }) => (
@@ -120,6 +122,38 @@ export const ProfilePage = () => {
   });
 
   const isNewPasswordValid = useMemo(() => Object.values(passwordValidation).every(Boolean), [passwordValidation]);
+
+  const [isPasskeySupported, setIsPasskeySupported] = useState(false);
+  const [enrollingPasskey, setEnrollingPasskey] = useState(false);
+
+  useEffect(() => {
+    isPlatformAuthenticatorAvailable().then(setIsPasskeySupported);
+  }, []);
+
+  const handleEnrollPasskey = async () => {
+    if (!user) return;
+    setEnrollingPasskey(true);
+    try {
+      const challengeRes = await getWebAuthnChallenge(user.id || user.email);
+      const credential = await registerPasskeyCredential(user.id, user.email, challengeRes.challenge);
+      await registerWebAuthnCredential(user.id, credential);
+      await logAuditEvent({ action: 'PASSKEY_REGISTERED', userId: user.id } as any);
+      setNotification({
+        open: true,
+        message: 'Biometric Passkey registered successfully! Touch ID / Face ID is active for instant unlock.',
+        severity: 'success',
+      });
+    } catch (err: any) {
+      console.error('Passkey enrollment failed', err);
+      setNotification({
+        open: true,
+        message: err.message || 'Passkey enrollment was cancelled or failed.',
+        severity: 'error',
+      });
+    } finally {
+      setEnrollingPasskey(false);
+    }
+  };
 
   useEffect(() => {
     // Reset form field if user context changes
@@ -412,6 +446,18 @@ export const ProfilePage = () => {
           <Button variant="outlined" onClick={handleToggleTwoFactorAuth} sx={{ ml: 2 }} disabled={loading}>
             {user.isTwoFactorEnabled ? 'Disable 2FA' : 'Enable 2FA'}
           </Button>
+          {isPasskeySupported && (
+            <Button
+              variant="outlined"
+              color="success"
+              startIcon={<FingerprintIcon />}
+              onClick={handleEnrollPasskey}
+              disabled={loading || enrollingPasskey}
+              sx={{ ml: 2, borderColor: '#10B981', color: '#10B981', '&:hover': { borderColor: '#059669', bgcolor: 'rgba(16,185,129,0.08)' } }}
+            >
+              {enrollingPasskey ? 'Enrolling...' : 'Enroll Passkey / Biometrics'}
+            </Button>
+          )}
           <Button variant="outlined" color="error" onClick={handleOpenDeleteModal} sx={{ ml: 2 }}>
             Delete Account
           </Button>

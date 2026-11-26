@@ -4,3 +4,5 @@ export * from './interceptors/logging.interceptor';
 export * from './services/monitoring.service';
 export * from './lib/interfaces';
 export * from './lib/mock-providers';
+export * from './lib/production-providers';
+export * from './lib/audit-telemetry.service';

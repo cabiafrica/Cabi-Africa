@@ -32,11 +32,17 @@ export class AdminPermissionGuard implements CanActivate {
             return false; 
         }
 
-        // 2. Get required permissions from metadata
-        const required = this.reflector.getAllAndOverride<string | string[]>('requiredPermission', [
+        // 2. Get required permissions from metadata (supports both @Permissions and @RequirePermissions)
+        const requiredLegacy = this.reflector.getAllAndOverride<string | string[]>('requiredPermission', [
             context.getHandler(),
             context.getClass(),
         ]);
+        const requiredStandard = this.reflector.getAllAndOverride<string | string[]>('permissions', [
+            context.getHandler(),
+            context.getClass(),
+        ]);
+
+        const required = requiredLegacy || requiredStandard;
 
         if (!required || (Array.isArray(required) && required.length === 0)) {
             return true;
