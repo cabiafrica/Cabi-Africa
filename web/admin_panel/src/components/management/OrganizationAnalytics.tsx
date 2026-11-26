@@ -34,11 +34,11 @@ export const OrganizationAnalytics: React.FC = () => {
         <div className="space-y-6 mb-8">
             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
                 {kpiData.map((item) => (
-                    <Card key={item.title} decoration="top" decorationColor="indigo">
+                    <Card key={item.title} decoration="top" decorationColor="amber" className="bg-[#131722] border-white/10">
                         <Flex alignItems="start">
                             <div className="truncate">
                                 <Text>{item.title}</Text>
-                                <Metric>{item.metric}</Metric>
+                                <Metric className="text-white">{item.metric}</Metric>
                             </div>
                             <BadgeDelta deltaType={item.deltaType}>{item.delta}</BadgeDelta>
                         </Flex>
@@ -47,18 +47,18 @@ export const OrganizationAnalytics: React.FC = () => {
             </Grid>
 
             <Grid numItems={1} numItemsLg={2} className="gap-6">
-                <Card>
-                    <Title>Membership Growth (Top Orgs)</Title>
+                <Card className="bg-[#131722] border-white/10">
+                    <Title className="text-white">Membership Growth (Top Orgs)</Title>
                     <AreaChart
                         className="h-72 mt-4"
                         data={chartdata}
                         index="date"
                         categories={["Nairobi West Drivers", "CBD Elite", "Taxi Association"]}
-                        colors={["indigo", "cyan", "blue"]}
+                        colors={["amber", "emerald", "cyan"]}
                     />
                 </Card>
-                <Card>
-                    <Title>Organization Details</Title>
+                <Card className="bg-[#131722] border-white/10">
+                    <Title className="text-white">Organization Details</Title>
                     <Flex className="mt-4">
                         <div className="w-1/2">
                             <Text className="text-center mb-2">Structure Distribution</Text>
@@ -67,10 +67,10 @@ export const OrganizationAnalytics: React.FC = () => {
                                 data={typeData}
                                 category="value"
                                 index="name"
-                                colors={["slate", "teal", "indigo", "rose", "cyan", "amber"]}
+                                colors={["amber", "emerald", "teal", "slate", "rose", "cyan"]}
                             />
                         </div>
-                        <div className="w-1/2 pl-4 border-l border-gray-200">
+                        <div className="w-1/2 pl-4 border-l border-white/10">
                             <Text className="mb-2">Engagement Score (Activity)</Text>
                             <BarList data={activityData} className="mt-2" />
                         </div>

@@ -4,6 +4,8 @@ import App from './App'
 import { AuthProvider } from './AuthContext'
 import './index.css'
 import { BrowserRouter } from 'react-router-dom'
+import { ThemeProvider, CssBaseline } from '@mui/material'
+import { cabiTheme } from './theme/cabiTheme'
 
 console.log('--- MAIN.TSX STARTING ---');
 
@@ -14,9 +16,12 @@ try {
     ReactDOM.createRoot(root!).render(
         <React.StrictMode>
             <BrowserRouter>
-                <AuthProvider>
-                    <App />
-                </AuthProvider>
+                <ThemeProvider theme={cabiTheme}>
+                    <CssBaseline />
+                    <AuthProvider>
+                        <App />
+                    </AuthProvider>
+                </ThemeProvider>
             </BrowserRouter>
         </React.StrictMode>,
     );

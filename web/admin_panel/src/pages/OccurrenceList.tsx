@@ -37,9 +37,9 @@ import { useNavigate } from 'react-router-dom';
 import { adminService, OccurrenceSummary } from '../services/adminService';
 
 // Premium Color Tokens
-const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
-const GLASS_BG = 'rgba(15, 23, 42, 0.6)';
-const CARD_BORDER = 'rgba(255, 215, 0, 0.1)';
+const GOLD_GRADIENT = 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)';
+const GLASS_BG = '#131722';
+const CARD_BORDER = 'rgba(255, 255, 255, 0.08)';
 
 const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
   {
@@ -229,9 +229,9 @@ export const OccurrenceList = () => {
             <IconButton 
               onClick={(e) => setFilterAnchorEl(e.currentTarget)}
               sx={{ 
-                bgcolor: activeSecondaryFilters > 0 ? 'rgba(255,215,0,0.15)' : 'rgba(255,255,255,0.05)', 
-                border: activeSecondaryFilters > 0 ? '1px solid #FFD700' : '1px solid rgba(255,255,255,0.1)', 
-                color: activeSecondaryFilters > 0 ? '#FFD700' : 'white',
+                bgcolor: activeSecondaryFilters > 0 ? 'rgba(245,158,11,0.15)' : 'rgba(255,255,255,0.05)', 
+                border: activeSecondaryFilters > 0 ? '1px solid #F59E0B' : '1px solid rgba(255,255,255,0.1)', 
+                color: activeSecondaryFilters > 0 ? '#F59E0B' : 'white',
                 transition: 'all 0.2s',
               }}
             >
@@ -247,7 +247,7 @@ export const OccurrenceList = () => {
               onClose={() => setFilterAnchorEl(null)}
               PaperProps={{
                 sx: {
-                  bgcolor: '#0f172a',
+                  bgcolor: '#131722',
                   border: '1px solid rgba(255,255,255,0.1)',
                   borderRadius: 3,
                   boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
@@ -274,7 +274,7 @@ export const OccurrenceList = () => {
                   sx={{
                     borderRadius: 1.5,
                     fontSize: '0.85rem',
-                    color: selectedSeverity === sev.id ? '#FFD700' : 'white',
+                    color: selectedSeverity === sev.id ? '#F59E0B' : 'white',
                     fontWeight: selectedSeverity === sev.id ? 700 : 400,
                   }}
                 >
@@ -306,7 +306,7 @@ export const OccurrenceList = () => {
                   sx={{
                     borderRadius: 1.5,
                     fontSize: '0.85rem',
-                    color: selectedCategory === cat.id ? '#FFD700' : 'white',
+                    color: selectedCategory === cat.id ? '#F59E0B' : 'white',
                     fontWeight: selectedCategory === cat.id ? 700 : 400,
                   }}
                 >

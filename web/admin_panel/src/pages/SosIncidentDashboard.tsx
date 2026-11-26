@@ -17,11 +17,11 @@ import { adminService, SOSIncidentDetails, SOSIncidentLogEntry, IncidentStatemen
 import CabiMap from '../components/CabiMap';
 import 'leaflet/dist/leaflet.css';
 
-const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
-const GLASS_BG = 'rgba(15, 23, 42, 0.7)';
-const CARD_BORDER = 'rgba(255, 215, 0, 0.1)';
+const GOLD_GRADIENT = 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)';
+const GLASS_BG = '#131722';
+const CARD_BORDER = 'rgba(255, 255, 255, 0.08)';
 
-const PulseDot = ({ color = '#FFD700' }) => (
+const PulseDot = ({ color = '#F59E0B' }) => (
   <Box sx={{ position: 'relative', width: 8, height: 8 }}>
     <Box sx={{
       position: 'absolute', width: '100%', height: '100%', borderRadius: '50%', bgcolor: color,

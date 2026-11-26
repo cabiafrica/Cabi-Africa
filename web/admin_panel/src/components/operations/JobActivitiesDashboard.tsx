@@ -280,62 +280,72 @@ export function JobActivitiesDashboard() {
   return (
     <Box>
       {/* Header */}
-      <Box sx={{ mb: 3, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-        <Typography variant="h4" fontWeight="bold" className="text-slate-900 dark:text-white">
-          Job Activities
-        </Typography>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+      <Box sx={{ mb: 4, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box>
+          <Typography variant="h4" fontWeight="800" sx={{
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 0.5
+          }}>
+            Job Activities
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+            Live ride dispatch log, active routes, and trip settlements
+          </Typography>
+        </Box>
+        <Box sx={{ display: 'flex', gap: 1.5 }}>
           <Tooltip title="Refresh">
-            <IconButton onClick={fetchRides} color="primary">
-              <Refresh className="text-amber-600 dark:text-amber-400" />
+            <IconButton onClick={fetchRides} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
+              <Refresh />
             </IconButton>
           </Tooltip>
           <Tooltip title="Export to CSV">
-            <IconButton onClick={handleExport} color="primary">
-              <Download className="text-amber-600 dark:text-amber-400" />
+            <IconButton onClick={handleExport} sx={{ bgcolor: 'rgba(255, 255, 255, 0.05)', color: '#F59E0B', border: '1px solid rgba(255, 255, 255, 0.1)', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.15)' } }}>
+              <Download />
             </IconButton>
           </Tooltip>
         </Box>
       </Box>
 
       {/* Statistics Cards */}
-      <Grid container spacing={3} sx={{ mb: 3 }}>
+      <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
-            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Total Rides
             </Typography>
-            <Typography variant="h4" fontWeight="bold" className="text-slate-900 dark:text-white">
+            <Typography variant="h4" fontWeight="bold" sx={{ color: '#f8fafc', mt: 0.5 }}>
               {stats.total}
             </Typography>
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
-            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Active Rides
             </Typography>
-            <Typography variant="h4" fontWeight="bold" className="text-amber-600 dark:text-amber-400">
+            <Typography variant="h4" fontWeight="bold" sx={{ color: '#F59E0B', mt: 0.5 }}>
               {stats.inProgress + stats.assigned}
             </Typography>
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
-            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Completed
             </Typography>
-            <Typography variant="h4" fontWeight="bold" className="text-green-600 dark:text-green-400">
+            <Typography variant="h4" fontWeight="bold" sx={{ color: '#10B981', mt: 0.5 }}>
               {stats.completed}
             </Typography>
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-white dark:bg-card-dark rounded-xl shadow p-4 border border-slate-200 dark:border-white/10">
-            <Typography className="text-slate-500 dark:text-slate-400" gutterBottom>
+          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+            <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Total Revenue
             </Typography>
-            <Typography variant="h4" fontWeight="bold" className="text-green-600 dark:text-green-400">
+            <Typography variant="h4" fontWeight="bold" sx={{ color: '#10B981', mt: 0.5 }}>
               KES {stats.totalRevenue.toLocaleString()}
             </Typography>
           </div>
@@ -343,13 +353,13 @@ export function JobActivitiesDashboard() {
       </Grid>
 
       {/* Filters */}
-      <div className="bg-white dark:bg-card-dark rounded-xl shadow mb-6 border border-slate-200 dark:border-white/10">
+      <div className="bg-[#131722] rounded-2xl mb-6 border border-white/10 shadow-sm">
         <div className="p-4">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <input
                 type="text"
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full border border-white/10 rounded-xl p-2.5 bg-white/[0.03] text-white placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
                 placeholder="Search by passenger, driver, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -357,7 +367,7 @@ export function JobActivitiesDashboard() {
             </Grid>
             <Grid item xs={12} sm={3}>
               <select
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none"
+                className="w-full border border-white/10 rounded-xl p-2.5 bg-[#131722] text-white focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -374,13 +384,13 @@ export function JobActivitiesDashboard() {
             <Grid item xs={12} sm={3}>
               <input
                 type="date"
-                className="w-full border border-slate-300 dark:border-slate-600 rounded-lg p-2.5 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-amber-500 outline-none placeholder-slate-400"
+                className="w-full border border-white/10 rounded-xl p-2.5 bg-[#131722] text-white focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Typography variant="body2" className="text-slate-500 dark:text-slate-400">
+              <Typography variant="body2" sx={{ color: '#94a3b8' }}>
                 {filteredRides.length} results
               </Typography>
             </Grid>
@@ -389,7 +399,7 @@ export function JobActivitiesDashboard() {
       </div>
 
       {/* Rides Table */}
-      <div className="bg-white dark:bg-card-dark rounded-xl shadow border border-slate-200 dark:border-white/10 overflow-hidden">
+      <div className="bg-[#131722] rounded-2xl shadow border border-white/10 overflow-hidden">
         <TableContainer>
           <Table>
             <TableHead className="bg-slate-50 dark:bg-surface-dark">

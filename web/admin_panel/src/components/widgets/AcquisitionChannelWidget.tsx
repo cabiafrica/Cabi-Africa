@@ -11,7 +11,7 @@ export const AcquisitionChannelWidget: React.FC = () => {
                 data={acquisitionChannel}
                 category="value"
                 index="name"
-                colors={["emerald", "teal", "indigo", "cyan"]}
+                colors={["amber", "emerald", "teal", "cyan"]}
                 showAnimation={true}
             />
         </WidgetWrapper>

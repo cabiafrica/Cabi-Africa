@@ -292,8 +292,8 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
               onClick={() => setFilter(tab.id)}
               className={`px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-colors ${
                 filter === tab.id
-                  ? 'bg-emerald-600 text-white shadow-sm'
-                  : 'bg-slate-100 dark:bg-white/5 text-slate-600 dark:text-slate-300 hover:bg-slate-200'
+                  ? 'bg-amber-500 text-black font-bold shadow-sm'
+                  : 'bg-white/5 text-slate-300 hover:bg-white/10'
               }`}
             >
               {tab.label}
