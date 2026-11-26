@@ -14,7 +14,7 @@ export default defineConfig({
                 changeOrigin: true,
             },
             '/api': {
-                target: 'http://localhost:3333',
+                target: 'https://api.cabi.africa',
                 changeOrigin: true,
                 secure: false,
                 // Add error handling to proxy
@@ -23,7 +23,8 @@ export default defineConfig({
                         console.log('proxy error', err);
                     });
                     proxy.on('proxyReq', (proxyReq, req, _res) => {
-                        console.log('Sending Request to the Target:', req.method, req.url);
+                        proxyReq.setHeader('origin', 'https://admin.cabi.africa');
+                        console.log('Sending Request to the Target:', req.method, proxyReq.path);
                     });
                     proxy.on('proxyRes', (proxyRes, req, _res) => {
                         console.log('Received Response from the Target:', proxyRes.statusCode, req.url);
