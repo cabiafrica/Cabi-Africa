@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Search } from 'lucide-react';
 import { adminService, PlatformUser } from '../../services/adminService';
 import { UserPaymentHistory } from '../users/UserPaymentHistory';
 import { UserDetails } from '../users/UserDetails';
@@ -119,9 +120,9 @@ export const UserManagementDashboard: React.FC = () => {
                             placeholder="Search by name or email..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-slate-600 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white dark:bg-card-dark text-slate-900 dark:text-slate-100"
+                            className="w-full pl-10 pr-4 py-2 border border-slate-300 dark:border-white/10 rounded-lg focus:outline-none focus:ring-1 focus:ring-amber-500 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 text-sm"
                         />
-                        <span className="absolute left-3 top-2.5 text-gray-400">🔍</span>
+                        <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3 pointer-events-none" />
                     </div>
                 )}
             </div>

@@ -67,8 +67,8 @@ export const UserManagement: React.FC = () => {
   if (editingUser) {
     return (
       <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-        <Paper sx={{ p: 4, borderRadius: 4, bgcolor: alpha(theme.palette.background.paper, 0.8), backdropFilter: 'blur(20px)' }}>
-          <Typography variant="h5" fontWeight="bold" mb={3}>
+        <Paper sx={{ p: 4, borderRadius: 4, bgcolor: '#131722', border: '1px solid rgba(255, 255, 255, 0.1)', color: 'white', backdropFilter: 'blur(20px)' }}>
+          <Typography variant="h5" fontWeight="bold" mb={3} sx={{ color: 'white' }}>
             {editingUser === 'new' ? 'Create New Admin' : 'Edit Admin User'}
           </Typography>
           <UserForm user={editingUser === 'new' ? undefined : editingUser} onSave={handleSave} onCancel={() => setEditingUser(null)} />
@@ -90,7 +90,7 @@ export const UserManagement: React.FC = () => {
           }}>
             Admin User Management
           </Typography>
-          <Typography variant="body1" color="text.secondary">
+          <Typography variant="body1" sx={{ color: '#94a3b8' }}>
             Manage system administrators and their access roles.
           </Typography>
         </Box>
@@ -100,11 +100,17 @@ export const UserManagement: React.FC = () => {
           onClick={() => setEditingUser('new')}
           sx={{
             background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
-            boxShadow: '0 3px 5px 2px rgba(99, 102, 241, .3)',
+            color: '#000000',
+            boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
             fontWeight: 'bold',
             px: 3,
-            py: 1.5,
-            borderRadius: 2
+            py: 1.25,
+            borderRadius: 2,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)',
+            }
           }}
         >
           Create New User
@@ -113,14 +119,14 @@ export const UserManagement: React.FC = () => {
 
       {/* Content Card */}
       <Paper elevation={0} sx={{
-        borderRadius: 4,
-        border: '1px solid',
-        borderColor: 'divider',
+        borderRadius: 3,
+        border: '1px solid rgba(255, 255, 255, 0.08)',
         overflow: 'hidden',
-        background: alpha(theme.palette.background.paper, 0.5)
+        background: '#131722',
+        backdropFilter: 'blur(20px)'
       }}>
         {/* Search Bar */}
-        <Box sx={{ p: 3, borderBottom: '1px solid', borderColor: 'divider', bgcolor: alpha(theme.palette.primary.main, 0.02) }}>
+        <Box sx={{ p: 2.5, borderBottom: '1px solid rgba(255, 255, 255, 0.06)', bgcolor: 'rgba(255, 255, 255, 0.01)' }}>
           <TextField
             fullWidth
             placeholder="Search by email or role..."
@@ -131,38 +137,47 @@ export const UserManagement: React.FC = () => {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon color="action" />
+                  <SearchIcon sx={{ color: '#94a3b8' }} />
                 </InputAdornment>
               ),
-              sx: { bgcolor: 'background.paper', borderRadius: 2 }
+              sx: {
+                bgcolor: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: 2,
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                '& input::placeholder': { color: '#64748b', opacity: 1 },
+                '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' },
+                '&.Mui-focused': { border: '1px solid #F59E0B' }
+              }
             }}
           />
         </Box>
 
         <TableContainer>
           <Table>
-            <TableHead sx={{ bgcolor: alpha(theme.palette.primary.main, 0.05) }}>
+            <TableHead sx={{ bgcolor: 'rgba(255, 255, 255, 0.02)' }}>
               <TableRow>
-                <TableCell sx={{ fontWeight: 'bold' }}>User Details</TableCell>
-                <TableCell sx={{ fontWeight: 'bold' }}>Assigned Roles</TableCell>
-                <TableCell align="right" sx={{ fontWeight: 'bold' }}>Actions</TableCell>
+                <TableCell sx={{ fontWeight: '600', color: '#cbd5e1', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>User Details</TableCell>
+                <TableCell sx={{ fontWeight: '600', color: '#cbd5e1', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Assigned Roles</TableCell>
+                <TableCell align="right" sx={{ fontWeight: '600', color: '#cbd5e1', borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {filteredUsers.map(user => (
-                <TableRow key={user.id} hover sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableRow key={user.id} hover sx={{ '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.03) !important' }, '& td': { borderBottom: '1px solid rgba(255, 255, 255, 0.04)' } }}>
                   <TableCell>
                     <Box display="flex" alignItems="center" gap={2}>
-                      <Avatar sx={{ bgcolor: alpha(theme.palette.primary.main, 0.1), color: theme.palette.primary.main }}>
+                      <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B' }}>
                         <AdminIcon />
                       </Avatar>
                       <Box>
-                        <Typography variant="body2" fontWeight="bold">
+                        <Typography variant="body2" fontWeight="600" sx={{ color: '#f8fafc' }}>
                           {user.email.split('@')[0]}
                         </Typography>
                         <Box display="flex" alignItems="center" gap={0.5}>
-                          <EmailIcon sx={{ fontSize: 14, color: 'text.secondary' }} />
-                          <Typography variant="caption" color="text.secondary">
+                          <EmailIcon sx={{ fontSize: 13, color: '#64748b' }} />
+                          <Typography variant="caption" sx={{ color: '#94a3b8' }}>
                             {user.email}
                           </Typography>
                         </Box>
@@ -176,8 +191,14 @@ export const UserManagement: React.FC = () => {
                           key={role}
                           label={role}
                           size="small"
-                          variant="outlined"
-                          sx={{ borderRadius: 1, borderColor: 'divider' }}
+                          sx={{
+                            borderRadius: 1.5,
+                            bgcolor: role.includes('ADMIN') ? 'rgba(245, 158, 11, 0.15)' : 'rgba(255, 255, 255, 0.06)',
+                            color: role.includes('ADMIN') ? '#F59E0B' : '#e2e8f0',
+                            border: `1px solid ${role.includes('ADMIN') ? 'rgba(245, 158, 11, 0.3)' : 'rgba(255, 255, 255, 0.1)'}`,
+                            fontWeight: 600,
+                            fontSize: '0.7rem'
+                          }}
                         />
                       ))}
                     </Box>
@@ -188,7 +209,7 @@ export const UserManagement: React.FC = () => {
                         <IconButton
                           onClick={() => setEditingUser(user)}
                           size="small"
-                          sx={{ color: theme.palette.primary.main, bgcolor: alpha(theme.palette.primary.main, 0.1) }}
+                          sx={{ color: '#F59E0B', bgcolor: 'rgba(245, 158, 11, 0.1)', '&:hover': { bgcolor: 'rgba(245, 158, 11, 0.2)' } }}
                         >
                           <EditIcon fontSize="small" />
                         </IconButton>
@@ -197,7 +218,7 @@ export const UserManagement: React.FC = () => {
                         <IconButton
                           onClick={() => handleDelete(user.id)}
                           size="small"
-                          sx={{ color: theme.palette.error.main, bgcolor: alpha(theme.palette.error.main, 0.1) }}
+                          sx={{ color: '#ef4444', bgcolor: 'rgba(239, 68, 68, 0.1)', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.2)' } }}
                         >
                           <DeleteIcon fontSize="small" />
                         </IconButton>
@@ -208,11 +229,11 @@ export const UserManagement: React.FC = () => {
               ))}
               {filteredUsers.length === 0 && (
                 <TableRow>
-                  <TableCell colSpan={3} align="center" sx={{ py: 8 }}>
+                  <TableCell colSpan={3} align="center" sx={{ py: 8, borderBottom: 'none' }}>
                     <Box display="flex" flexDirection="column" alignItems="center">
-                      <SearchIcon sx={{ fontSize: 48, color: 'text.disabled', mb: 2 }} />
-                      <Typography variant="h6" color="text.secondary">No users found</Typography>
-                      <Typography variant="body2" color="text.disabled">Try adjusting your search terms</Typography>
+                      <SearchIcon sx={{ fontSize: 44, color: '#475569', mb: 1.5 }} />
+                      <Typography variant="subtitle1" fontWeight="600" sx={{ color: '#cbd5e1' }}>No users found</Typography>
+                      <Typography variant="body2" sx={{ color: '#64748b' }}>Try adjusting your search terms</Typography>
                     </Box>
                   </TableCell>
                 </TableRow>

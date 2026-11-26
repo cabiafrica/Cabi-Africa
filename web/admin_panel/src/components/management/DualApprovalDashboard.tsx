@@ -249,7 +249,7 @@ export const DualApprovalDashboard: React.FC = () => {
                                                             : req.status === 'REJECTED'
                                                             ? 'bg-red-500/15 text-red-400 border-red-500/30'
                                                             : req.status === 'BREAK_GLASS_EXECUTED'
-                                                            ? 'bg-purple-500/15 text-purple-300 border-purple-500/30 animate-pulse'
+                                                            ? 'bg-rose-500/15 text-rose-300 border-rose-500/30 animate-pulse'
                                                             : 'bg-amber-500/15 text-amber-300 border-amber-500/30'
                                                     }`}
                                                 >
@@ -271,7 +271,7 @@ export const DualApprovalDashboard: React.FC = () => {
                                                     </div>
                                                 )}
                                                 {req.breakGlassJustification && (
-                                                    <div className="text-purple-300 text-[11px] italic">
+                                                    <div className="text-rose-300 text-[11px] italic">
                                                         "{req.breakGlassJustification}"
                                                     </div>
                                                 )}

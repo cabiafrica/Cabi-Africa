@@ -50,7 +50,7 @@ export const BIDashboard: React.FC = () => {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <TrendingUp className="text-cyan-600 dark:text-cyan-400" />
+                        <TrendingUp className="text-amber-500" />
                         Business Intelligence
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Global performance metrics and growth analytics.</p>
@@ -63,47 +63,47 @@ export const BIDashboard: React.FC = () => {
             </div>
 
             <Grid numItems={1} numItemsSm={2} numItemsLg={5} className="gap-4">
-                <Card decoration="top" decorationColor="indigo" className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                    <Text className="dark:text-slate-400">Gross Bookings</Text>
+                <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
+                    <Text className="dark:text-slate-400 font-medium">Gross Bookings</Text>
                     <Metric className="dark:text-white mt-1 text-2xl">{stats.grossBookings?.toLocaleString() || '0'} KES</Metric>
                     <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
-                <Card decoration="top" decorationColor="rose" className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                    <Text className="dark:text-slate-400">Total Trips</Text>
+                <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
+                    <Text className="dark:text-slate-400 font-medium">Total Trips</Text>
                     <Metric className="dark:text-white mt-1 text-2xl">{stats.trips?.toLocaleString() || '0'}</Metric>
                     <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
-                <Card decoration="top" decorationColor="cyan" className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                    <Text className="dark:text-slate-400">New Users</Text>
+                <Card decoration="top" decorationColor="emerald" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
+                    <Text className="dark:text-slate-400 font-medium">New Users</Text>
                     <Metric className="dark:text-white mt-1 text-2xl">{stats.newUsers || '0'}</Metric>
                     <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
-                <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                    <Text className="dark:text-slate-400">Active Drivers</Text>
+                <Card decoration="top" decorationColor="amber" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
+                    <Text className="dark:text-slate-400 font-medium">Active Drivers</Text>
                     <Metric className="dark:text-white mt-1 text-2xl">{stats.activeDrivers || '0'}</Metric>
                     <BadgeDelta deltaType="unchanged" size="xs" className="mt-2">0.0%</BadgeDelta>
                 </Card>
-                <Card decoration="top" decorationColor="emerald" className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
-                    <Text className="dark:text-slate-400">Avg Rating</Text>
+                <Card decoration="top" decorationColor="emerald" className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
+                    <Text className="dark:text-slate-400 font-medium">Avg Rating</Text>
                     <Metric className="dark:text-white mt-1 text-2xl">{stats.avgRating || '0'} ★</Metric>
                     <Text className="text-xs text-slate-500 mt-2">Target: 4.8</Text>
                 </Card>
             </Grid>
 
             <Grid numItems={1} numItemsLg={2} className="gap-6">
-                <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
+                <Card className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
                     <Title className="dark:text-white">Revenue Growth (H1 2024)</Title>
                     <AreaChart
                         className="h-72 mt-4"
                         data={revenueData}
                         index="date"
                         categories={["Revenue", "Target"]}
-                        colors={["indigo", "cyan"]}
+                        colors={["amber", "emerald"]}
                         valueFormatter={valueFormatter}
                         showAnimation={true}
                     />
                 </Card>
-                <Card className="bg-white dark:bg-card-dark ring-1 ring-slate-200 dark:ring-slate-700">
+                <Card className="bg-white dark:bg-[#131722] ring-1 ring-slate-200 dark:ring-white/10 rounded-2xl">
                     <Title className="dark:text-white">Trip Volume by City</Title>
                     <BarChart
                         className="h-72 mt-4"

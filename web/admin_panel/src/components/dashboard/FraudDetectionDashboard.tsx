@@ -46,13 +46,13 @@ export const FraudDetectionDashboard: React.FC = () => {
                 <div className="flex gap-2">
                     <button
                         onClick={() => setFilter('ALL')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'ALL' ? 'bg-slate-800 text-white dark:bg-white dark:text-slate-900 border-transparent' : 'bg-white dark:bg-card-dark text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'ALL' ? 'bg-amber-500 text-black border-amber-500 shadow-sm' : 'bg-white dark:bg-[#131722] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:border-amber-500/50'}`}
                     >
                         All Alerts
                     </button>
                     <button
                         onClick={() => setFilter('HIGH')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'HIGH' ? 'bg-red-600 text-white border-red-600' : 'bg-white dark:bg-card-dark text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:text-red-600'}`}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${filter === 'HIGH' ? 'bg-red-600 text-white border-red-600 shadow-sm' : 'bg-white dark:bg-[#131722] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-white/10 hover:text-red-500'}`}
                     >
                         High Severity
                     </button>
@@ -116,9 +116,11 @@ export const FraudDetectionDashboard: React.FC = () => {
                                 <tr><td colSpan={5} className="px-6 py-12 text-center text-slate-500">Scanning activity logs...</td></tr>
                             ) : filteredAlerts.length === 0 ? (
                                 <tr>
-                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400 flex flex-col items-center">
-                                        <CheckCircle className="text-green-500 mb-2" fontSize="large" />
-                                        No active alerts matching your filter.
+                                    <td colSpan={5} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">
+                                        <div className="flex flex-col items-center justify-center">
+                                            <CheckCircle className="text-green-500 mb-2" fontSize="large" />
+                                            <span>No active alerts matching your filter.</span>
+                                        </div>
                                     </td>
                                 </tr>
                             ) : filteredAlerts.map((a: any) => (

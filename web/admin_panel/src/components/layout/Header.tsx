@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Search } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import { SosManager } from '../sos/SosManager';
 
@@ -40,8 +41,8 @@ export const Header: React.FC<{ currentView: string }> = ({ currentView }) => {
                 </h2>
                 {/* Global Search Bar */}
                 <div className="relative max-w-md w-full ml-8 hidden sm:block" ref={searchRef}>
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <span className="text-slate-400">🔍</span>
+                    <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
+                        <Search className="w-4 h-4 text-slate-400" />
                     </div>
                     <input
                         type="text"

@@ -97,14 +97,14 @@ const RolesList: React.FC = () => {
             }}>
                 <Box>
                     <Typography variant="h4" fontWeight="800" sx={{
-                        background: 'linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)',
+                        background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
                         WebkitBackgroundClip: 'text',
                         WebkitTextFillColor: 'transparent',
                         mb: 1
                     }}>
                         Roles & Permissions
                     </Typography>
-                    <Typography variant="body2" color="gray">
+                    <Typography variant="body2" sx={{ color: '#94a3b8' }}>
                         Manage system access levels and permissions across all platforms
                     </Typography>
                 </Box>
@@ -114,10 +114,16 @@ const RolesList: React.FC = () => {
                     onClick={() => navigate('/roles/new')}
                     sx={{
                         backgroundColor: '#F59E0B',
-                        color: '#0a0a0a',
+                        color: '#000000',
+                        boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
                         '&:hover': { backgroundColor: '#D97706' },
                         fontWeight: 'bold',
-                        px: 3, py: 1
+                        px: 3,
+                        py: 1.25,
+                        whiteSpace: 'nowrap',
+                        borderRadius: 2,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.5px'
                     }}
                 >
                     Create New Role
