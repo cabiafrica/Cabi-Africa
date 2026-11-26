@@ -194,14 +194,14 @@ export const OccurrenceList = () => {
 
   return (
     <Fade in={true} timeout={800}>
-      <Box p={4} sx={{ maxWidth: '1600px', margin: '0 auto' }}>
+      <Box p={{ xs: 2, md: 4 }} sx={{ maxWidth: '1600px', margin: '0 auto' }}>
         {/* Header Section */}
-        <Box display="flex" justifyContent="space-between" alignItems="flex-end" mb={6}>
+        <Box display="flex" justifyContent="space-between" alignItems="flex-end" mb={4}>
           <Box>
-            <Typography variant="h3" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 1, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
+            <Typography variant="h4" sx={{ fontWeight: 800, letterSpacing: '-0.02em', mb: 0.5, background: GOLD_GRADIENT, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
               Occurrence Book
             </Typography>
-            <Typography variant="h6" sx={{ color: 'text.secondary', fontWeight: 400, opacity: 0.8 }}>
+            <Typography variant="body2" sx={{ color: '#94a3b8', fontWeight: 400 }}>
               Security Command & Incident Audit Trail
             </Typography>
           </Box>
@@ -210,20 +210,25 @@ export const OccurrenceList = () => {
             <Box sx={{ 
               display: 'flex', 
               alignItems: 'center', 
-              bgcolor: 'rgba(255,255,255,0.05)', 
+              bgcolor: 'rgba(255,255,255,0.03)', 
               borderRadius: '12px', 
               px: 2, 
-              border: '1px solid rgba(255,255,255,0.1)',
+              border: '1px solid rgba(255,255,255,0.08)',
               width: '300px',
               transition: 'all 0.3s',
-              '&:focus-within': { borderColor: '#FFD700', boxShadow: '0 0 15px rgba(255, 215, 0, 0.1)' }
+              '&:focus-within': { borderColor: '#F59E0B', boxShadow: '0 0 15px rgba(245, 158, 11, 0.15)' }
             }}>
-              <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />
+              <SearchIcon sx={{ color: '#94a3b8', mr: 1, fontSize: 20 }} />
               <InputBase 
                 placeholder="Search by OB#, Title..." 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                sx={{ color: 'white', fontSize: '0.9rem', width: '100%' }}
+                sx={{
+                  color: 'white',
+                  fontSize: '0.875rem',
+                  width: '100%',
+                  '& input::placeholder': { color: '#64748b', opacity: 1 }
+                }}
               />
             </Box>
             <IconButton 
@@ -417,31 +422,31 @@ export const OccurrenceList = () => {
                       key={occurrence.id} 
                       hover 
                       sx={{ 
-                        '&:hover': { bgcolor: 'rgba(255,215,0,0.02)' },
-                        '& td': { borderBottom: '1px solid rgba(255,255,255,0.03)' }
+                        '&:hover': { bgcolor: 'rgba(245,158,11,0.03)' },
+                        '& td': { borderBottom: '1px solid rgba(255,255,255,0.04)' }
                       }}
                     >
                       <TableCell>
-                        <Typography sx={{ fontWeight: 700, color: '#FFD700', fontSize: '0.9rem' }}>
+                        <Typography sx={{ fontWeight: 700, color: '#F59E0B', fontSize: '0.875rem' }}>
                           {occurrence.obNumber}
                         </Typography>
                       </TableCell>
                       
                       <TableCell>
-                        <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                        <Typography variant="body2" sx={{ color: '#e2e8f0', fontWeight: 500 }}>
                           {new Date(occurrence.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short' })}
                         </Typography>
-                        <Typography variant="caption" sx={{ opacity: 0.5 }}>
+                        <Typography variant="caption" sx={{ color: '#94a3b8' }}>
                           {new Date(occurrence.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                         </Typography>
                       </TableCell>
 
                       <TableCell>
-                        <Typography sx={{ fontWeight: 600, fontSize: '0.95rem', color: 'white' }}>
+                        <Typography sx={{ fontWeight: 600, fontSize: '0.9rem', color: '#f8fafc' }}>
                           {occurrence.title}
                         </Typography>
-                        <Typography variant="caption" sx={{ color: 'text.secondary', display: 'flex', alignItems: 'center', gap: 0.5 }}>
-                          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: 'rgba(255,215,0,0.5)' }} />
+                        <Typography variant="caption" sx={{ color: '#94a3b8', display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.25 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: '50%', backgroundColor: '#F59E0B' }} />
                           {occurrence.category.replace(/_/g, ' ')}
                         </Typography>
                       </TableCell>
@@ -449,12 +454,12 @@ export const OccurrenceList = () => {
                       <TableCell>
                         <Stack spacing={1}>
                           <Box display="flex" alignItems="center" gap={1.5}>
-                            <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem', bgcolor: 'rgba(255,215,0,0.1)', color: '#FFD700', border: '1px solid rgba(255,215,0,0.2)' }}>D</Avatar>
-                            <Typography variant="body2" sx={{ fontSize: '0.8rem', opacity: 0.9 }}>{occurrence.driverName || 'N/A'}</Typography>
+                            <Avatar sx={{ width: 22, height: 22, fontSize: '0.7rem', bgcolor: 'rgba(245,158,11,0.15)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.3)' }}>D</Avatar>
+                            <Typography variant="body2" sx={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{occurrence.driverName || 'N/A'}</Typography>
                           </Box>
                           <Box display="flex" alignItems="center" gap={1.5}>
-                            <Avatar sx={{ width: 24, height: 24, fontSize: '0.7rem', bgcolor: 'rgba(255,255,255,0.05)', color: 'white', border: '1px solid rgba(255,255,255,0.1)' }}>P</Avatar>
-                            <Typography variant="body2" sx={{ fontSize: '0.8rem', opacity: 0.9 }}>{occurrence.passengerName || 'N/A'}</Typography>
+                            <Avatar sx={{ width: 22, height: 22, fontSize: '0.7rem', bgcolor: 'rgba(255,255,255,0.06)', color: 'white', border: '1px solid rgba(255,255,255,0.12)' }}>P</Avatar>
+                            <Typography variant="body2" sx={{ fontSize: '0.8rem', color: '#cbd5e1' }}>{occurrence.passengerName || 'N/A'}</Typography>
                           </Box>
                         </Stack>
                       </TableCell>
@@ -495,17 +500,17 @@ export const OccurrenceList = () => {
                             <IconButton 
                               onClick={() => navigate(`/resolution-dashboard/${occurrence.id}`)}
                               sx={{ 
-                                bgcolor: 'rgba(255,215,0,0.05)', 
-                                color: '#FFD700',
-                                border: '1px solid rgba(255,215,0,0.1)',
-                                '&:hover': { bgcolor: '#FFD700', color: 'black' }
+                                bgcolor: 'rgba(245,158,11,0.1)', 
+                                color: '#F59E0B',
+                                border: '1px solid rgba(245,158,11,0.25)',
+                                '&:hover': { bgcolor: '#F59E0B', color: 'black' }
                               }}
                             >
                               <VisibilityIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>
                           <Tooltip title="View Logs">
-                            <IconButton sx={{ color: 'rgba(255,255,255,0.3)', '&:hover': { color: 'white' } }}>
+                            <IconButton sx={{ color: '#94a3b8', '&:hover': { color: 'white' } }}>
                               <HistoryIcon fontSize="small" />
                             </IconButton>
                           </Tooltip>

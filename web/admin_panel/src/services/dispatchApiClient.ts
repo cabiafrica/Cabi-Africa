@@ -10,6 +10,11 @@ export function getDispatchBaseUrl(): string {
     return envDispatch.replace(/\/+$/, '');
   }
 
+  const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  if (isLocal) {
+    return '';
+  }
+
   // Production heuristic for DigitalOcean Droplet / production domain
   const isProd = import.meta.env.PROD || 
     (typeof window !== 'undefined' && 

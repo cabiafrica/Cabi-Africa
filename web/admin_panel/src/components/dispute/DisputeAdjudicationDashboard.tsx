@@ -233,53 +233,53 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
 
       {/* KPI Stats Grid */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <span>Pending Adjudication</span>
             <Clock className="w-4 h-4 text-amber-500" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{pendingCount}</span>
-            <span className="text-xs text-amber-600 font-medium">Requires Review</span>
+            <span className="text-3xl font-extrabold text-white">{pendingCount}</span>
+            <span className="text-xs text-amber-400 font-medium">Requires Review</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <span>Driver Appeals</span>
-            <ShieldAlert className="w-4 h-4 text-blue-500" />
+            <ShieldAlert className="w-4 h-4 text-sky-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{appealedCount}</span>
-            <span className="text-xs text-blue-600 font-medium">Under 48h SLA</span>
+            <span className="text-3xl font-extrabold text-white">{appealedCount}</span>
+            <span className="text-xs text-sky-400 font-medium">Under 48h SLA</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <span>Resolved Disputes</span>
-            <CheckCircle className="w-4 h-4 text-emerald-500" />
+            <CheckCircle className="w-4 h-4 text-emerald-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">{resolvedCount}</span>
-            <span className="text-xs text-emerald-600 font-medium">Auto & Manual</span>
+            <span className="text-3xl font-extrabold text-white">{resolvedCount}</span>
+            <span className="text-xs text-emerald-400 font-medium">Auto & Manual</span>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-card-dark p-5 rounded-xl border border-slate-200 dark:border-white/10 shadow-sm">
-          <div className="flex justify-between items-center text-slate-500 dark:text-slate-400 text-xs font-medium uppercase tracking-wider">
+        <div className="bg-[#131722] p-5 rounded-2xl border border-white/10 shadow-sm">
+          <div className="flex justify-between items-center text-slate-400 text-xs font-semibold uppercase tracking-wider">
             <span>Avg Detour Anomaly</span>
-            <AlertTriangle className="w-4 h-4 text-red-500" />
+            <AlertTriangle className="w-4 h-4 text-rose-400" />
           </div>
           <div className="mt-3 flex items-baseline gap-2">
-            <span className="text-3xl font-extrabold text-slate-900 dark:text-white">+33.5%</span>
-            <span className="text-xs text-red-600 font-medium">Above Corridor</span>
+            <span className="text-3xl font-extrabold text-white">+33.5%</span>
+            <span className="text-xs text-rose-400 font-medium">Above Corridor</span>
           </div>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white dark:bg-card-dark p-4 rounded-xl border border-slate-200 dark:border-white/10">
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 bg-[#131722] p-4 rounded-2xl border border-white/10 shadow-sm">
         <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto">
           {[
             { id: 'ALL', label: 'All Claims' },
@@ -308,13 +308,13 @@ export const DisputeAdjudicationDashboard: React.FC = () => {
             placeholder="Search trip, passenger, driver..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-white/5 border border-slate-200 dark:border-white/10 rounded-lg text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+            className="w-full pl-9 pr-3 py-1.5 text-xs bg-white/[0.03] border border-white/10 rounded-lg text-white placeholder-slate-500 focus:outline-none focus:ring-1 focus:ring-amber-500"
           />
         </div>
       </div>
 
       {/* Disputes Table */}
-      <div className="bg-white dark:bg-card-dark rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden shadow-sm">
+      <div className="bg-[#131722] rounded-2xl border border-white/10 overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm text-slate-600 dark:text-slate-300">
             <thead className="bg-slate-50 dark:bg-white/5 text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400 border-b border-slate-200 dark:border-white/10">
