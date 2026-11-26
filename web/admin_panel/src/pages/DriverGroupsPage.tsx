@@ -8,9 +8,6 @@ import {
   Card,
   CardHeader,
   CardContent,
-  CardActions,
-  Chip,
-  CircularProgress,
   IconButton,
   InputAdornment,
   Divider,
@@ -23,10 +20,12 @@ import {
   Refresh as RefreshIcon,
 } from '@mui/icons-material';
 import { DriverGroup } from '@/types/admin';
+import apiClient from '../services/apiClient';
 
 // Separate components
 import { DriverGroupsList } from '../components/drivers/DriverGroupsList';
 import { CreateDriverGroupModal } from '../components/drivers/CreateDriverGroupModal';
+import { DriverGroupDetailView } from '../components/drivers/DriverGroupDetailView';
 
 interface DriverGroupsResponse {
   data: DriverGroup[];
@@ -38,19 +37,26 @@ interface DriverGroupsResponse {
   };
 }
 
-const StatCard = ({ title, value, subtitle, icon: Icon }: any) => (
-  <Card sx={{ height: '100%' }}>
+const StatCard = ({ title, value, subtitle, icon: Icon, accentColor = '#F59E0B' }: any) => (
+  <Card sx={{
+    height: '100%',
+    bgcolor: '#131722',
+    border: '1px solid rgba(255, 255, 255, 0.08)',
+    borderRadius: 3,
+    color: 'white',
+    backdropFilter: 'blur(20px)'
+  }}>
     <CardHeader
       title={title}
-      titleTypographyProps={{ variant: 'subtitle2', color: 'text.secondary' }}
-      action={<Icon color="disabled" />}
+      titleTypographyProps={{ variant: 'caption', sx: { color: '#94a3b8', textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.05em' } }}
+      action={<Box sx={{ p: 1, borderRadius: 2, bgcolor: `${accentColor}15`, color: accentColor }}><Icon fontSize="small" /></Box>}
       sx={{ pb: 0 }}
     />
-    <CardContent>
-      <Typography variant="h4" component="div" fontWeight="bold">
+    <CardContent sx={{ pt: 1 }}>
+      <Typography variant="h4" component="div" fontWeight="800" sx={{ color: 'white' }}>
         {value}
       </Typography>
-      <Typography variant="caption" color="text.secondary">
+      <Typography variant="caption" sx={{ color: '#64748b' }}>
         {subtitle}
       </Typography>
     </CardContent>
@@ -62,6 +68,7 @@ export function DriverGroupsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState<DriverGroup | null>(null);
   const [pagination, setPagination] = useState({
     total: 0,
     page: 1,
@@ -72,18 +79,17 @@ export function DriverGroupsPage() {
   const fetchDriverGroups = async (page = 1, search = searchTerm) => {
     try {
       setLoading(true);
-      const params = new URLSearchParams({
-        page: page.toString(),
-        limit: '10',
-        ...(search && { search }),
+      const response = await apiClient.get('/admin/driver-groups', {
+        params: {
+          page: page.toString(),
+          limit: '10',
+          ...(search && { search }),
+        }
       });
-
-      const response = await fetch(`/api/admin/driver-groups?${params}`);
-      if (!response.ok) throw new Error('Failed to fetch groups');
-      
-      const data: DriverGroupsResponse = await response.json();
-      setGroups(data.data || []);
-      setPagination(data.pagination || { total: 0, page: 1, limit: 10, totalPages: 0 });
+      const data = response.data;
+      const groupsList = Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : [];
+      setGroups(groupsList);
+      setPagination(data?.pagination || { total: groupsList.length, page: 1, limit: 10, totalPages: 1 });
     } catch (error) {
       console.error('Failed to fetch driver groups:', error);
     } finally {
@@ -115,13 +121,32 @@ export function DriverGroupsPage() {
     totalSubgroups: groups.reduce((sum, group) => sum + (group._count?.subgroups || 0), 0),
   };
 
+  if (selectedGroup) {
+    return (
+      <Box sx={{ p: { xs: 2, md: 0 } }}>
+        <DriverGroupDetailView
+          group={selectedGroup}
+          onClose={() => setSelectedGroup(null)}
+          onRefresh={() => fetchDriverGroups()}
+        />
+      </Box>
+    );
+  }
+
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: { xs: 2, md: 0 } }}>
       {/* Header */}
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 4 }}>
         <Box>
-          <Typography variant="h4" fontWeight="bold">Driver Groups</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="h4" fontWeight="800" sx={{
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
+            WebkitBackgroundClip: 'text',
+            WebkitTextFillColor: 'transparent',
+            mb: 0.5
+          }}>
+            Driver Groups
+          </Typography>
+          <Typography variant="body2" sx={{ color: '#94a3b8' }}>
             Manage driver groups and hierarchical organization structure
           </Typography>
         </Box>
@@ -129,6 +154,21 @@ export function DriverGroupsPage() {
           variant="contained"
           startIcon={<PlusIcon />}
           onClick={handleCreateGroup}
+          sx={{
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
+            color: '#000000',
+            boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
+            fontWeight: 'bold',
+            px: 3,
+            py: 1.25,
+            borderRadius: 2,
+            textTransform: 'uppercase',
+            letterSpacing: '0.5px',
+            whiteSpace: 'nowrap',
+            '&:hover': {
+              background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)',
+            }
+          }}
         >
           Create Group
         </Button>
@@ -142,6 +182,7 @@ export function DriverGroupsPage() {
             value={stats.totalGroups}
             subtitle="Active driver groups"
             icon={BuildingIcon}
+            accentColor="#F59E0B"
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -150,6 +191,7 @@ export function DriverGroupsPage() {
             value={stats.totalDrivers}
             subtitle="Drivers in all groups"
             icon={UsersIcon}
+            accentColor="#10B981"
           />
         </Grid>
         <Grid item xs={12} md={4}>
@@ -158,22 +200,32 @@ export function DriverGroupsPage() {
             value={stats.totalSubgroups}
             subtitle="Nested groups"
             icon={BuildingIcon}
+            accentColor="#F59E0B"
           />
         </Grid>
       </Grid>
 
       {/* Search and List */}
-      <Card sx={{ mb: 4 }}>
+      <Card sx={{
+        mb: 4,
+        bgcolor: '#131722',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: 3,
+        color: 'white',
+        overflow: 'hidden'
+      }}>
         <CardHeader
           title="Management"
+          titleTypographyProps={{ variant: 'subtitle1', sx: { color: '#f8fafc', fontWeight: 600 } }}
           action={
-            <IconButton onClick={() => fetchDriverGroups()} disabled={loading}>
+            <IconButton onClick={() => fetchDriverGroups()} disabled={loading} sx={{ color: '#94a3b8' }}>
               <RefreshIcon />
             </IconButton>
           }
+          sx={{ bgcolor: 'rgba(255, 255, 255, 0.02)', py: 2, px: 3 }}
         />
-        <Divider />
-        <CardContent>
+        <Divider sx={{ borderColor: 'rgba(255, 255, 255, 0.06)' }} />
+        <CardContent sx={{ p: 3 }}>
           <TextField
             fullWidth
             variant="outlined"
@@ -185,9 +237,19 @@ export function DriverGroupsPage() {
             InputProps={{
               startAdornment: (
                 <InputAdornment position="start">
-                  <SearchIcon color="disabled" />
+                  <SearchIcon sx={{ color: '#94a3b8' }} />
                 </InputAdornment>
               ),
+              sx: {
+                bgcolor: 'rgba(255, 255, 255, 0.03)',
+                borderRadius: 2,
+                color: 'white',
+                border: '1px solid rgba(255, 255, 255, 0.08)',
+                '& input::placeholder': { color: '#64748b', opacity: 1 },
+                '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' },
+                '&.Mui-focused': { border: '1px solid #F59E0B' }
+              }
             }}
           />
 
@@ -195,6 +257,7 @@ export function DriverGroupsPage() {
             groups={groups}
             loading={loading}
             onRefresh={() => fetchDriverGroups()}
+            onView={(group) => setSelectedGroup(group)}
           />
         </CardContent>
       </Card>

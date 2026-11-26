@@ -104,7 +104,7 @@ class AdminService {
   getBIStats = this.analyticsService.getBIStats.bind(this.analyticsService);
   getHeatMapData = this.analyticsService.getHeatMapData.bind(this.analyticsService);
   getLiveDrivers = this.analyticsService.getLiveDrivers.bind(this.analyticsService);
-  getFraudAlerts = this.analyticsService.getFraudAlerts.bind(this.analyticsService);
+  getAnalyticsFraudAlerts = this.analyticsService.getFraudAlerts.bind(this.analyticsService);
   getCityKPIs = this.analyticsService.getCityKPIs.bind(this.analyticsService);
   runSimulation = this.analyticsService.runSimulation.bind(this.analyticsService);
 

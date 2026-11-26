@@ -152,15 +152,28 @@ export const AssignDriverToGroupModal = ({
   };
 
   return (
-    <Dialog open={isOpen} onClose={handleClose} fullWidth maxWidth="sm">
-      <DialogTitle>
+    <Dialog
+      open={isOpen}
+      onClose={handleClose}
+      fullWidth
+      maxWidth="sm"
+      PaperProps={{
+        sx: {
+          bgcolor: '#131722',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          color: 'white',
+          borderRadius: 3
+        }
+      }}
+    >
+      <DialogTitle sx={{ color: 'white', fontWeight: 600 }}>
         {isGroupToDriverMode
           ? `Add Drivers to "${groupName}"`
           : `Assign ${driverName} to Groups`}
       </DialogTitle>
-      <DialogContent dividers>
+      <DialogContent dividers sx={{ borderColor: 'rgba(255, 255, 255, 0.08)' }}>
         {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
+          <Alert severity="error" sx={{ mb: 2, bgcolor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
             {error}
           </Alert>
         )}
@@ -174,9 +187,19 @@ export const AssignDriverToGroupModal = ({
           onChange={(e) => setSearchQuery(e.target.value)}
           InputProps={{
             startAdornment: (
-              <SearchIcon fontSize="small" sx={{ mr: 1, color: 'text.secondary' }} />
+              <SearchIcon fontSize="small" sx={{ mr: 1, color: '#94a3b8' }} />
             ),
-            endAdornment: isLoading ? <CircularProgress size={16} /> : null,
+            endAdornment: isLoading ? <CircularProgress size={16} sx={{ color: '#F59E0B' }} /> : null,
+            sx: {
+              bgcolor: 'rgba(255, 255, 255, 0.03)',
+              borderRadius: 2,
+              color: 'white',
+              border: '1px solid rgba(255, 255, 255, 0.08)',
+              '& input::placeholder': { color: '#64748b', opacity: 1 },
+              '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
+              '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.05)' },
+              '&.Mui-focused': { border: '1px solid #F59E0B' }
+            }
           }}
           sx={{ mb: 2 }}
         />
@@ -188,30 +211,33 @@ export const AssignDriverToGroupModal = ({
                 dense
                 button
                 onClick={() => toggleItem(item.id)}
-                sx={{ borderRadius: 1 }}
+                sx={{ borderRadius: 1.5, '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.04)' } }}
               >
                 <Checkbox
                   edge="start"
                   checked={selectedItems.includes(item.id)}
                   tabIndex={-1}
                   disableRipple
+                  sx={{ color: '#64748b', '&.Mui-checked': { color: '#F59E0B' } }}
                 />
                 <ListItemText
-                  primary={item.name}
+                  primary={<Typography variant="body2" sx={{ color: '#f8fafc', fontWeight: 500 }}>{item.name}</Typography>}
                   secondary={
-                    isGroupToDriverMode
-                      ? item.phone ?? item.licenseNumber ?? 'Driver'
-                      : `${item.memberCount} members • ${item.type}`
+                    <Typography variant="caption" sx={{ color: '#94a3b8' }}>
+                      {isGroupToDriverMode
+                        ? item.phone ?? item.licenseNumber ?? 'Driver'
+                        : `${item.memberCount} members • ${item.type}`}
+                    </Typography>
                   }
                 />
               </ListItem>
-              <Divider component="li" />
+              <Divider component="li" sx={{ borderColor: 'rgba(255, 255, 255, 0.04)' }} />
             </React.Fragment>
           ))}
 
           {!isLoading && listItems.length === 0 && (
             <Box sx={{ py: 4, textAlign: 'center' }}>
-              <Typography variant="body2" color="text.secondary">
+              <Typography variant="body2" sx={{ color: '#64748b' }}>
                 {isGroupToDriverMode && !searchQuery.trim()
                   ? 'Type a name or phone number to search for drivers.'
                   : 'No results found.'}
@@ -220,14 +246,23 @@ export const AssignDriverToGroupModal = ({
           )}
         </List>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleClose} disabled={isSubmitting}>
+      <DialogActions sx={{ px: 3, py: 2, borderColor: 'rgba(255, 255, 255, 0.08)', borderTop: '1px solid rgba(255, 255, 255, 0.06)' }}>
+        <Button onClick={handleClose} disabled={isSubmitting} sx={{ color: '#94a3b8' }}>
           Cancel
         </Button>
         <Button
           onClick={handleSave}
           variant="contained"
           disabled={isSubmitting || selectedItems.length === 0}
+          sx={{
+            background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
+            color: '#000000',
+            fontWeight: 'bold',
+            borderRadius: 2,
+            px: 2.5,
+            '&:hover': { background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)' },
+            '&.Mui-disabled': { bgcolor: 'rgba(255, 255, 255, 0.1)', color: '#64748b' }
+          }}
         >
           {isSubmitting ? 'Saving...' : `Save (${selectedItems.length})`}
         </Button>

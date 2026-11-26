@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaSearch, FaRobot, FaUser } from 'react-icons/fa';
+import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaRobot, FaUser } from 'react-icons/fa';
+import { Search } from 'lucide-react';
+import apiClient from '../services/apiClient';
 
 // Mock Interfaces based on Area 3 specs
 interface DriverDocument {
@@ -45,34 +47,33 @@ export const DriverApprovalDashboard: React.FC = () => {
   useEffect(() => {
     const fetchApps = async () => {
       try {
-        const res = await fetch('/api/admin/approvals/registrations');
-        const json = await res.json();
-        setRegistrations(json.data || []);
+        const res = await apiClient.get('/admin/approvals/registrations');
+        const data = res.data;
+        setRegistrations(Array.isArray(data?.data) ? data.data : Array.isArray(data) ? data : []);
       } catch (err) {
-        console.error('Failed to load apps');
+        console.error('Failed to load apps:', err);
       }
     };
     fetchApps();
   }, []);
 
   const getScoreColor = (score: number) => {
-    if (score >= 90) return 'text-green-600 bg-green-100';
-    if (score >= 70) return 'text-amber-600 bg-amber-100';
-    return 'text-red-600 bg-red-100';
+    if (score >= 90) return 'text-emerald-400 bg-emerald-500/15 border border-emerald-500/30';
+    if (score >= 70) return 'text-amber-400 bg-amber-500/15 border border-amber-500/30';
+    return 'text-rose-400 bg-rose-500/15 border border-rose-500/30';
   };
 
   const getStatusBadge = (status: string, score: number) => {
-    if (status === 'APPROVED') return <span className="px-2 py-1 bg-green-100 text-green-700 rounded text-xs font-bold">APPROVED</span>;
-    if (status === 'REJECTED') return <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold">REJECTED</span>;
-    if (score >= 90) return <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-APPROVE READY</span>;
-    if (score >= 70) return <span className="px-2 py-1 bg-amber-100 text-amber-700 rounded text-xs font-bold flex items-center gap-1"><FaUser /> MANUAL REVIEW</span>;
-    return <span className="px-2 py-1 bg-red-100 text-red-700 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-REJECT</span>;
+    if (status === 'APPROVED') return <span className="px-2 py-0.5 bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 rounded text-xs font-bold">APPROVED</span>;
+    if (status === 'REJECTED') return <span className="px-2 py-0.5 bg-rose-500/15 text-rose-400 border border-rose-500/30 rounded text-xs font-bold">REJECTED</span>;
+    if (score >= 90) return <span className="px-2 py-0.5 bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-APPROVE READY</span>;
+    if (score >= 70) return <span className="px-2 py-0.5 bg-amber-500/15 text-amber-400 border border-amber-500/30 rounded text-xs font-bold flex items-center gap-1"><FaUser /> MANUAL REVIEW</span>;
+    return <span className="px-2 py-0.5 bg-rose-500/15 text-rose-400 border border-rose-500/30 rounded text-xs font-bold flex items-center gap-1"><FaRobot /> AUTO-REJECT</span>;
   };
 
   const handleApproveSubmit = () => {
     if (!selectedDriver || !selectedCategory) return;
     
-    // API call: POST /admin/drivers/{id}/approve { category: selectedCategory }
     setRegistrations(prev => prev.map(d => 
       d.id === selectedDriver.id ? { ...d, status: 'APPROVED', vehicle: { ...d.vehicle, serviceCategory: selectedCategory } } : d
     ));
@@ -84,7 +85,6 @@ export const DriverApprovalDashboard: React.FC = () => {
   const handleRejectSubmit = () => {
     if (!selectedDriver || !rejectionReason.trim()) return;
 
-    // API call: POST /admin/drivers/{id}/reject { reason: rejectionReason }
     setRegistrations(prev => prev.map(d => 
       d.id === selectedDriver.id ? { ...d, status: 'REJECTED' } : d
     ));
@@ -100,21 +100,21 @@ export const DriverApprovalDashboard: React.FC = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-800">
+    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col bg-[#0B0E17] border-t border-white/10">
       <div className="flex-1 flex overflow-hidden">
         
         {/* Left Sidebar - List */}
-        <div className="w-1/3 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Pending Registrations</h2>
+        <div className="w-1/3 bg-[#131722] border-r border-white/10 flex flex-col">
+          <div className="p-4 border-b border-white/10">
+            <h2 className="text-xl font-bold text-white mb-4">Pending Registrations</h2>
             <div className="relative">
-              <FaSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+              <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
                 type="text" 
                 placeholder="Search name, ID, or plate..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-cyan-500 dark:bg-gray-700 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-white/10 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white/[0.03] text-white placeholder-slate-500 text-sm"
               />
             </div>
           </div>
@@ -124,75 +124,74 @@ export const DriverApprovalDashboard: React.FC = () => {
               <div
                 key={driver.id}
                 onClick={() => setSelectedDriver(driver)}
-                className={`p-4 border-b border-gray-100 dark:border-gray-700 cursor-pointer transition-colors ${selectedDriver?.id === driver.id ? 'bg-cyan-50 dark:bg-cyan-900/30 border-l-4 border-l-cyan-500' : 'hover:bg-gray-50 dark:hover:bg-gray-750 border-l-4 border-l-transparent'}`}
+                className={`p-4 border-b border-white/[0.04] cursor-pointer transition-colors ${selectedDriver?.id === driver.id ? 'bg-amber-500/10 border-l-4 border-l-amber-500' : 'hover:bg-white/[0.03] border-l-4 border-l-transparent'}`}
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="font-semibold text-gray-900 dark:text-white">{driver.name}</h3>
-                    <p className="text-sm text-gray-500 font-mono">{driver.id}</p>
+                    <h3 className="font-semibold text-white">{driver.name}</h3>
+                    <p className="text-xs text-slate-400 font-mono mt-0.5">{driver.id}</p>
                   </div>
-                  <div className={`px-2 py-1 rounded font-bold text-sm ${getScoreColor(driver.overallAiScore)}`}>
+                  <div className={`px-2 py-0.5 rounded font-bold text-xs ${getScoreColor(driver.overallAiScore)}`}>
                     {driver.overallAiScore}% AI
                   </div>
                 </div>
                 <div className="flex justify-between items-center mt-3">
                   {getStatusBadge(driver.status, driver.overallAiScore)}
-                  <span className="text-xs text-gray-400">{new Date(driver.appliedAt).toLocaleDateString()}</span>
+                  <span className="text-xs text-slate-500">{new Date(driver.appliedAt).toLocaleDateString()}</span>
                 </div>
               </div>
             ))}
             {filteredRegistrations.length === 0 && (
-              <div className="p-8 text-center text-gray-500">No registrations found.</div>
+              <div className="p-8 text-center text-slate-500 text-sm">No registrations found.</div>
             )}
           </div>
         </div>
 
         {/* Right Content - Details */}
-        <div className="w-2/3 bg-gray-50 dark:bg-gray-900 flex flex-col overflow-y-auto">
+        <div className="w-2/3 bg-[#0B0E17] flex flex-col overflow-y-auto">
           {selectedDriver ? (
             <div className="p-8 max-w-4xl mx-auto w-full">
               
               {/* Header */}
-              <div className="flex justify-between items-start mb-8 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700">
+              <div className="flex justify-between items-start mb-8 bg-[#131722] p-6 rounded-2xl shadow-sm border border-white/10">
                 <div>
-                  <h1 className="text-3xl font-bold text-gray-900 dark:text-white">{selectedDriver.name}</h1>
-                  <div className="flex items-center gap-4 mt-2 text-gray-500">
+                  <h1 className="text-2xl font-bold text-white">{selectedDriver.name}</h1>
+                  <div className="flex items-center gap-3 mt-2 text-slate-400 text-sm">
                     <span>{selectedDriver.email}</span>
                     <span>•</span>
                     <span>{selectedDriver.phone}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className={`inline-flex items-center justify-center w-16 h-16 rounded-full text-2xl font-bold ${getScoreColor(selectedDriver.overallAiScore)}`}>
+                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl text-xl font-bold ${getScoreColor(selectedDriver.overallAiScore)}`}>
                     {selectedDriver.overallAiScore}
                   </div>
-                  <div className="text-sm font-semibold text-gray-500 mt-2 uppercase tracking-wide">Overall AI Match</div>
+                  <div className="text-xs font-semibold text-slate-500 mt-2 uppercase tracking-wider">Overall AI Match</div>
                 </div>
               </div>
 
               {/* Documents Grid */}
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Identity & Documents</h3>
+              <h3 className="text-lg font-bold text-white mb-4">Identity & Documents</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
                 {selectedDriver.documents.map((doc, idx) => (
-                  <div key={idx} className="bg-white dark:bg-gray-800 rounded-xl overflow-hidden shadow-sm border border-gray-200 dark:border-gray-700">
-                    <div className="h-40 bg-gray-200 dark:bg-gray-700 relative group cursor-pointer flex items-center justify-center text-gray-400">
-                       {/* Mock placeholder for image */}
-                       <span className="text-sm">Click to view doc</span>
+                  <div key={idx} className="bg-[#131722] rounded-2xl overflow-hidden shadow-sm border border-white/10">
+                    <div className="h-36 bg-white/[0.02] relative group cursor-pointer flex items-center justify-center text-slate-500 hover:text-amber-500 transition-colors">
+                       <span className="text-xs font-medium">Click to view document</span>
                     </div>
-                    <div className="p-4 border-t border-gray-200 dark:border-gray-700">
+                    <div className="p-4 border-t border-white/10">
                       <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold text-gray-900 dark:text-white">{doc.name}</span>
+                        <span className="font-semibold text-white text-sm">{doc.name}</span>
                         {doc.aiScore && (
                           <span className={`px-2 py-0.5 rounded text-xs font-bold ${getScoreColor(doc.aiScore)}`}>
                             {doc.aiScore}%
                           </span>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 text-sm">
-                        {doc.status === 'VERIFIED' && <FaCheckCircle className="text-green-500" />}
-                        {doc.status === 'PENDING' && <FaExclamationTriangle className="text-amber-500" />}
-                        {doc.status === 'REJECTED' && <FaTimesCircle className="text-red-500" />}
-                        <span className="text-gray-600 dark:text-gray-400">{doc.status}</span>
+                      <div className="flex items-center gap-2 text-xs">
+                        {doc.status === 'VERIFIED' && <FaCheckCircle className="text-emerald-400" />}
+                        {doc.status === 'PENDING' && <FaExclamationTriangle className="text-amber-400" />}
+                        {doc.status === 'REJECTED' && <FaTimesCircle className="text-rose-400" />}
+                        <span className="text-slate-400">{doc.status}</span>
                       </div>
                     </div>
                   </div>
@@ -200,37 +199,37 @@ export const DriverApprovalDashboard: React.FC = () => {
               </div>
 
               {/* Vehicle Info */}
-              <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Vehicle Details</h3>
-              <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 mb-8 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-white mb-4">Vehicle Details</h3>
+              <div className="bg-[#131722] rounded-2xl p-6 shadow-sm border border-white/10 mb-8 flex items-center justify-between">
                 <div>
-                  <h4 className="text-xl font-bold text-gray-900 dark:text-white">{selectedDriver.vehicle.make} {selectedDriver.vehicle.model}</h4>
-                  <div className="flex items-center gap-4 mt-2">
-                    <span className="font-mono bg-gray-100 dark:bg-gray-700 px-3 py-1 rounded text-gray-800 dark:text-gray-200 font-bold tracking-widest">{selectedDriver.vehicle.plate}</span>
+                  <h4 className="text-xl font-bold text-white">{selectedDriver.vehicle.make} {selectedDriver.vehicle.model}</h4>
+                  <div className="flex items-center gap-3 mt-2">
+                    <span className="font-mono bg-white/[0.05] border border-white/10 px-3 py-1 rounded-lg text-amber-400 font-bold tracking-widest text-sm">{selectedDriver.vehicle.plate}</span>
                     {selectedDriver.vehicle.allowCoDriver && (
-                      <span className="bg-amber-100 text-amber-800 px-2 py-1 rounded text-xs font-semibold">CO-DRIVER ALLOWED</span>
+                      <span className="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded text-xs font-bold">CO-DRIVER ALLOWED</span>
                     )}
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-sm text-gray-500 mb-1">Vehicle AI Verification</div>
+                  <div className="text-xs text-slate-500 mb-1">Vehicle AI Verification</div>
                   {selectedDriver.vehicle.aiVerified 
-                    ? <span className="text-green-600 font-bold flex items-center gap-1 justify-end"><FaCheckCircle /> Verified</span>
-                    : <span className="text-red-600 font-bold flex items-center gap-1 justify-end"><FaTimesCircle /> Failed/Pending</span>}
+                    ? <span className="text-emerald-400 font-bold text-sm flex items-center gap-1.5 justify-end"><FaCheckCircle /> Verified</span>
+                    : <span className="text-rose-400 font-bold text-sm flex items-center gap-1.5 justify-end"><FaTimesCircle /> Failed/Pending</span>}
                 </div>
               </div>
 
               {/* Action Bar */}
               {selectedDriver.status !== 'APPROVED' && selectedDriver.status !== 'REJECTED' && (
-                <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700 flex gap-4">
+                <div className="bg-[#131722] rounded-2xl p-6 shadow-sm border border-white/10 flex gap-4">
                   <button
                     onClick={() => setShowApproveModal(true)}
-                    className="flex-1 bg-green-600 hover:bg-green-700 text-white font-bold py-4 rounded-xl transition-colors text-lg flex justify-center items-center gap-2"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center gap-2 shadow-lg shadow-emerald-900/20"
                   >
                     <FaCheckCircle /> Approve Registration
                   </button>
                   <button
                     onClick={() => setShowRejectModal(true)}
-                    className="flex-1 bg-red-600 hover:bg-red-700 text-white font-bold py-4 rounded-xl transition-colors text-lg flex justify-center items-center gap-2"
+                    className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center gap-2 shadow-lg shadow-rose-900/20"
                   >
                     <FaTimesCircle /> Reject & Require Action
                   </button>
@@ -239,9 +238,9 @@ export const DriverApprovalDashboard: React.FC = () => {
 
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center text-gray-400">
-               <FaUser className="text-6xl mb-4 text-gray-300 dark:text-gray-700" />
-               <p className="text-xl font-medium text-gray-500">Select an application to review</p>
+            <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
+               <FaUser className="text-5xl mb-4 text-slate-700" />
+               <p className="text-lg font-medium text-slate-400">Select an application to review</p>
             </div>
           )}
         </div>
@@ -249,28 +248,28 @@ export const DriverApprovalDashboard: React.FC = () => {
 
       {/* Modals */}
       {showApproveModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-200 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Assign Service Category</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#131722] p-8 rounded-2xl w-full max-w-md shadow-2xl border border-white/10">
+            <h2 className="text-xl font-bold text-white mb-2">Assign Service Category</h2>
+            <p className="text-slate-400 mb-6 text-sm">
               You are approving {selectedDriver?.name}. As an admin, you must strictly assign the vehicle category before completing approval.
             </p>
             
-            <div className="space-y-4 mb-8">
+            <div className="space-y-3 mb-8">
               {['Standard', 'PSV (Matatu)', 'Premium', 'Boda Boda', 'Delivery'].map(cat => (
-                <label key={cat} className={`flex items-center p-4 border rounded-xl cursor-pointer transition-colors ${selectedCategory === cat ? 'bg-cyan-50 border-cyan-500 dark:bg-cyan-900/20' : 'border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-750'}`}>
-                  <input type="radio" name="category" value={cat} checked={selectedCategory === cat} onChange={() => setSelectedCategory(cat)} className="h-5 w-5 text-cyan-600" />
-                  <span className="ml-3 font-medium text-gray-900 dark:text-white">{cat}</span>
+                <label key={cat} className={`flex items-center p-3.5 border rounded-xl cursor-pointer transition-colors ${selectedCategory === cat ? 'bg-amber-500/10 border-amber-500 text-white' : 'border-white/10 hover:bg-white/[0.03] text-slate-300'}`}>
+                  <input type="radio" name="category" value={cat} checked={selectedCategory === cat} onChange={() => setSelectedCategory(cat)} className="h-4 w-4 text-amber-500 accent-amber-500" />
+                  <span className="ml-3 font-semibold text-sm">{cat}</span>
                 </label>
               ))}
             </div>
 
             <div className="flex gap-4">
-              <button onClick={() => setShowApproveModal(false)} className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-xl flex-1">Cancel</button>
+              <button onClick={() => setShowApproveModal(false)} className="px-5 py-2.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-semibold rounded-xl flex-1 text-sm transition-colors">Cancel</button>
               <button 
                 onClick={handleApproveSubmit} 
                 disabled={!selectedCategory}
-                className="px-6 py-3 bg-green-600 text-white font-bold rounded-xl flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black font-bold rounded-xl flex-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md shadow-amber-500/20"
               >
                 Confirm Approval
               </button>
@@ -280,27 +279,27 @@ export const DriverApprovalDashboard: React.FC = () => {
       )}
 
       {showRejectModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in">
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-2xl w-full max-w-md shadow-2xl border border-gray-200 dark:border-gray-700">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2 text-red-600">Reject Application</h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 text-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#131722] p-8 rounded-2xl w-full max-w-md shadow-2xl border border-white/10">
+            <h2 className="text-xl font-bold text-rose-400 mb-2">Reject Application</h2>
+            <p className="text-slate-400 mb-6 text-sm">
               Please specify the precise reason for rejecting {selectedDriver?.name}'s application. This will be sent directly to the driver to request corrections.
             </p>
             
             <textarea
               rows={4}
               placeholder="e.g. The driving license photo is blurred and unreadable. Please upload a clear photo."
-              className="w-full p-4 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-red-500 mb-8 dark:bg-gray-700 dark:text-white resize-none"
+              className="w-full p-4 border border-white/10 rounded-xl focus:ring-2 focus:ring-rose-500 focus:outline-none mb-6 bg-white/[0.03] text-white placeholder-slate-500 resize-none text-sm"
               value={rejectionReason}
               onChange={(e) => setRejectionReason(e.target.value)}
             />
 
             <div className="flex gap-4">
-              <button onClick={() => {setShowRejectModal(false); setRejectionReason('');}} className="px-6 py-3 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 font-bold rounded-xl flex-1">Cancel</button>
+              <button onClick={() => {setShowRejectModal(false); setRejectionReason('');}} className="px-5 py-2.5 bg-white/[0.05] hover:bg-white/[0.1] text-slate-300 font-semibold rounded-xl flex-1 text-sm transition-colors">Cancel</button>
               <button 
                 onClick={handleRejectSubmit} 
                 disabled={!rejectionReason.trim()}
-                className="px-6 py-3 bg-red-600 text-white font-bold rounded-xl flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-5 py-2.5 bg-rose-600 hover:bg-rose-500 text-white font-bold rounded-xl flex-1 text-sm disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
                 Confirm Rejection
               </button>
