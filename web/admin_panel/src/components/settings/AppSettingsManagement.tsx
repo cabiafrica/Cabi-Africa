@@ -466,11 +466,11 @@ export function AppSettingsManagement() {
         </div>
 
         {/* Global Save Controls */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={loadAllSettings}
             disabled={isLoading || isSaving}
-            className="flex items-center gap-2 px-4 py-2.5 rounded-lg text-xs font-semibold border border-slate-300 dark:border-white/10 hover:bg-slate-100 dark:hover:bg-white/5 text-slate-700 dark:text-slate-300 transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-medium border border-white/10 hover:bg-white/10 text-slate-300 bg-white/5 transition-colors disabled:opacity-50 active:scale-95"
             title="Reload settings from database"
           >
             <RotateCcw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -480,16 +480,16 @@ export function AppSettingsManagement() {
           <button
             onClick={handleSave}
             disabled={!isDirty || isSaving}
-            className={`flex items-center gap-2 px-6 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all ${
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold transition-all ${
               isDirty && !isSaving
-                ? 'bg-amber-500 hover:bg-amber-400 text-black shadow-lg shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98]'
-                : 'bg-slate-200 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black shadow-sm shadow-amber-500/20 active:scale-95'
+                : 'bg-white/5 border border-white/10 text-slate-500 cursor-not-allowed'
             }`}
           >
             {isSaving ? (
-              <div className="w-4 h-4 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              <div className="w-3.5 h-3.5 border-2 border-black border-t-transparent rounded-full animate-spin" />
             ) : (
-              <Save className="w-4 h-4" />
+              <Save className="w-3.5 h-3.5" />
             )}
             <span>{isSaving ? 'Saving…' : isDirty ? `Save (${dirtyKeys.length}) Changes` : 'All Saved'}</span>
           </button>

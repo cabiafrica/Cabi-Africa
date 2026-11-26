@@ -174,9 +174,9 @@ export const SosPenaltyConfig: React.FC = () => {
           <button
             onClick={handleSave}
             disabled={saveStatus !== 'idle'}
-            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold shadow-md transition-all transform active:scale-95 ${saveStatus === 'saved'
-              ? 'bg-green-600 text-white'
-              : 'bg-amber-500 hover:bg-amber-600 text-black'
+            className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all ${saveStatus === 'saved'
+              ? 'bg-emerald-600 text-white'
+              : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black disabled:opacity-50'
               }`}
           >
             {saveStatus === 'saving' ? 'Saving Rule...' : saveStatus === 'saved' ? 'Saved' : 'Save Configuration'}

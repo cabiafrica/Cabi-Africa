@@ -67,7 +67,7 @@ export const SupportTicketManagement: React.FC = () => {
                         />
                         <button
                             onClick={handleAddMessage}
-                            className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2 rounded-lg font-medium flex items-center gap-2 transition-colors"
+                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold flex items-center gap-1.5 transition-all active:scale-95 shadow-sm shadow-amber-500/20"
                         >
                             <Add fontSize="small" />
                             Add
@@ -110,9 +110,9 @@ export const SupportTicketManagement: React.FC = () => {
                 </div>
                 <button
                     onClick={() => setShowSavedMessages(true)}
-                    className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-card-dark text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors shadow-sm font-medium"
+                    className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 rounded text-xs font-medium transition-colors shadow-sm active:scale-95"
                 >
-                    <Message fontSize="small" className="text-amber-500" />
+                    <Message fontSize="small" className="text-amber-400" />
                     Saved Messages
                 </button>
             </div>

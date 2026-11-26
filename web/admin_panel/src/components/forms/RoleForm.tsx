@@ -86,19 +86,19 @@ export const RoleForm: React.FC<Props> = ({ role, onSave, onCancel }) => {
           <p className="text-xs text-slate-400 mt-2">Select the permissions that users with this role should have by default.</p>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-white/10">
+        <div className="flex justify-end gap-2.5 pt-6 border-t border-white/10">
           <button
             type="button"
             onClick={onCancel}
             disabled={isLoading}
-            className="bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 px-6 py-2.5 rounded font-medium transition-colors text-sm"
+            className="bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10 px-3.5 py-1.5 rounded font-medium transition-colors text-xs"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={isLoading}
-            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-6 py-2.5 rounded font-bold transition-all shadow-md shadow-amber-500/20 disabled:opacity-50 text-sm"
+            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded font-semibold transition-all shadow-sm shadow-amber-500/20 disabled:opacity-50 text-xs active:scale-95"
           >
             {isLoading ? 'Saving...' : 'Save Role'}
           </button>

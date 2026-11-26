@@ -116,9 +116,9 @@ export const BulkMessaging: React.FC = () => {
                             <button
                                 onClick={handleSend}
                                 disabled={sending || success || !subject || !body}
-                                className={`w-full flex justify-center items-center gap-2 py-3 px-6 rounded-lg shadow-md text-sm font-bold text-white transition-all transform active:scale-[0.98] ${success
-                                        ? 'bg-green-600 hover:bg-green-700'
-                                        : 'bg-amber-600 hover:bg-amber-700 disabled:opacity-50 disabled:cursor-not-allowed'
+                                className={`w-full flex justify-center items-center gap-1.5 py-2 px-4 rounded text-xs font-semibold tracking-wide transition-all active:scale-95 shadow-sm shadow-amber-500/20 ${success
+                                        ? 'bg-emerald-600 text-white'
+                                        : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black disabled:opacity-50 disabled:cursor-not-allowed'
                                     }`}
                             >
                                 {sending ? (

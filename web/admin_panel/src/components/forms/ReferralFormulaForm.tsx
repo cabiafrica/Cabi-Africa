@@ -104,7 +104,7 @@ export function ReferralFormulaForm() {
 
       <div className="flex justify-between items-center pt-5 border-t border-white/10">
         <p className={`text-sm font-medium ${total > 100 ? 'text-rose-400' : 'text-slate-300'}`}>Total: {total.toFixed(2)}%</p>
-        <button type="submit" disabled={isLoading || total > 100} className="rounded bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-2.5 px-6 text-sm font-bold shadow-md shadow-amber-500/20 disabled:opacity-50 transition-all">
+        <button type="submit" disabled={isLoading || total > 100} className="rounded bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-1.5 px-3.5 text-xs font-semibold shadow-sm shadow-amber-500/20 disabled:opacity-50 transition-all active:scale-95">
           {isLoading ? 'Saving...' : 'Save Configuration'}
         </button>
       </div>

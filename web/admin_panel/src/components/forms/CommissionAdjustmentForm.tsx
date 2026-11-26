@@ -139,7 +139,7 @@ export function CommissionAdjustmentForm() {
       </div>
 
       <div className="flex justify-end pt-5 border-t border-white/10">
-        <button type="submit" disabled={!selectedDriver || isSubmitting} className="rounded bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-2.5 px-6 text-sm font-bold shadow-md shadow-amber-500/20 disabled:opacity-50 transition-all">
+        <button type="submit" disabled={!selectedDriver || isSubmitting} className="rounded bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black py-1.5 px-3.5 text-xs font-semibold shadow-sm shadow-amber-500/20 disabled:opacity-50 transition-all active:scale-95">
           {isSubmitting ? 'Creating...' : 'Create Adjustment'}
         </button>
       </div>

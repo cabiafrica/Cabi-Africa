@@ -211,9 +211,9 @@ export const GamificationManagement: React.FC = () => {
                 <button
                     onClick={handleSave}
                     disabled={loading}
-                    className={`flex items-center gap-2 ${saveSuccess ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black'} disabled:opacity-50 px-6 py-2.5 rounded font-bold shadow-lg shadow-amber-500/20 transition-transform hover:scale-105 active:scale-95`}
+                    className={`flex items-center gap-1.5 ${saveSuccess ? 'bg-emerald-600 text-white' : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black'} disabled:opacity-50 px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 transition-all active:scale-95`}
                 >
-                    {loading ? <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : saveSuccess ? <CheckCircle /> : <Save />}
+                    {loading ? <div className="w-3.5 h-3.5 border-2 border-black/30 border-t-black rounded-full animate-spin" /> : saveSuccess ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
                     {saveSuccess ? 'Configuration Saved!' : 'Save Configuration'}
                 </button>
             </div>
@@ -568,8 +568,8 @@ export const GamificationManagement: React.FC = () => {
                             </div>
 
                             <div className="flex justify-end">
-                                <button className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-2.5 rounded-lg font-bold">
-                                    <Save />
+                                <button onClick={handleSave} className="flex items-center gap-1.5 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all">
+                                    <Save fontSize="small" />
                                     Sync to Database
                                 </button>
                             </div>

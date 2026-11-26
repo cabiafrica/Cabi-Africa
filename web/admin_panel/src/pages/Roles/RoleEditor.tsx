@@ -141,18 +141,17 @@ const RoleEditor: React.FC = () => {
                             </p>
                         </div>
                     </div>
-                    <div className="flex gap-3">
-                        <Button
-                            variant="outlined"
+                    <div className="flex gap-2.5">
+                        <button
+                            type="button"
                             onClick={() => navigate('/roles')}
-                            color="inherit"
-                            className="text-slate-600 dark:text-slate-300 border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700"
+                            className="bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded text-xs font-medium transition-colors"
                         >
                             Cancel
-                        </Button>
+                        </button>
                         <button
                             type="submit"
-                            className="bg-brand-yellow hover:bg-brand-yellowHover text-black px-6 py-2 rounded-lg font-bold shadow-sm active:scale-95 transition-all flex items-center gap-2"
+                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5"
                         >
                             <SaveIcon fontSize="small" />
                             Save Configuration

@@ -127,11 +127,11 @@ export const PromotionalConfig: React.FC = () => {
         <button
           onClick={handleSave}
           disabled={saveStatus !== 'idle' || !isValidSplit}
-          className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium shadow-sm transition-all ${saveStatus === 'saved'
-              ? 'bg-green-600 text-white'
+          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all whitespace-nowrap shrink-0 ${saveStatus === 'saved'
+              ? 'bg-emerald-600 text-white'
               : !isValidSplit
-                ? 'bg-slate-300 dark:bg-slate-700 text-slate-500 cursor-not-allowed'
-                : 'bg-amber-500 hover:bg-amber-600 text-black'
+                ? 'bg-white/5 text-slate-500 border border-white/10 cursor-not-allowed'
+                : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black'
             }`}
         >
           {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved Successfully' : 'Save Campaign'}

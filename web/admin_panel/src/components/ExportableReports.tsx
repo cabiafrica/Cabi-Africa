@@ -42,7 +42,7 @@ export const ExportableReports: React.FC = () => {
     switch (type) {
       case 'FINANCIAL_SUMMARY': return <ReceiptLong className="text-green-600 dark:text-green-400" />;
       case 'DRIVER_PERFORMANCE': return <Person className="text-amber-600 dark:text-amber-400" />;
-      case 'TRIP_LOGS': return <TableChart className="text-cyan-600 dark:text-cyan-400" />;
+      case 'TRIP_LOGS': return <TableChart className="text-amber-400" />;
     }
   };
 
@@ -147,7 +147,7 @@ export const ExportableReports: React.FC = () => {
             <button
               onClick={handleDownload}
               disabled={isDownloading}
-              className="w-full py-3 bg-amber-500 hover:bg-amber-600 text-black rounded-lg font-bold shadow-md transition-all active:scale-[0.98] disabled:opacity-70 disabled:cursor-wait flex justify-center items-center gap-2"
+              className="w-full py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black rounded text-xs font-bold shadow-sm shadow-amber-500/20 transition-all active:scale-95 disabled:opacity-50 flex justify-center items-center gap-1.5"
             >
               {isDownloading ? (
                 <>

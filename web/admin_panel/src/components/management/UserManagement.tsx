@@ -101,13 +101,13 @@ export const UserManagement: React.FC = () => {
           sx={{
             background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',
             color: '#000000',
-            boxShadow: '0 4px 14px 0 rgba(245, 158, 11, 0.25)',
-            fontWeight: 'bold',
-            px: 3,
-            py: 1.25,
-            borderRadius: 2,
-            textTransform: 'uppercase',
-            letterSpacing: '0.5px',
+            boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
+            fontWeight: 700,
+            px: 2,
+            py: 0.75,
+            borderRadius: 0.75,
+            fontSize: '0.8125rem',
+            textTransform: 'none',
             '&:hover': {
               background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)',
             }

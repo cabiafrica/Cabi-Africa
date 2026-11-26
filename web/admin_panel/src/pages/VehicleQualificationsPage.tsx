@@ -195,14 +195,16 @@ export const VehicleQualificationsPage: React.FC = () => {
               startIcon={<AddIcon />}
               onClick={handleOpenNew}
               sx={{ 
-                bgcolor: '#FFD700', 
+                background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)', 
                 color: 'black', 
-                fontWeight: 800, 
-                px: 4,
-                py: 1.5,
-                borderRadius: 3,
-                boxShadow: '0 10px 20px rgba(255,215,0,0.2)',
-                '&:hover': { bgcolor: '#E6C200' } 
+                fontWeight: 700, 
+                px: 2,
+                py: 0.75,
+                borderRadius: 0.75,
+                fontSize: '0.8125rem',
+                textTransform: 'none',
+                boxShadow: '0 2px 8px rgba(245,158,11,0.25)',
+                '&:hover': { background: 'linear-gradient(45deg, #D97706 30%, #B45309 90%)' } 
               }}
             >
               Add Qualification

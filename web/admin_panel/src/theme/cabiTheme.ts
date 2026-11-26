@@ -147,6 +147,10 @@ export const cabiTheme = createTheme({
           borderRadius: 3,
           textTransform: 'none',
           fontWeight: 600,
+          fontSize: '0.8125rem',
+          padding: '5px 14px',
+          fontFamily: ['Inter', 'system-ui', '-apple-system', 'sans-serif'].join(','),
+          boxShadow: 'none',
         },
         containedPrimary: {
           background: 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)',

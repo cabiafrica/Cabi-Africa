@@ -28,7 +28,7 @@ export const PromoCodeManagement: React.FC = () => {
                     </h1>
                     <p className="text-slate-500 dark:text-slate-400 mt-1">Manage marketing codes and discount offers.</p>
                 </div>
-                <button className="bg-amber-500 hover:bg-amber-600 text-black px-4 py-2.5 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 shadow-sm">
+                <button className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5 whitespace-nowrap shrink-0">
                     <Add fontSize="small" />
                     Create Promo Code
                 </button>
