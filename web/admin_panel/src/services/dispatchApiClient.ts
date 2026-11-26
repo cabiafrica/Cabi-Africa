@@ -5,14 +5,14 @@ import axios from 'axios';
  * Handles local dev and production Docker container environments.
  */
 export function getDispatchBaseUrl(): string {
-  const envDispatch = import.meta.env.VITE_DISPATCH_SERVICE_URL || import.meta.env.VITE_DISPATCH_API_URL;
-  if (envDispatch) {
-    return envDispatch.replace(/\/+$/, '');
-  }
-
   const isLocal = typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
   if (isLocal) {
     return '';
+  }
+
+  const envDispatch = import.meta.env.VITE_DISPATCH_SERVICE_URL || import.meta.env.VITE_DISPATCH_API_URL;
+  if (envDispatch) {
+    return envDispatch.replace(/\/+$/, '');
   }
 
   // Production heuristic for DigitalOcean Droplet / production domain
