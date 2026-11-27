@@ -121,7 +121,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     {
       'id': 'boda',
       'name': 'Cabi Boda',
-      'color': Color(0xFF10B981),
+      'color': Color(0xFFD97706), // Warm Terracotta Amber
       'tag': 'Speedy',
       'time': '3 min',
       'image': 'assets/images/boda.png',
@@ -131,7 +131,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     {
       'id': 'standard',
       'name': 'CabiGo',
-      'color': Color(0xFFE5A93C),
+      'color': Color(0xFF0D9488), // Petrol Teal / Sage
       'tag': 'Affordable',
       'time': '4 min',
       'image': 'assets/images/standard.png',
@@ -141,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     {
       'id': 'comfort',
       'name': 'CabiX Comfort',
-      'color': Color(0xFF0284C7),
+      'color': Color(0xFF2563EB), // Executive Steel Navy
       'tag': 'Executive',
       'time': '5 min',
       'image': 'assets/images/lite.png',
@@ -150,8 +150,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     },
     {
       'id': 'lux',
-      'name': 'Cabi Lux',
-      'color': Color(0xFFD4AF37),
+      'name': 'Executive Suite',
+      'color': Color(0xFFD4AF37), // Presidential Champagne Gold
       'tag': 'VIP Captain',
       'time': '7 min',
       'image': 'assets/images/xl.png',

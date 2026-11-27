@@ -144,6 +144,7 @@ export const create3DVehicleIcon = (category?: string, bearing = 0, isMoving = t
         width: 52px;
         height: 52px;
         transform: translate(-50%, -50%) rotate(${bearing}deg);
+        transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -152,7 +153,7 @@ export const create3DVehicleIcon = (category?: string, bearing = 0, isMoving = t
         <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
           <defs>
             <linearGradient id="beamGrad" x1="0%" y1="100%" x2="0%" y2="0%">
-              <stop offset="0%" stop-color="${accentColor}" stop-opacity="0.5"/>
+              <stop offset="0%" stop-color="${accentColor}" stop-opacity="0.55"/>
               <stop offset="100%" stop-color="${accentColor}" stop-opacity="0"/>
             </linearGradient>
             <linearGradient id="glassGrad" x1="0%" y1="0%" x2="0%" y2="100%">

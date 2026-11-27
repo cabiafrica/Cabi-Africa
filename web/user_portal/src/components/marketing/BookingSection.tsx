@@ -92,6 +92,7 @@ const DEFAULT_VEHICLES: VehicleOption[] = [
         bgImage: '/images/vehicles/boda.png',
         tag: 'FASTEST',
         capacity: '1 Passenger',
+        colorCode: '#D97706', // Warm Terracotta Amber
         description: 'Traffic bypass spec',
     },
     {
@@ -103,6 +104,7 @@ const DEFAULT_VEHICLES: VehicleOption[] = [
         bgImage: '/images/vehicles/cabigo.png',
         tag: 'POPULAR',
         capacity: '4 Passengers',
+        colorCode: '#0D9488', // Petrol Teal / Sage
         description: 'Clean air-conditioned sedan',
     },
     {
@@ -114,6 +116,7 @@ const DEFAULT_VEHICLES: VehicleOption[] = [
         bgImage: '/images/vehicles/executive.jpg',
         tag: 'LUXURY',
         capacity: '3 Passengers',
+        colorCode: '#D4AF37', // Presidential Champagne Gold
         description: 'Suited captain & Mercedes E-Class',
     },
     {
@@ -125,6 +128,7 @@ const DEFAULT_VEHICLES: VehicleOption[] = [
         bgImage: '/images/vehicles/xl.png',
         tag: 'DELEGATION',
         capacity: '6 Passengers',
+        colorCode: '#2563EB', // Executive Steel Navy
         description: 'Alphard / Land Cruiser convoy',
     },
 ];
@@ -982,16 +986,27 @@ export default function BookingSection() {
                                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
                                         {vehicleOptions.map((v) => {
                                             const isSelected = selectedVehicle === v.id;
+                                            const tierColor = v.colorCode || (v.id === 'boda' ? '#D97706' : v.id === 'cabigo' ? '#0D9488' : v.id === 'executive' ? '#D4AF37' : '#2563EB');
                                             return (
                                                 <div
                                                     key={v.id}
                                                     onClick={() => setSelectedVehicle(v.id)}
+                                                    style={{
+                                                        borderColor: isSelected ? tierColor : undefined,
+                                                        boxShadow: isSelected ? `0 0 0 1px ${tierColor}, 0 4px 12px ${tierColor}25` : undefined,
+                                                    }}
                                                     className={`p-3.5 rounded-[3px] border transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden group min-h-[125px] ${
                                                         isSelected
-                                                            ? 'bg-amber-500/[0.08] border-amber-500 text-slate-900 dark:text-white ring-1 ring-amber-500 shadow-md'
-                                                            : 'bg-white dark:bg-[#11131a] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-amber-500/50'
+                                                            ? 'text-slate-900 dark:text-white'
+                                                            : 'bg-white dark:bg-[#11131a] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-white/20'
                                                     }`}
                                                 >
+                                                    {/* Category Color Accent Header Bar */}
+                                                    <div
+                                                        className="absolute top-0 left-0 right-0 h-1 transition-all"
+                                                        style={{ backgroundColor: tierColor, opacity: isSelected ? 1 : 0.45 }}
+                                                    />
+
                                                     {/* Realistic Vehicle Background with Faded Opacity for Crystal Text Readability */}
                                                     <div
                                                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 pointer-events-none opacity-20 dark:opacity-25"
@@ -1001,15 +1016,16 @@ export default function BookingSection() {
                                                     <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-[#0c0e14]/95 dark:via-[#0c0e14]/85 dark:to-[#0c0e14]/65 pointer-events-none" />
 
                                                     {/* Content Overlay */}
-                                                    <div className="relative z-10 flex flex-col justify-between h-full">
+                                                    <div className="relative z-10 flex flex-col justify-between h-full pt-1">
                                                         <div className="flex items-start justify-between gap-1 mb-2">
-                                                            {/* Stylized Vector Vehicle Icon Badge */}
+                                                            {/* Stylized Vector Vehicle Icon Badge Color-Coded */}
                                                             <div
-                                                                className={`w-7 h-7 rounded-[3px] flex items-center justify-center border transition-colors ${
-                                                                    isSelected
-                                                                        ? 'bg-amber-500 text-black border-amber-500'
-                                                                        : 'bg-slate-100 dark:bg-white/10 text-amber-500 border-slate-200 dark:border-white/10'
-                                                                }`}
+                                                                className="w-7 h-7 rounded-[3px] flex items-center justify-center border transition-colors"
+                                                                style={{
+                                                                    backgroundColor: isSelected ? tierColor : `${tierColor}15`,
+                                                                    color: isSelected ? '#FFFFFF' : tierColor,
+                                                                    borderColor: isSelected ? tierColor : `${tierColor}40`,
+                                                                }}
                                                             >
                                                                 {v.id === 'boda' && <FaMotorcycle className="text-xs" />}
                                                                 {v.id === 'cabigo' && <FaCarSide className="text-xs" />}
@@ -1019,11 +1035,12 @@ export default function BookingSection() {
 
                                                             {v.tag && (
                                                                 <span
-                                                                    className={`text-[8px] font-mono font-black px-1.5 py-0.5 rounded-[2px] ${
-                                                                        isSelected
-                                                                            ? 'bg-amber-500 text-black'
-                                                                            : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
-                                                                    }`}
+                                                                    className="text-[8px] font-mono font-black px-1.5 py-0.5 rounded-[2px] transition-colors"
+                                                                    style={{
+                                                                        backgroundColor: isSelected ? `${tierColor}25` : undefined,
+                                                                        color: isSelected ? tierColor : undefined,
+                                                                        border: isSelected ? `1px solid ${tierColor}50` : undefined,
+                                                                    }}
                                                                 >
                                                                     {v.tag}
                                                                 </span>
@@ -1031,9 +1048,16 @@ export default function BookingSection() {
                                                         </div>
 
                                                         <div>
-                                                            <p className="font-extrabold text-xs uppercase tracking-tight truncate">
-                                                                {v.name}
-                                                            </p>
+                                                            <div className="flex items-center gap-1.5">
+                                                                <span
+                                                                    className="w-2 h-2 rounded-full inline-block"
+                                                                    style={{ backgroundColor: tierColor }}
+                                                                    title={`Tier Accent: ${tierColor}`}
+                                                                />
+                                                                <p className="font-extrabold text-xs uppercase tracking-tight truncate">
+                                                                    {v.name}
+                                                                </p>
+                                                            </div>
                                                             <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                                                                 {v.capacity || `${v.eta}m away`}
                                                             </span>
@@ -1043,7 +1067,10 @@ export default function BookingSection() {
                                                             <span className="text-[9px] uppercase font-bold text-slate-400">
                                                                 {trajectory ? 'Fare' : 'From'}
                                                             </span>
-                                                            <p className="font-black text-sm text-amber-600 dark:text-amber-400">
+                                                            <p
+                                                                className="font-black text-sm"
+                                                                style={{ color: isSelected ? tierColor : undefined }}
+                                                            >
                                                                 KES {Math.round(v.price).toLocaleString()}
                                                             </p>
                                                         </div>
