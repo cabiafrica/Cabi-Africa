@@ -655,6 +655,20 @@ export default function BookingSection() {
         setPinpointerTarget(null);
     };
 
+    const [tripProgressRatio, setTripProgressRatio] = useState<number>(0.38);
+
+    // Live vehicle movement simulation: vehicle advances along route, covered road turns grey, and alternatives adaptively update
+    useEffect(() => {
+        if (!trajectory || !trajectory.polyline || trajectory.polyline.length === 0) return;
+        const interval = setInterval(() => {
+            setTripProgressRatio((prev) => {
+                const next = prev + 0.02;
+                return next > 0.92 ? 0.15 : next;
+            });
+        }, 3000);
+        return () => clearInterval(interval);
+    }, [trajectory]);
+
     const activeVehicleObj = useMemo(
         () => vehicleOptions.find((v) => v.id === selectedVehicle) || vehicleOptions[1] || vehicleOptions[0],
         [vehicleOptions, selectedVehicle]
@@ -671,8 +685,8 @@ export default function BookingSection() {
                 tripStatus === 'ARRIVED' ||
                 tripStatus === 'IN_PROGRESS';
 
-            // Point along route trajectory for visual simulation and counterpart live tracking
-            const midIndex = Math.min(Math.floor(trajectory.polyline.length * 0.42), trajectory.polyline.length - 1);
+            // Point along route trajectory for live progress and counterpart tracking
+            const midIndex = Math.min(Math.floor(trajectory.polyline.length * tripProgressRatio), trajectory.polyline.length - 1);
             const midPoint = trajectory.polyline[midIndex] || [
                 (trajectory.pickupCoords.lat + trajectory.dropoffCoords.lat) / 2,
                 (trajectory.pickupCoords.lng + trajectory.dropoffCoords.lng) / 2,
@@ -701,7 +715,7 @@ export default function BookingSection() {
                 categoryColor: activeVehicleObj?.colorCode,
                 popup: isTripActive
                     ? `Assigned Captain: ${driverInfo?.name || 'James Mwangi'} (${activeVehicleObj?.name || 'Cabi'}) · On the move`
-                    : `Active ${activeVehicleObj?.name || 'Cabi'} nearby · Ready for dispatch`,
+                    : `Active ${activeVehicleObj?.name || 'Cabi'} nearby · In transit (${Math.round(tripProgressRatio * 100)}% covered)`,
             });
         }
         return base;
@@ -715,6 +729,7 @@ export default function BookingSection() {
         selectedVehicle,
         activeVehicleObj,
         driverInfo,
+        tripProgressRatio,
     ]);
 
     const renderProgressBar = () => {
@@ -1265,6 +1280,7 @@ export default function BookingSection() {
                                         height="100%"
                                         markers={mapMarkers}
                                         route={trajectory?.polyline}
+                                        progressRatio={tripProgressRatio}
                                         alternativeRoutes={trajectory?.alternativeRoutes}
                                         trafficSegments={trajectory?.trafficSegments}
                                         hazards={trajectory?.hazards}

@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -83,6 +84,7 @@ class CabiMap extends StatefulWidget {
   final bool enableInteraction;
   final CabiMapTheme theme;
   final CabiMapSource mapSource;
+  final double? progressRatio; // 0.0 to 1.0 (portion of route already traveled, turns grey)
   final Function(LatLng center, bool hasGesture)? onCameraMove;
   final Function(CabiMapController)? onMapCreated;
   final String? apiKey;
@@ -93,6 +95,7 @@ class CabiMap extends StatefulWidget {
     this.initialZoom = 13.0,
     this.markers = const [],
     this.routePoints,
+    this.progressRatio,
     this.alternativeRoutes,
     this.trafficSegments,
     this.onSelectAlternativeRoute,
@@ -182,19 +185,54 @@ class _CabiMapState extends State<CabiMap> {
             }).toList(),
           ),
 
-        // Primary Route Polyline (Gold base)
-        if (widget.routePoints != null && widget.routePoints!.isNotEmpty)
-          PolylineLayer(
-            polylines: [
-              Polyline(
-                points: widget.routePoints!,
-                strokeWidth: 5.0,
-                color: const Color(0xFFD4AF37),
-                borderStrokeWidth: 2.0,
-                borderColor: isDark ? const Color(0xFF0A0A0B) : Colors.white,
-              ),
-            ],
+        // Primary Route Polyline (Covered portion turns grey; remaining portion highlights in gold)
+        if (widget.routePoints != null && widget.routePoints!.isNotEmpty) ...[
+          // Covered road grey trail
+          if (widget.progressRatio != null && widget.progressRatio! > 0) ...[
+            Builder(
+              builder: (context) {
+                final int splitIdx = (widget.routePoints!.length * widget.progressRatio!.clamp(0.0, 1.0)).floor();
+                if (splitIdx > 0) {
+                  final covered = widget.routePoints!.sublist(0, math.min(splitIdx + 1, widget.routePoints!.length));
+                  return PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: covered,
+                        strokeWidth: 5.0,
+                        color: const Color(0xFF64748B), // Covered road turns grey
+                        borderStrokeWidth: 1.5,
+                        borderColor: isDark ? const Color(0xFF0F172A) : Colors.white70,
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+          // Active remaining route in Gold
+          Builder(
+            builder: (context) {
+              final int splitIdx = widget.progressRatio != null && widget.progressRatio! > 0
+                  ? (widget.routePoints!.length * widget.progressRatio!.clamp(0.0, 1.0)).floor()
+                  : 0;
+              final remaining = splitIdx < widget.routePoints!.length - 1
+                  ? widget.routePoints!.sublist(splitIdx)
+                  : widget.routePoints!;
+              return PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: remaining,
+                    strokeWidth: 5.0,
+                    color: const Color(0xFFD4AF37),
+                    borderStrokeWidth: 2.0,
+                    borderColor: isDark ? const Color(0xFF0A0A0B) : Colors.white,
+                  ),
+                ],
+              );
+            },
           ),
+        ],
 
         // Traffic Congestion Overlay Segments (Green flow, Amber moderate, Red heavy)
         if (widget.trafficSegments != null && widget.trafficSegments!.isNotEmpty)
