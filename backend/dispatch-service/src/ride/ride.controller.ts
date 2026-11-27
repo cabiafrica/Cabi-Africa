@@ -2,6 +2,7 @@ import { Controller, Get, Param, Put, Post, Body, Query, HttpCode, Logger, BadRe
 import * as jwt from 'jsonwebtoken';
 import * as crypto from 'crypto';
 import { RideService } from './ride.service';
+import { PricingService } from '../pricing/pricing.service';
 
 import { IsString, IsNotEmpty, IsOptional, IsObject, IsNumber, IsEnum } from 'class-validator';
 
@@ -70,7 +71,96 @@ class StartRideDto {
 export class RideController {
   private readonly logger = new Logger(RideController.name);
 
-  constructor(private readonly rideService: RideService) { }
+  constructor(
+    private readonly rideService: RideService,
+    private readonly pricingService: PricingService,
+  ) { }
+
+  @Post('estimate')
+  async estimateFare(@Body() body: any) {
+    const pickup = body.pickup;
+    const destination = body.destination;
+    const pickupCoords = body.pickupCoords;
+    const dropoffCoords = body.dropoffCoords;
+    const includeTrajectory = body.includeTrajectory;
+
+    if (!pickup && !pickupCoords) {
+      throw new BadRequestException('Pickup location is required');
+    }
+    if (!destination && !dropoffCoords) {
+      throw new BadRequestException('Destination location is required');
+    }
+
+    const start = pickupCoords && Number.isFinite(Number(pickupCoords.lat))
+      ? { lat: Number(pickupCoords.lat), lng: Number(pickupCoords.lng) }
+      : { lat: -1.286389, lng: 36.817223 };
+    const end = dropoffCoords && Number.isFinite(Number(dropoffCoords.lat))
+      ? { lat: Number(dropoffCoords.lat), lng: Number(dropoffCoords.lng) }
+      : { lat: -1.2655, lng: 36.8048 };
+
+    // Calculate distance
+    const R = 6371;
+    const dLat = ((end.lat - start.lat) * Math.PI) / 180;
+    const dLng = ((end.lng - start.lng) * Math.PI) / 180;
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos((start.lat * Math.PI) / 180) *
+        Math.cos((end.lat * Math.PI) / 180) *
+        Math.sin(dLng / 2) *
+        Math.sin(dLng / 2);
+    const rawKm = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    // Edge Case 1: Geofence validation (Coverage bounds)
+    const inBounds =
+      start.lat >= -5 && start.lat <= 5 && start.lng >= 28 && start.lng <= 42 &&
+      end.lat >= -5 && end.lat <= 5 && end.lng >= 28 && end.lng <= 42;
+
+    if (!inBounds || rawKm > 200) {
+      throw new BadRequestException('OUT_OF_SERVICE_AREA: Selected location is currently outside CABI Africa direct coverage area.');
+    }
+
+    const distanceKm = Number(Math.max(2.0, rawKm * 1.25).toFixed(1));
+    const durationMin = Math.max(5, Math.round(distanceKm * 2.5));
+
+    const categories = await this.pricingService.getCategoriesPricing();
+    const estimates = categories
+      .filter((c) => c.isActive)
+      .map((cat, idx) => {
+        const rawPrice = Math.max(
+          cat.minimumFare,
+          cat.baseFare + distanceKm * cat.perKmRate + durationMin * cat.perMinuteRate,
+        );
+        const step = cat.roundingStep > 0 ? cat.roundingStep : 1;
+        const roundedPrice = Math.round(rawPrice / step) * step;
+        return {
+          id: cat.category.toLowerCase(),
+          categoryKey: cat.category,
+          name: cat.displayName,
+          price: roundedPrice,
+          eta: Math.max(3, 3 + idx * 2),
+          icon: cat.category === 'BODA' ? '🏍️' : cat.category === 'XL' ? '🚙' : cat.category === 'PREMIUM' ? '✨' : '🚗',
+          colorCode: cat.category === 'BODA' ? '#D97706' : cat.category === 'BASIC' ? '#0D9488' : cat.category === 'PREMIUM' ? '#D4AF37' : '#2563EB',
+          capacity: cat.category === 'BODA' ? '1 Passenger' : cat.category === 'XL' ? '6 Passengers' : '4 Passengers',
+          tag: cat.category === 'BODA' ? 'FASTEST' : cat.category === 'PREMIUM' ? 'LUXURY' : cat.category === 'XL' ? 'DELEGATION' : 'POPULAR',
+          description: cat.description,
+        };
+      });
+
+    if (includeTrajectory) {
+      return {
+        estimates,
+        trajectory: {
+          distanceKm,
+          durationMin,
+          pickupCoords: start,
+          dropoffCoords: end,
+          summary: 'Fastest Direct Route',
+        },
+      };
+    }
+
+    return estimates;
+  }
 
   private extractUser(req: any): any {
     if (req?.user) return req.user;

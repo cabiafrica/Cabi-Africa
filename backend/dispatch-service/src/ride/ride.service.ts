@@ -1514,7 +1514,10 @@ export class RideService implements OnModuleInit {
       let category: any = 'DISPUTE';
       let severity: any = 'LOW';
 
-      if (/cash|scam|cheat|overcharge/.test(lowerReason)) {
+      if (ride.status === 'IN_PROGRESS') {
+        category = 'DISPUTE';
+        severity = 'HIGH';
+      } else if (/cash|scam|cheat|overcharge/.test(lowerReason)) {
         category = 'FRAUD';
         severity = 'HIGH';
       } else if (/unsafe|harass|fight|threat|drunk/.test(lowerReason)) {
@@ -1524,11 +1527,15 @@ export class RideService implements OnModuleInit {
         severity = 'MEDIUM';
       }
 
-      const title = assessedWaitFee > 0
+      const title = ride.status === 'IN_PROGRESS'
+        ? `In-Transit Cancellation: Charges Frozen for Dispatch Review (Ride ${rideId})`
+        : assessedWaitFee > 0
         ? `Trip Cancellation: Wait Fee Assessed (KES ${assessedWaitFee})`
         : `Trip Cancellation Flagged: ${category}`;
 
-      const description = `Ride ${rideId} cancelled by passenger. Reason: "${reason || 'Not specified'}". ${
+      const description = ride.status === 'IN_PROGRESS'
+        ? `Ride ${rideId} was cancelled midway during IN_PROGRESS. Charges have been frozen pending supervisor review. Reason: "${reason || 'Not specified'}". Passenger: ${ride.passengerId}, Driver: ${ride.driverId || 'None assigned'}.`
+        : `Ride ${rideId} cancelled by passenger. Reason: "${reason || 'Not specified'}". ${
         assessedWaitFee > 0
           ? `Driver waited ${chargeableMinutes.toFixed(1)} chargeable mins (@ KES ${feePerMinute}/min = KES ${assessedWaitFee}). Fee credited to driver wallet.`
           : 'Cancellation flagged due to dispute or safety concern.'

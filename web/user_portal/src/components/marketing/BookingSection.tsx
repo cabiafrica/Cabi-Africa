@@ -460,7 +460,8 @@ export default function BookingSection() {
                     setSelectedVehicle(mergedList[1]?.id || mergedList[0].id);
                 }
             } else {
-                setBookingError('Unable to compute route prices. Please check locations and try again.');
+                const errData = await response.json().catch(() => ({}));
+                setBookingError(errData.message || 'Location is currently outside our direct fleet coverage area.');
             }
         } catch (error) {
             console.error('Failed to compute route prices', error);
@@ -998,10 +999,10 @@ export default function BookingSection() {
                                         </span>
                                     </div>
 
-                                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2.5 sm:gap-3">
                                         {vehicleOptions.map((v) => {
                                             const isSelected = selectedVehicle === v.id;
-                                            const tierColor = v.colorCode || (v.id === 'boda' ? '#D97706' : v.id === 'cabigo' ? '#0D9488' : v.id === 'executive' ? '#D4AF37' : '#2563EB');
+                                            const tierColor = v.colorCode || (v.id === 'boda' ? '#D97706' : v.id === 'executive' || v.id === 'premium' ? '#D4AF37' : v.id === 'xl' ? '#2563EB' : '#0D9488');
                                             return (
                                                 <div
                                                     key={v.id}
@@ -1041,9 +1042,10 @@ export default function BookingSection() {
                                                                 }}
                                                             >
                                                                 {v.id === 'boda' && <FaMotorcycle className="text-xs" />}
-                                                                {v.id === 'cabigo' && <FaCarSide className="text-xs" />}
-                                                                {v.id === 'executive' && <FaCrown className="text-xs" />}
+                                                                {(v.id === 'cabigo' || v.id === 'standard' || v.id === 'basic') && <FaCarSide className="text-xs" />}
+                                                                {(v.id === 'executive' || v.id === 'premium') && <FaCrown className="text-xs" />}
                                                                 {v.id === 'xl' && <FaShuttleVan className="text-xs" />}
+                                                                {!(v.id === 'boda' || v.id === 'cabigo' || v.id === 'standard' || v.id === 'basic' || v.id === 'executive' || v.id === 'premium' || v.id === 'xl') && <FaCarSide className="text-xs" />}
                                                             </div>
 
                                                             {v.tag && (
@@ -1063,11 +1065,11 @@ export default function BookingSection() {
                                                         <div>
                                                             <div className="flex items-center gap-1.5">
                                                                 <span
-                                                                    className="w-1.5 h-1.5 rounded-full inline-block"
+                                                                    className="w-1.5 h-1.5 rounded-full inline-block shrink-0"
                                                                     style={{ backgroundColor: tierColor }}
                                                                     title={`Tier Accent: ${tierColor}`}
                                                                 />
-                                                                <p className="font-extrabold text-xs uppercase tracking-tight truncate">
+                                                                <p className="font-extrabold text-[11px] sm:text-xs uppercase tracking-tight line-clamp-1">
                                                                     {v.name}
                                                                 </p>
                                                             </div>
@@ -1081,7 +1083,7 @@ export default function BookingSection() {
                                                                 {trajectory ? 'Fare' : 'From'}
                                                             </span>
                                                             <p
-                                                                className="font-black text-sm"
+                                                                className="font-black text-sm whitespace-nowrap"
                                                                 style={{ color: isSelected ? tierColor : undefined }}
                                                             >
                                                                 KES {Math.round(v.price).toLocaleString()}

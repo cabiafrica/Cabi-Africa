@@ -126,16 +126,16 @@ dispatch.cabi.africa {
         reverse_proxy verification-service:3003
     }
 
+    # User Portal Next.js Internal API endpoints (Fare Estimation, Places Autocomplete, Contact, etc.)
+    @user_portal_api path /api/rides/estimate* /api/places* /api/contact* /api/appointments* /api/driver-leads* /api/driver-org* /api/concierge*
+    handle @user_portal_api {
+        reverse_proxy user-portal:8080
+    }
+
     # Dispatch & Real-Time Microservice Routes
     @dispatch_routes_root path /api/safety* /api/dispatch* /api/rides* /api/wealth* /api/corporate* /api/lost-and-found* /api/disputes* /api/welfare* /api/pricing* /api/badges* /api/commissions*
     handle @dispatch_routes_root {
         reverse_proxy dispatch-service:3334
-    }
-
-    # User Portal Next.js Internal API endpoints (Places Autocomplete, Contact, etc.)
-    @user_portal_api path /api/places* /api/contact* /api/appointments* /api/driver-leads* /api/driver-org* /api/concierge*
-    handle @user_portal_api {
-        reverse_proxy user-portal:8080
     }
 
     # Backend API endpoints

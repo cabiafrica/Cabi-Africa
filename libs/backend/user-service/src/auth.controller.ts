@@ -71,7 +71,7 @@ export class AuthController {
         user,
       };
     } catch (error: any) {
-      globalAuditTelemetry.logAuthFailure(loginDto?.identifier || 'unknown', error?.message || 'Login failed').catch(() => {});
+      globalAuditTelemetry.logAuthFailure((loginDto as any)?.identifier || loginDto?.email || 'unknown', error?.message || 'Login failed').catch(() => {});
       if (error instanceof UnauthorizedException) {
         throw error;
       }
