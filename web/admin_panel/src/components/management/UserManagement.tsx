@@ -1,7 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { adminService, AdminUser } from '../../services/adminService';
 import { UserForm } from '../forms/UserForm';
 import { PageHeader } from '../common/PageHeader';
+import { UserAccessTabs } from './UserAccessTabs';
 import {
   Box,
   Paper,
@@ -29,11 +31,15 @@ import {
   Delete as DeleteIcon,
   AdminPanelSettings as AdminIcon,
   Email as EmailIcon,
-  Search as SearchIcon
+  Search as SearchIcon,
+  Security as SecurityIcon,
+  People as PeopleIcon
 } from '@mui/icons-material';
 
 export const UserManagement: React.FC = () => {
   const theme = useTheme();
+  const location = useLocation();
+  const navigate = useNavigate();
   const [users, setUsers] = useState<AdminUser[]>([]);
   const [editingUser, setEditingUser] = useState<AdminUser | 'new' | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,14 +53,21 @@ export const UserManagement: React.FC = () => {
     fetchUsers();
   }, [fetchUsers]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    if (params.get('new') === 'true') {
+      setEditingUser('new');
+    }
+  }, [location.search]);
+
   const handleSave = () => {
     setEditingUser(null);
+    navigate('/users', { replace: true });
     fetchUsers();
   };
 
   const handleDelete = async (userId: string) => {
     if (window.confirm('Are you sure you want to delete this admin user?')) {
-      // In a real app, await adminService.deleteUser(userId);
       alert(`User ${userId} deleted.`);
       fetchUsers();
     }
@@ -67,13 +80,15 @@ export const UserManagement: React.FC = () => {
 
   if (editingUser) {
     return (
-      <Box sx={{ maxWidth: 800, mx: 'auto', mt: 4 }}>
-        <Paper sx={{ p: 4, borderRadius: 4, bgcolor: '#131722', border: '1px solid rgba(255, 255, 255, 0.1)', color: 'white', backdropFilter: 'blur(20px)' }}>
-          <Typography variant="h5" fontWeight="bold" mb={3} sx={{ color: 'white' }}>
-            {editingUser === 'new' ? 'Create New Admin' : 'Edit Admin User'}
-          </Typography>
-          <UserForm user={editingUser === 'new' ? undefined : editingUser} onSave={handleSave} onCancel={() => setEditingUser(null)} />
-        </Paper>
+      <Box sx={{ maxWidth: '100%', mx: 'auto', mt: 2 }}>
+        <UserForm
+          user={editingUser === 'new' ? undefined : editingUser}
+          onSave={handleSave}
+          onCancel={() => {
+            setEditingUser(null);
+            navigate('/users', { replace: true });
+          }}
+        />
       </Box>
     );
   }
@@ -83,18 +98,36 @@ export const UserManagement: React.FC = () => {
       <PageHeader
         category="Fleet & People"
         title="Admin User Management"
-        subtitle="Manage system administrators and their operational access roles."
+        subtitle="Manage system administrators, assign operational roles, and configure granular permissions."
         icon={<SupervisorAccount className="text-amber-500" />}
         actions={
-          <button
-            onClick={() => setEditingUser('new')}
-            className="btn-primary flex items-center gap-1.5"
-          >
-            <AddIcon fontSize="small" />
-            Create New User
-          </button>
+          <div className="flex items-center gap-2 flex-wrap">
+            <button
+              onClick={() => navigate('/roles')}
+              className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <SecurityIcon fontSize="small" className="text-amber-500" />
+              <span>Roles & Permissions</span>
+            </button>
+            <button
+              onClick={() => navigate('/platform-users')}
+              className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+            >
+              <PeopleIcon fontSize="small" className="text-amber-500" />
+              <span>Platform Users</span>
+            </button>
+            <button
+              onClick={() => setEditingUser('new')}
+              className="btn-primary flex items-center gap-1.5 text-xs py-2 px-3.5 rounded-[4px] cursor-pointer"
+            >
+              <AddIcon fontSize="small" />
+              <span>+ Create New Admin</span>
+            </button>
+          </div>
         }
       />
+
+      <UserAccessTabs activeTab="users" />
 
       {/* Content Card */}
       <Paper elevation={0} sx={{

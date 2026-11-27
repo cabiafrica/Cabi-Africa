@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { PageHeader } from '../../components/common/PageHeader';
+import { UserAccessTabs } from '../../components/management/UserAccessTabs';
 import {
     Box, Typography, Button, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, IconButton, Chip, TextField, InputAdornment, Grow, Avatar, Tooltip
@@ -13,7 +14,8 @@ import {
     AdminPanelSettings as AdminIcon,
     Smartphone as MobileIcon,
     Web as WebIcon,
-    Dns as ApiIcon
+    Dns as ApiIcon,
+    People as PeopleIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { roleService, Role } from '../../services/roleService';
@@ -93,16 +95,34 @@ const RolesList: React.FC = () => {
                 title="Roles & Permissions"
                 subtitle="Manage system access levels and permissions across all operational platforms"
                 icon={<SecurityIcon className="w-5 h-5 text-amber-500" />}
-                action={
-                    <button
-                        onClick={() => navigate('/roles/new')}
-                        className="btn-primary flex items-center gap-1.5"
-                    >
-                        <AddIcon fontSize="small" />
-                        <span>Create New Role</span>
-                    </button>
+                actions={
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                            onClick={() => navigate('/users')}
+                            className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                            <AdminIcon fontSize="small" className="text-amber-500" />
+                            <span>Admin Users</span>
+                        </button>
+                        <button
+                            onClick={() => navigate('/platform-users')}
+                            className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                        >
+                            <PeopleIcon fontSize="small" className="text-amber-500" />
+                            <span>Platform Users</span>
+                        </button>
+                        <button
+                            onClick={() => navigate('/roles/new')}
+                            className="btn-primary flex items-center gap-1.5 text-xs py-2 px-3.5 rounded-[4px] cursor-pointer"
+                        >
+                            <AddIcon fontSize="small" />
+                            <span>+ Create New Role</span>
+                        </button>
+                    </div>
                 }
             />
+
+            <UserAccessTabs activeTab="roles" />
 
             {/* Search Bar */}
             <Box mb={3} mt={3}>

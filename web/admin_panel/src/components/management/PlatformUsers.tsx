@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { Search, Users } from 'lucide-react';
+import { Search, Users, UserPlus, UserCog, ShieldCheck, X } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { adminService, PlatformUser } from '../../services/adminService';
 import { UserPaymentHistory } from '../users/UserPaymentHistory';
 import { UserDetails } from '../users/UserDetails';
 import { PageHeader } from '../common/PageHeader';
+import { UserAccessTabs } from './UserAccessTabs';
 
 export const UserManagementDashboard: React.FC = () => {
+    const navigate = useNavigate();
     const [users, setUsers] = useState<PlatformUser[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedUser, setSelectedUser] = useState<PlatformUser | null>(null);
@@ -13,6 +16,14 @@ export const UserManagementDashboard: React.FC = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
     const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+
+    // Provision Modal State
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [newUserName, setNewUserName] = useState('');
+    const [newUserEmail, setNewUserEmail] = useState('');
+    const [newUserType, setNewUserType] = useState<'DRIVER' | 'PASSENGER'>('PASSENGER');
+    const [newUserPhone, setNewUserPhone] = useState('');
+    const [isSubmittingNewUser, setIsSubmittingNewUser] = useState(false);
 
     const fetchUsers = useCallback(async () => {
         setLoading(true);
@@ -74,6 +85,30 @@ export const UserManagementDashboard: React.FC = () => {
         fetchUsers();
     };
 
+    const handleCreatePlatformUser = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!newUserName.trim() || !newUserEmail.trim()) return;
+        setIsSubmittingNewUser(true);
+        try {
+            await adminService.createPlatformUser({
+                name: newUserName.trim(),
+                email: newUserEmail.trim(),
+                type: newUserType,
+                phone: newUserPhone.trim() || undefined
+            });
+            setIsAddModalOpen(false);
+            setNewUserName('');
+            setNewUserEmail('');
+            setNewUserPhone('');
+            fetchUsers();
+        } catch (err) {
+            console.error('Failed to create user', err);
+            alert('Failed to create user');
+        } finally {
+            setIsSubmittingNewUser(false);
+        }
+    };
+
     if (viewingPaymentsFor) {
         return (
             <UserPaymentHistory
@@ -106,7 +141,37 @@ export const UserManagementDashboard: React.FC = () => {
                         {users.length} Users
                     </span>
                 }
+                actions={
+                    <div className="flex items-center gap-2 flex-wrap">
+                        <button
+                            onClick={() => navigate('/roles/new')}
+                            className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                            title="Create a new system role with custom permissions"
+                        >
+                            <ShieldCheck className="w-4 h-4 text-amber-500" />
+                            <span>Create Role</span>
+                        </button>
+                        <button
+                            onClick={() => navigate('/users?new=true')}
+                            className="px-3.5 py-2 rounded-[4px] bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
+                            title="Create an administrator or operator account"
+                        >
+                            <UserCog className="w-4 h-4 text-amber-500" />
+                            <span>Create Admin User</span>
+                        </button>
+                        <button
+                            onClick={() => setIsAddModalOpen(true)}
+                            className="btn-primary flex items-center gap-1.5 text-xs py-2 px-3.5 rounded-[4px] cursor-pointer"
+                            title="Add a new platform rider or driver"
+                        >
+                            <UserPlus className="w-4 h-4" />
+                            <span>+ Provision Platform User</span>
+                        </button>
+                    </div>
+                }
             />
+
+            <UserAccessTabs activeTab="platform-users" />
 
             <div className="bg-[#131722] shadow-sm rounded-[4px] border border-white/10 overflow-hidden">
                 <div className="px-5 py-3.5 border-b border-white/10 flex flex-col md:flex-row justify-between items-center gap-4 bg-white/[0.02]">
@@ -206,6 +271,122 @@ export const UserManagementDashboard: React.FC = () => {
                 </table>
             </div>
         </div>
+
+        {/* Provision Platform User Modal */}
+        {isAddModalOpen && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+                <div className="bg-[#131722] border border-white/10 rounded-xl shadow-2xl w-full max-w-md overflow-hidden animate-scale-up">
+                    <div className="flex items-center justify-between px-6 py-4 border-b border-white/10 bg-white/[0.02]">
+                        <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                                <UserPlus className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <h3 className="text-base font-bold text-white">Provision Platform User</h3>
+                                <p className="text-xs text-slate-400">Register a new rider or driver account</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setIsAddModalOpen(false)}
+                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+
+                    <form onSubmit={handleCreatePlatformUser} className="p-6 space-y-4">
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                                Account Type
+                            </label>
+                            <div className="grid grid-cols-2 gap-3">
+                                <button
+                                    type="button"
+                                    onClick={() => setNewUserType('PASSENGER')}
+                                    className={`py-2 px-3 text-xs font-bold rounded-lg border transition-all text-center ${
+                                        newUserType === 'PASSENGER'
+                                            ? 'bg-amber-500/15 border-amber-500/40 text-amber-400'
+                                            : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                                    }`}
+                                >
+                                    Passenger / Rider
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setNewUserType('DRIVER')}
+                                    className={`py-2 px-3 text-xs font-bold rounded-lg border transition-all text-center ${
+                                        newUserType === 'DRIVER'
+                                            ? 'bg-emerald-500/15 border-emerald-500/40 text-emerald-400'
+                                            : 'bg-black/30 border-white/10 text-slate-400 hover:border-white/20'
+                                    }`}
+                                >
+                                    Driver
+                                </button>
+                            </div>
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                                Full Name <span className="text-amber-500">*</span>
+                            </label>
+                            <input
+                                type="text"
+                                required
+                                placeholder="e.g. Samuel Kamau"
+                                value={newUserName}
+                                onChange={(e) => setNewUserName(e.target.value)}
+                                className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                                Email Address <span className="text-amber-500">*</span>
+                            </label>
+                            <input
+                                type="email"
+                                required
+                                placeholder="e.g. samuel.kamau@cabi.africa"
+                                value={newUserEmail}
+                                onChange={(e) => setNewUserEmail(e.target.value)}
+                                className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                            />
+                        </div>
+
+                        <div>
+                            <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">
+                                Phone Number (Optional)
+                            </label>
+                            <input
+                                type="tel"
+                                placeholder="e.g. +254 758 777 222"
+                                value={newUserPhone}
+                                onChange={(e) => setNewUserPhone(e.target.value)}
+                                className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-lg text-white text-xs placeholder-slate-500 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-end gap-3 pt-3 border-t border-white/10">
+                            <button
+                                type="button"
+                                onClick={() => setIsAddModalOpen(false)}
+                                className="px-4 py-2 rounded-lg text-xs font-semibold text-slate-400 hover:text-white hover:bg-white/5 transition-colors"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="submit"
+                                disabled={isSubmittingNewUser || !newUserName.trim() || !newUserEmail.trim()}
+                                className="btn-primary px-5 py-2 rounded-lg text-xs font-bold transition-all disabled:opacity-50"
+                            >
+                                {isSubmittingNewUser ? 'Provisioning...' : 'Provision User'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
     </div>
     );
 };

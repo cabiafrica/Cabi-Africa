@@ -6,7 +6,8 @@ const API_URL = import.meta.env.VITE_API_URL || 'https://api.cabi.africa/api';
 
 // Create axios instance with authentication interceptor
 const apiClient = axios.create({
-    baseURL: API_URL
+    baseURL: API_URL,
+    timeout: 6000
 });
 
 // Add authentication token and MFA step-up token to all requests
@@ -190,16 +191,26 @@ class RoleService {
     }
 
     async getAllRoles(): Promise<Role[]> {
+        const cached = this.getCachedRoles();
+        const customRoles = cached.filter(r => !r.isSystem);
+
         try {
             const response = await apiClient.get('/admin/roles');
             if (Array.isArray(response.data) && response.data.length > 0) {
-                this.saveCachedRoles(response.data);
-                return response.data;
+                const remoteRoles: Role[] = response.data;
+                const merged = [...remoteRoles];
+                customRoles.forEach(customRole => {
+                    if (!merged.some(m => m.id === customRole.id || m.name === customRole.name)) {
+                        merged.push(customRole);
+                    }
+                });
+                this.saveCachedRoles(merged);
+                return merged;
             }
         } catch (err) {
             console.warn('[RoleService] Upstream /admin/roles unavailable, using system role catalog');
         }
-        return this.getCachedRoles();
+        return cached;
     }
 
     async getRole(id: string): Promise<Role> {
@@ -229,7 +240,12 @@ class RoleService {
             };
         }
         const roles = this.getCachedRoles();
-        roles.push(created);
+        const existingIdx = roles.findIndex(r => r.name === created.name || r.id === created.id);
+        if (existingIdx !== -1) {
+            roles[existingIdx] = created;
+        } else {
+            roles.push(created);
+        }
         this.saveCachedRoles(roles);
         return created;
     }

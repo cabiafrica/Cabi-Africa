@@ -73,6 +73,7 @@ class AdminService {
   getSuspendedAdmins = this.userService.getSuspendedAdmins.bind(this.userService);
   reactivateAdmin = this.userService.reactivateAdmin.bind(this.userService);
   getPlatformUsers = this.userService.getPlatformUsers.bind(this.userService);
+  createPlatformUser = this.userService.createPlatformUser.bind(this.userService);
   getUserPaymentHistory = this.userService.getUserPaymentHistory.bind(this.userService);
   getUserDetails = this.userService.getUserDetails.bind(this.userService);
   impersonateUser = this.userService.impersonateUser.bind(this.userService);

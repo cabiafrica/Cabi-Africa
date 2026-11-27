@@ -6,6 +6,7 @@ export interface PageHeaderProps {
   icon?: React.ReactNode;
   badge?: React.ReactNode;
   actions?: React.ReactNode;
+  action?: React.ReactNode;
   category?: string;
   className?: string;
 }
@@ -20,9 +21,12 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
   icon,
   badge,
   actions,
+  action,
   category,
   className = '',
 }) => {
+  const renderedActions = actions || action;
+
   return (
     <div className={`w-full ${className}`}>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -39,7 +43,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
           </div>
           {subtitle && <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{subtitle}</p>}
         </div>
-        {actions && <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">{actions}</div>}
+        {renderedActions && <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">{renderedActions}</div>}
       </div>
       <GoldenSeparator />
     </div>

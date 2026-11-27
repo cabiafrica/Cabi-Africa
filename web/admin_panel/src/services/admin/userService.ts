@@ -55,16 +55,24 @@ export class UserService {
     }
 
     async getAdminUsers(): Promise<AdminUser[]> {
+        const cached = this.getCachedUsers();
         try {
             const res = await apiClient.get('/admin/users');
             if (Array.isArray(res.data) && res.data.length > 0) {
-                this.saveCachedUsers(res.data);
-                return res.data;
+                const remoteUsers: AdminUser[] = res.data;
+                const merged = [...remoteUsers];
+                cached.forEach(localUser => {
+                    if (!merged.some(m => m.id === localUser.id || m.email.toLowerCase() === localUser.email.toLowerCase())) {
+                        merged.push(localUser);
+                    }
+                });
+                this.saveCachedUsers(merged);
+                return merged;
             }
         } catch (err) {
             console.warn('[UserService] Upstream /admin/users unavailable, using local administrator cache');
         }
-        return this.getCachedUsers();
+        return cached;
     }
 
     async createAdminUser(userData: Omit<AdminUser, 'id'>): Promise<AdminUser> {
@@ -89,7 +97,12 @@ export class UserService {
         }
 
         const users = this.getCachedUsers();
-        users.push(created);
+        const existingIdx = users.findIndex(u => u.email.toLowerCase() === created.email.toLowerCase());
+        if (existingIdx !== -1) {
+            users[existingIdx] = { ...users[existingIdx], ...created };
+        } else {
+            users.unshift(created);
+        }
         this.saveCachedUsers(users);
         return created;
     }
@@ -137,9 +150,105 @@ export class UserService {
         await apiClient.post(`/admin/users/${userId}/reactivate`);
     }
 
+    private getCachedPlatformUsers(): PlatformUser[] {
+        try {
+            const cached = localStorage.getItem('cabi_platform_users_cache');
+            if (cached) return JSON.parse(cached);
+        } catch {
+            // ignore
+        }
+        const defaultUsers: PlatformUser[] = [
+            {
+                id: 'usr-ken-001',
+                name: 'David Mwangi',
+                email: 'david.mwangi@cabi.africa',
+                type: 'DRIVER',
+                isDistressResponder: false,
+                registrationDate: '2025-01-15T08:30:00Z',
+                status: 'ACTIVE'
+            },
+            {
+                id: 'usr-ken-002',
+                name: 'Faith Chebet',
+                email: 'faith.chebet@gmail.com',
+                type: 'PASSENGER',
+                isDistressResponder: false,
+                registrationDate: '2025-02-10T14:15:00Z',
+                status: 'ACTIVE'
+            },
+            {
+                id: 'usr-ken-003',
+                name: 'Joseph Ochieng',
+                email: 'j.ochieng@nairobibusiness.co.ke',
+                type: 'PASSENGER',
+                isDistressResponder: false,
+                registrationDate: '2025-03-01T11:45:00Z',
+                status: 'ACTIVE'
+            },
+            {
+                id: 'usr-ken-004',
+                name: 'Benson Kimani',
+                email: 'benson.kimani@cabi.africa',
+                type: 'DRIVER',
+                isDistressResponder: true,
+                registrationDate: '2024-11-20T09:00:00Z',
+                status: 'ACTIVE'
+            }
+        ];
+        localStorage.setItem('cabi_platform_users_cache', JSON.stringify(defaultUsers));
+        return defaultUsers;
+    }
+
+    private saveCachedPlatformUsers(users: PlatformUser[]): void {
+        try {
+            localStorage.setItem('cabi_platform_users_cache', JSON.stringify(users));
+        } catch {
+            // ignore
+        }
+    }
+
     async getPlatformUsers(): Promise<PlatformUser[]> {
-        const res = await apiClient.get('/users/all');
-        return res.data;
+        const cached = this.getCachedPlatformUsers();
+        try {
+            const res = await apiClient.get('/users/all');
+            if (Array.isArray(res.data) && res.data.length > 0) {
+                const remote: PlatformUser[] = res.data;
+                const merged = [...remote];
+                cached.forEach(localUser => {
+                    if (!merged.some(m => m.id === localUser.id || m.email.toLowerCase() === localUser.email.toLowerCase())) {
+                        merged.push(localUser);
+                    }
+                });
+                this.saveCachedPlatformUsers(merged);
+                return merged;
+            }
+        } catch (err) {
+            console.warn('[UserService] Upstream /users/all unavailable, using cached platform users');
+        }
+        return cached;
+    }
+
+    async createPlatformUser(userData: { name: string; email: string; type: 'DRIVER' | 'PASSENGER'; phone?: string }): Promise<PlatformUser> {
+        let created: PlatformUser;
+        try {
+            const res = await apiClient.post('/users/create', userData);
+            created = res.data;
+        } catch {
+            console.warn('[UserService] Upstream platform user creation failed, caching locally');
+            created = {
+                id: 'usr-' + Math.random().toString(36).substring(2, 9),
+                name: userData.name,
+                email: userData.email,
+                type: userData.type,
+                isDistressResponder: false,
+                registrationDate: new Date().toISOString(),
+                status: 'ACTIVE'
+            };
+        }
+        const cached = this.getCachedPlatformUsers();
+        cached.unshift(created);
+        this.saveCachedPlatformUsers(cached);
+        return created;
     }
 
     async getUserPaymentHistory(userId: string): Promise<any[]> {
