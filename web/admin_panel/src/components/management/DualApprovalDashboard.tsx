@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import apiClient from '../../services/apiClient';
 import { useAuthContext } from '../../AuthContext';
+import { PageHeader } from '../common/PageHeader';
 import {
     ShieldCheck,
     AlertTriangle,
@@ -123,65 +124,53 @@ export const DualApprovalDashboard: React.FC = () => {
     const isSuperAdmin = (user?.role as string)?.toUpperCase() === 'SUPER_ADMIN';
 
     return (
-        <div className="p-6 max-w-7xl mx-auto space-y-6 animate-fade-in text-white selection:bg-brand-yellow selection:text-black">
+        <div className="p-6 max-w-7xl mx-auto space-y-6 animate-fade-in text-white selection:bg-amber-500 selection:text-black">
             {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-4 border-b border-white/10">
-                <div>
-                    <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-brand-yellow/15 text-brand-yellow border border-brand-yellow/30 rounded-xl">
-                            <ShieldCheck className="w-6 h-6" />
-                        </div>
-                        <div>
-                            <h1 className="text-2xl font-bold tracking-tight text-white flex items-center gap-2">
-                                Four-Eyes Dual-Authorization Queue
-                            </h1>
-                            <p className="text-xs text-gray-400">
-                                Institutional governance: High-risk Tier-1 operational actions require two independent operator approvals
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="flex items-center gap-3">
+            <PageHeader
+                category="Fleet & People"
+                title="Four-Eyes Dual-Authorization Queue"
+                subtitle="Institutional governance: High-risk Tier-1 operational actions require two independent operator approvals"
+                icon={<ShieldCheck className="w-5 h-5 text-amber-500" />}
+                action={
                     <button
                         onClick={fetchRequests}
                         disabled={loading}
-                        className="px-3.5 py-2 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-semibold text-gray-300 hover:text-white transition-colors flex items-center gap-1.5 cursor-pointer disabled:opacity-50"
+                        className="btn-secondary flex items-center gap-1.5"
                     >
                         <RefreshCw className={`w-3.5 h-3.5 ${loading ? 'animate-spin' : ''}`} />
                         <span>Refresh Queue</span>
                     </button>
-                </div>
-            </div>
+                }
+            />
 
             {/* Notification Alert */}
             {feedback && (
                 <div
-                    className={`p-4 rounded-xl text-sm flex items-start gap-3 border animate-fade-in ${
+                    className={`p-3 rounded-[3px] text-xs flex items-start gap-2.5 border animate-fade-in ${
                         feedback.type === 'success'
                             ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
                             : 'bg-red-500/10 border-red-500/30 text-red-300'
                     }`}
                 >
                     {feedback.type === 'success' ? (
-                        <CheckCircle2 className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <CheckCircle2 className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     ) : (
-                        <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <AlertTriangle className="w-4 h-4 flex-shrink-0 mt-0.5" />
                     )}
                     <span>{feedback.message}</span>
                 </div>
             )}
 
-            {/* Status Filter Tabs */}
-            <div className="flex items-center gap-2 border-b border-white/10 pb-3">
+            {/* Status Filter Tabs - Gamification Gold Pill style */}
+            <div className="flex items-center gap-2 border-b border-white/10 pb-2 overflow-x-auto">
                 {['PENDING', 'APPROVED', 'REJECTED', 'BREAK_GLASS_EXECUTED', 'ALL'].map((status) => (
                     <button
                         key={status}
                         onClick={() => setFilterStatus(status)}
-                        className={`px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+                        className={`transition-all cursor-pointer whitespace-nowrap ${
                             filterStatus === status
-                                ? 'bg-brand-yellow text-black shadow-md shadow-brand-yellow/20'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
                         }`}
                     >
                         {status.replace(/_/g, ' ')}
@@ -190,19 +179,19 @@ export const DualApprovalDashboard: React.FC = () => {
             </div>
 
             {/* Requests List */}
-            <div className="bg-card-dark/95 backdrop-blur-xl border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="bg-[#131722] border border-white/10 rounded-[3px] overflow-hidden shadow-2xl">
                 {loading && requests.length === 0 ? (
-                    <div className="py-20 text-center text-sm text-gray-400">Loading dual-approval proposals...</div>
+                    <div className="py-20 text-center text-xs text-gray-400">Loading dual-approval proposals...</div>
                 ) : requests.length === 0 ? (
                     <div className="py-16 text-center text-gray-400 space-y-2">
-                        <CheckCircle2 className="w-10 h-10 mx-auto text-emerald-500/50 mb-2" />
-                        <p className="font-semibold text-white">No {filterStatus} proposals in queue</p>
-                        <p className="text-xs text-gray-500">All high-risk operational proposals are currently resolved.</p>
+                        <CheckCircle2 className="w-8 h-8 mx-auto text-emerald-500/50 mb-2" />
+                        <p className="font-semibold text-white text-xs">No {filterStatus} proposals in queue</p>
+                        <p className="text-[11px] text-gray-500">All high-risk operational proposals are currently resolved.</p>
                     </div>
                 ) : (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-xs">
-                            <thead className="bg-surface-dark border-b border-white/10 text-gray-400 uppercase tracking-wider font-semibold">
+                            <thead className="bg-[#0a0a0a] border-b border-white/10 text-gray-400 uppercase tracking-wider font-semibold text-[11px]">
                                 <tr>
                                     <th className="px-5 py-3.5">ID / Action</th>
                                     <th className="px-5 py-3.5">Proposed By</th>
@@ -330,34 +319,34 @@ export const DualApprovalDashboard: React.FC = () => {
             {/* ===================== REJECT MODAL ===================== */}
             {rejectModalReq && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
-                    <div className="bg-zinc-950 border border-white/10 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+                    <div className="bg-[#131722] border border-white/10 rounded-[3px] p-6 max-w-md w-full shadow-2xl">
                         <div className="flex items-center gap-3 text-red-400 mb-4">
-                            <XCircle className="w-6 h-6" />
-                            <h3 className="text-lg font-bold text-white">Decline High-Risk Proposal</h3>
+                            <XCircle className="w-5 h-5" />
+                            <h3 className="text-base font-bold text-white">Decline High-Risk Proposal</h3>
                         </div>
                         <p className="text-xs text-gray-300 mb-4">
-                            You are rejecting proposal <span className="font-mono text-brand-yellow font-bold">{rejectModalReq.id}</span> ({rejectModalReq.actionType}). Provide a reason for the audit trail:
+                            You are rejecting proposal <span className="font-mono text-amber-500 font-bold">{rejectModalReq.id}</span> ({rejectModalReq.actionType}). Provide a reason for the audit trail:
                         </p>
                         <form onSubmit={handleRejectSubmit} className="space-y-4">
                             <textarea
                                 value={rejectReason}
                                 onChange={(e) => setRejectReason(e.target.value)}
                                 placeholder="State reason for declining this action..."
-                                className="w-full h-24 px-3.5 py-2.5 bg-black/60 border border-white/15 rounded-xl text-white text-xs outline-none focus:border-red-500 transition-all resize-none"
+                                className="w-full h-24 px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white text-xs outline-none focus:border-red-500 transition-all resize-none"
                                 required
                             />
                             <div className="flex items-center justify-end gap-2 pt-2">
                                 <button
                                     type="button"
                                     onClick={() => setRejectModalReq(null)}
-                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                                    className="btn-secondary"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={!rejectReason.trim()}
-                                    className="px-4 py-2 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white rounded-xl text-xs font-bold transition-all cursor-pointer"
+                                    className="px-3.5 py-1.5 bg-red-500 hover:bg-red-600 disabled:opacity-50 text-white rounded-[3px] text-xs font-semibold transition-all cursor-pointer"
                                 >
                                     Confirm Rejection
                                 </button>
@@ -370,16 +359,16 @@ export const DualApprovalDashboard: React.FC = () => {
             {/* ===================== BREAK-GLASS EMERGENCY MODAL ===================== */}
             {breakGlassReq && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
-                    <div className="bg-zinc-950 border border-red-500/50 rounded-2xl p-6 max-w-lg w-full shadow-2xl">
+                    <div className="bg-[#131722] border border-red-500/50 rounded-[3px] p-6 max-w-lg w-full shadow-2xl">
                         <div className="flex items-center gap-3 text-red-500 mb-3">
-                            <AlertOctagon className="w-7 h-7 animate-pulse" />
+                            <AlertOctagon className="w-6 h-6 animate-pulse" />
                             <div>
-                                <h3 className="text-lg font-bold text-white">Emergency Break-Glass Execution</h3>
-                                <p className="text-[11px] text-red-400 font-semibold uppercase tracking-wider">High-Priority Security Override</p>
+                                <h3 className="text-base font-bold text-white">Emergency Break-Glass Execution</h3>
+                                <p className="text-[10px] text-red-400 font-semibold uppercase tracking-wider">High-Priority Security Override</p>
                             </div>
                         </div>
 
-                        <div className="bg-red-500/10 border border-red-500/30 p-3.5 rounded-xl text-xs text-red-300 space-y-1 mb-4">
+                        <div className="bg-red-500/10 border border-red-500/30 p-3 rounded-[3px] text-xs text-red-300 space-y-1 mb-4">
                             <p className="font-bold">⚠️ Notice to Super Administrator:</p>
                             <p>
                                 Executing Break-Glass bypasses second operator authorization for proposal <span className="font-mono text-white font-bold">{breakGlassReq.id}</span>. An urgent incident alert will immediately be broadcast to all system owners via SMS & Email.
@@ -395,7 +384,7 @@ export const DualApprovalDashboard: React.FC = () => {
                                     value={justification}
                                     onChange={(e) => setJustification(e.target.value)}
                                     placeholder="Explain the critical incident or emergency necessitating solo execution..."
-                                    className="w-full h-24 px-3.5 py-2.5 bg-black/60 border border-white/15 rounded-xl text-white text-xs outline-none focus:border-amber-500 transition-all resize-none"
+                                    className="w-full h-24 px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-white text-xs outline-none focus:border-amber-500 transition-all resize-none"
                                     required
                                     minLength={20}
                                 />
@@ -406,7 +395,7 @@ export const DualApprovalDashboard: React.FC = () => {
 
                             <div>
                                 <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-1.5 flex items-center gap-1.5">
-                                    <KeyRound className="w-4 h-4 text-brand-yellow" />
+                                    <KeyRound className="w-3.5 h-3.5 text-amber-500" />
                                     <span>Step-Up 2FA Security PIN</span>
                                 </label>
                                 <input
@@ -416,7 +405,7 @@ export const DualApprovalDashboard: React.FC = () => {
                                     value={otpCode}
                                     onChange={(e) => setOtpCode(e.target.value.replace(/\D/g, ''))}
                                     placeholder="Enter your 6-digit OTP"
-                                    className="w-full tracking-widest font-mono text-center text-lg py-2.5 px-4 bg-black/80 border border-amber-500/40 rounded-xl focus:border-brand-yellow text-white outline-none"
+                                    className="w-full tracking-widest font-mono text-center text-base py-2 px-3 bg-[#0a0a0a] border border-amber-500/40 rounded-[3px] focus:border-amber-500 text-white outline-none"
                                     required
                                 />
                             </div>
@@ -425,16 +414,16 @@ export const DualApprovalDashboard: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setBreakGlassReq(null)}
-                                    className="px-4 py-2 bg-white/5 hover:bg-white/10 text-gray-300 rounded-xl text-xs font-semibold transition-colors cursor-pointer"
+                                    className="btn-secondary"
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={justification.trim().length < 20 || otpCode.length < 6}
-                                    className="px-5 py-2 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer"
+                                    className="px-4 py-1.5 bg-red-600 hover:bg-red-700 disabled:opacity-40 text-white rounded-[3px] text-xs font-semibold transition-all flex items-center gap-1.5 cursor-pointer"
                                 >
-                                    <AlertOctagon className="w-4 h-4" />
+                                    <AlertOctagon className="w-3.5 h-3.5" />
                                     <span>Execute Break-Glass</span>
                                 </button>
                             </div>

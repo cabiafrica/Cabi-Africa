@@ -316,7 +316,7 @@ export function JobActivitiesDashboard() {
       {/* Statistics Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+          <div className="bg-[#131722] rounded-[3px] p-5 border border-white/10 shadow-sm">
             <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Total Rides
             </Typography>
@@ -326,7 +326,7 @@ export function JobActivitiesDashboard() {
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+          <div className="bg-[#131722] rounded-[3px] p-5 border border-white/10 shadow-sm">
             <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Active Rides
             </Typography>
@@ -336,7 +336,7 @@ export function JobActivitiesDashboard() {
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+          <div className="bg-[#131722] rounded-[3px] p-5 border border-white/10 shadow-sm">
             <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Completed
             </Typography>
@@ -346,7 +346,7 @@ export function JobActivitiesDashboard() {
           </div>
         </Grid>
         <Grid item xs={12} sm={6} md={3}>
-          <div className="bg-[#131722] rounded-2xl p-5 border border-white/10 shadow-sm">
+          <div className="bg-[#131722] rounded-[3px] p-5 border border-white/10 shadow-sm">
             <Typography sx={{ color: '#94a3b8', fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em' }} gutterBottom>
               Total Revenue
             </Typography>
@@ -358,13 +358,13 @@ export function JobActivitiesDashboard() {
       </Grid>
 
       {/* Filters */}
-      <div className="bg-[#131722] rounded-2xl mb-6 border border-white/10 shadow-sm">
+      <div className="bg-[#131722] rounded-[3px] mb-6 border border-white/10 shadow-sm">
         <div className="p-4">
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={4}>
               <input
                 type="text"
-                className="w-full border border-white/10 rounded-xl p-2.5 bg-white/[0.03] text-white placeholder-slate-500 focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
+                className="w-full border border-white/10 rounded-[3px] p-2 bg-[#0a0a0a] text-white placeholder-slate-500 focus:ring-1 focus:ring-amber-500/50 focus:outline-none text-xs"
                 placeholder="Search by passenger, driver, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -372,7 +372,7 @@ export function JobActivitiesDashboard() {
             </Grid>
             <Grid item xs={12} sm={3}>
               <select
-                className="w-full border border-white/10 rounded-xl p-2.5 bg-[#131722] text-white focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
+                className="w-full border border-white/10 rounded-[3px] p-2 bg-[#0a0a0a] text-white focus:ring-1 focus:ring-amber-500/50 focus:outline-none text-xs"
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
               >
@@ -389,13 +389,13 @@ export function JobActivitiesDashboard() {
             <Grid item xs={12} sm={3}>
               <input
                 type="date"
-                className="w-full border border-white/10 rounded-xl p-2.5 bg-[#131722] text-white focus:ring-2 focus:ring-amber-500 focus:outline-none text-sm"
+                className="w-full border border-white/10 rounded-[3px] p-2 bg-[#0a0a0a] text-white focus:ring-1 focus:ring-amber-500/50 focus:outline-none text-xs"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
               />
             </Grid>
             <Grid item xs={12} sm={2}>
-              <Typography variant="body2" sx={{ color: '#94a3b8' }}>
+              <Typography variant="body2" sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>
                 {filteredRides.length} results
               </Typography>
             </Grid>
@@ -404,7 +404,7 @@ export function JobActivitiesDashboard() {
       </div>
 
       {/* Rides Table */}
-      <div className="bg-[#131722] rounded-2xl shadow border border-white/10 overflow-hidden">
+      <div className="bg-[#131722] rounded-[3px] shadow border border-white/10 overflow-hidden">
         <TableContainer>
           <Table>
             <TableHead className="bg-slate-50 dark:bg-surface-dark">
@@ -529,11 +529,21 @@ export function JobActivitiesDashboard() {
         <DialogContent dividers>
           {selectedRide && (
             <Box>
-              <Tabs value={activeTab} onChange={(_, v) => setActiveTab(v)} sx={{ mb: 2 }}>
-                <Tab label="Overview" />
-                <Tab label="Location" />
-                <Tab label="Timeline" />
-              </Tabs>
+              <div className="flex gap-2 border-b border-white/10 overflow-x-auto pb-2 mb-4">
+                {['Overview', 'Location', 'Timeline'].map((tabLabel, idx) => (
+                  <button
+                    key={tabLabel}
+                    onClick={() => setActiveTab(idx)}
+                    className={`transition-all cursor-pointer whitespace-nowrap ${
+                      activeTab === idx
+                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                        : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
+                    }`}
+                  >
+                    {tabLabel}
+                  </button>
+                ))}
+              </div>
 
               {activeTab === 0 && (
                 <Grid container spacing={2}>

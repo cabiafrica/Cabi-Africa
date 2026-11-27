@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
+import { PageHeader } from '../common/PageHeader';
 import {
     FileDownload,
     FilterList,
@@ -70,48 +71,44 @@ export const TractionLogs: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                        <ReceiptLong className="text-emerald-600 dark:text-emerald-400" />
-                        Traction Logs
-                    </h1>
-                    <p className="text-slate-500 dark:text-slate-400 mt-1">Audit trail of all financial and operational transactions.</p>
-                </div>
-                <button
-                    onClick={() => alert('Exporting to CSV...')}
-                    className="flex items-center gap-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg font-bold shadow-md hover:bg-slate-800 dark:hover:bg-slate-200 transition-colors"
-                >
-                    <FileDownload fontSize="small" />
-                    Export CSV
-                </button>
-            </div>
+            <PageHeader
+                category="Finance & Sacco"
+                title="Traction Logs"
+                subtitle="Institutional audit trail of all financial and operational transactions"
+                icon={<ReceiptLong className="w-5 h-5 text-amber-500" />}
+                action={
+                    <button
+                        onClick={() => alert('Exporting to CSV...')}
+                        className="btn-secondary flex items-center gap-1.5"
+                    >
+                        <FileDownload fontSize="small" />
+                        <span>Export CSV</span>
+                    </button>
+                }
+            />
 
-            <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
+            <div className="bg-[#131722] rounded-[3px] shadow-sm border border-white/10 overflow-hidden">
                 {/* Toolbar */}
-                <div className="p-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark/50 flex items-center justify-between gap-4">
+                <div className="p-4 border-b border-white/10 bg-[#0a0a0a] flex items-center justify-between gap-4">
                     <div className="relative flex-1 max-w-md">
                         <input
                             type="text"
                             placeholder="Search by ID, User, or Description..."
                             value={filterText}
                             onChange={(e) => setFilterText(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-cyan-500 outline-none shadow-sm"
+                            className="w-full pl-9 pr-4 py-2 bg-[#131722] border border-white/10 rounded-[3px] text-xs text-white focus:outline-none focus:border-amber-500/50"
                         />
-                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" fontSize="small" />
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" fontSize="small" />
                     </div>
-                    <button className="p-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
-                        <FilterList />
-                    </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-                        <thead className="bg-white dark:bg-card-dark">
+                    <table className="min-w-full divide-y divide-white/5 text-xs">
+                        <thead className="bg-[#0a0a0a]">
                             <tr>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Transaction ID</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Type</th>
-                                <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
+                                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Transaction ID</th>
+                                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Type</th>
+                                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">User</th>
                                 <th className="px-6 py-4 text-right text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Amount</th>
                                 <th className="px-6 py-4 text-center text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
                                 <th className="px-6 py-4 text-left text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Date</th>

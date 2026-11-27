@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
 import { CategoryPricingConfig } from '../../services/admin/types';
+import { PageHeader } from '../common/PageHeader';
 import {
     LocalTaxi,
     Speed,
@@ -172,45 +173,42 @@ export const VehicleCategoriesManagement: React.FC = () => {
     return (
         <div className="space-y-6">
             {/* Header & Control Actions */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold text-white flex items-center gap-2">
-                        <Speed className="text-amber-500" />
-                        Fair Driver Pay & Real-Time Taximeter Rules
-                    </h1>
-                    <p className="text-slate-400 mt-1 text-sm">
-                        Configure dynamic pay per kilometer and minute, minimum floors, and real-time nearest-figure rounding per vehicle category.
-                    </p>
-                </div>
-                <div className="flex items-center gap-2">
-                    <button
-                        onClick={handleResetDefaults}
-                        className="bg-white/5 hover:bg-white/10 border border-white/10 text-slate-300 px-3.5 py-1.5 rounded text-xs font-medium transition-colors flex items-center gap-1.5 active:scale-95"
-                        title="Restore African standard market defaults"
-                    >
-                        <Refresh fontSize="small" />
-                        Reset Defaults
-                    </button>
-                    <button
-                        onClick={handleSaveAll}
-                        disabled={saving}
-                        className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 disabled:opacity-50 text-black px-3.5 py-1.5 rounded text-xs font-bold transition-all flex items-center gap-1.5 shadow-sm shadow-amber-500/20 active:scale-95"
-                    >
-                        {saveSuccess ? (
-                            <>
-                                <CheckCircle fontSize="small" /> Saved to System!
-                            </>
-                        ) : (
-                            <>
-                                <Save fontSize="small" /> {saving ? 'Saving...' : 'Save Configuration'}
-                            </>
-                        )}
-                    </button>
-                </div>
-            </div>
+            <PageHeader
+                category="Growth & Platform"
+                title="Fair Driver Pay & Real-Time Taximeter Rules"
+                subtitle="Configure dynamic pay per kilometer and minute, minimum floors, and real-time nearest-figure rounding per vehicle category"
+                icon={<Speed className="w-5 h-5 text-amber-500" />}
+                action={
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handleResetDefaults}
+                            className="btn-secondary flex items-center gap-1.5"
+                            title="Restore African standard market defaults"
+                        >
+                            <Refresh fontSize="small" />
+                            <span>Reset Defaults</span>
+                        </button>
+                        <button
+                            onClick={handleSaveAll}
+                            disabled={saving}
+                            className="btn-primary flex items-center gap-1.5 disabled:opacity-50"
+                        >
+                            {saveSuccess ? (
+                                <>
+                                    <CheckCircle fontSize="small" /> <span>Saved to System!</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Save fontSize="small" /> <span>{saving ? 'Saving...' : 'Save Configuration'}</span>
+                                </>
+                            )}
+                        </button>
+                    </div>
+                }
+            />
 
             {/* Quick Context Card */}
-            <div className="bg-[#131722] border border-amber-500/30 rounded p-4 flex items-start gap-3">
+            <div className="bg-[#131722] border border-amber-500/30 rounded-[3px] p-4 flex items-start gap-3">
                 <InfoOutlined className="text-amber-400 mt-0.5" />
                 <div className="text-xs text-slate-300 leading-relaxed">
                     <span className="font-semibold text-white">Driver Meter Rounding Rule:</span> Fares are calculated in real time during the trip using <code className="font-mono bg-[#0a0a0a] text-amber-400 border border-white/10 px-1.5 py-0.5 rounded">Base + (KM × Rate) + (Minutes × Rate)</code>. At every second, the live taximeter rounds the figure mathematically to the configured category step (e.g. Boda Boda rounds to nearest KES 10; Basic to nearest KES 25; Standard, XL and Premium to nearest KES 50) guaranteeing fair, clear cash-change friendly earnings.

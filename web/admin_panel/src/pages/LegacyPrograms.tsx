@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { PageHeader } from '../components/common/PageHeader';
 import {
   Award,
   CheckCircle2,
@@ -365,49 +366,42 @@ export function LegacyPrograms() {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-brand-yellow mb-1">
-            <Landmark className="w-4 h-4" />
-            <span>Finance &amp; Cabi Legacy Engine</span>
+      <PageHeader
+        category="Finance & Sacco"
+        title="Cabi Legacy Programs"
+        subtitle="Configure driver-selectable Sacco, MMF, and pension programs or attach them as badge incentives under Cabi Legacy"
+        icon={<Landmark className="w-5 h-5 text-amber-500" />}
+        action={
+          <div className="flex items-center gap-2">
+            <button
+              onClick={loadData}
+              className="btn-secondary flex items-center gap-1.5"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+              <span>Refresh</span>
+            </button>
+            <button
+              onClick={openCreateModal}
+              className="btn-primary flex items-center gap-1.5"
+            >
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add Wealth Program</span>
+            </button>
           </div>
-          <h1 className="text-2xl font-bold text-gray-900 dark:text-white tracking-tight">
-            Cabi Legacy Programs
-          </h1>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            Configure driver-selectable Sacco, MMF, and pension programs or attach them as badge incentives under Cabi Legacy.
-          </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <button
-            onClick={loadData}
-            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl border border-gray-200 dark:border-white/10 bg-white dark:bg-card-dark text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-brand-yellow/50 transition-colors"
-          >
-            <RefreshCw className={`w-4 h-4 ${isLoading ? 'animate-spin' : ''}`} />
-            Refresh
-          </button>
-          <button
-            onClick={openCreateModal}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-yellow hover:bg-brand-yellowHover text-black font-semibold text-sm shadow-sm transition-colors"
-          >
-            <Plus className="w-4 h-4" />
-            Add Wealth Program
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* Notices */}
       {notice && (
-        <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 dark:text-emerald-400 text-sm">
-          <CheckCircle2 className="w-4 h-4 shrink-0" />
+        <div className="flex items-center gap-2 px-3.5 py-2.5 rounded-[3px] bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs">
+          <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
           <span>{notice}</span>
         </div>
       )}
       {error && (
-        <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 dark:text-red-400 text-sm">
+        <div className="flex items-center justify-between px-3.5 py-2.5 rounded-[3px] bg-red-500/10 border border-red-500/30 text-red-400 text-xs">
           <span>{error}</span>
-          <button onClick={() => setError(null)} className="text-xs underline">
+          <button onClick={() => setError(null)} className="text-[11px] underline">
             Dismiss
           </button>
         </div>
@@ -415,60 +409,73 @@ export function LegacyPrograms() {
 
       {/* KPI Strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="p-4 rounded-[3px] bg-[#131722] border border-white/10">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Active Programs</span>
-            <Landmark className="w-4 h-4 text-brand-yellow" />
+            <Landmark className="w-4 h-4 text-amber-500" />
           </div>
-          <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.active}</p>
+          <p className="mt-2 text-xl font-bold text-white">{stats.active}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="p-4 rounded-[3px] bg-[#131722] border border-white/10">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Driver-Selectable</span>
             <TrendingUp className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.selectable}</p>
+          <p className="mt-2 text-xl font-bold text-white">{stats.selectable}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="p-4 rounded-[3px] bg-[#131722] border border-white/10">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Badge Incentives Linked</span>
-            <Award className="w-4 h-4 text-executive-gold" />
+            <Award className="w-4 h-4 text-amber-500" />
           </div>
-          <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.badgeLinked}</p>
+          <p className="mt-2 text-xl font-bold text-white">{stats.badgeLinked}</p>
         </div>
-        <div className="p-4 rounded-2xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400">
+        <div className="p-4 rounded-[3px] bg-[#131722] border border-white/10">
+          <div className="flex items-center justify-between text-xs text-gray-400">
             <span>Active Enrollments</span>
             <Users className="w-4 h-4 text-emerald-400" />
           </div>
-          <p className="mt-2 text-2xl font-bold text-gray-900 dark:text-white">{stats.enrolledDrivers}</p>
+          <p className="mt-2 text-xl font-bold text-white">{stats.enrolledDrivers}</p>
         </div>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3">
-        <div className="relative flex-1">
-          <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search programs by name, provider, or benefit..."
-            className="w-full pl-10 pr-4 py-2.5 rounded-xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-brand-yellow"
-          />
-        </div>
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="px-4 py-2.5 rounded-xl bg-white dark:bg-card-dark border border-gray-200 dark:border-white/10 text-sm text-gray-900 dark:text-white focus:outline-none focus:border-brand-yellow"
+      {/* Category Tabs - Gamification Gold Pill style */}
+      <div className="flex items-center gap-2 border-b border-white/10 pb-2 overflow-x-auto">
+        <button
+          onClick={() => setCategoryFilter('ALL')}
+          className={`transition-all cursor-pointer whitespace-nowrap ${
+            categoryFilter === 'ALL'
+              ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+              : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
+          }`}
         >
-          <option value="ALL">All Categories</option>
-          {Object.entries(CATEGORY_LABELS).map(([k, label]) => (
-            <option key={k} value={k}>
-              {label}
-            </option>
-          ))}
-        </select>
+          All Categories
+        </button>
+        {Object.entries(CATEGORY_LABELS).map(([k, label]) => (
+          <button
+            key={k}
+            onClick={() => setCategoryFilter(k as WealthCategory)}
+            className={`transition-all cursor-pointer whitespace-nowrap ${
+              categoryFilter === k
+                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+
+      {/* Search Input */}
+      <div className="relative max-w-md">
+        <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="Search programs by name, provider, or benefit..."
+          className="w-full pl-9 pr-3 py-2 rounded-[3px] bg-[#0a0a0a] border border-white/10 text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500/50"
+        />
       </div>
 
       {/* Programs List */}
@@ -496,10 +503,10 @@ export function LegacyPrograms() {
           {filteredPrograms.map((p) => (
             <div
               key={p.id}
-              className={`rounded-2xl p-5 bg-white dark:bg-card-dark border transition-colors ${
+              className={`rounded-[3px] p-5 bg-[#131722] border transition-colors ${
                 p.isActive
-                  ? 'border-gray-200 dark:border-white/10 hover:border-brand-yellow/40'
-                  : 'border-gray-200/60 dark:border-white/5 opacity-65'
+                  ? 'border-white/10 hover:border-amber-500/40'
+                  : 'border-white/5 opacity-65'
               }`}
             >
               <div className="flex items-start justify-between gap-3">

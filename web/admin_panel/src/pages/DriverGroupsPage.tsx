@@ -21,6 +21,7 @@ import {
 } from '@mui/icons-material';
 import { DriverGroup } from '@/types/admin';
 import apiClient from '../services/apiClient';
+import { PageHeader } from '../components/common/PageHeader';
 
 // Separate components
 import { DriverGroupsList } from '../components/drivers/DriverGroupsList';
@@ -135,49 +136,21 @@ export function DriverGroupsPage() {
 
   return (
     <Box sx={{ p: { xs: 2, md: 0 } }}>
-      {/* Header */}
-      <Box mb={3}>
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Box>
-            <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
-              FLEET & PEOPLE
-            </Typography>
-            <Typography variant="h4" fontWeight="800" sx={{
-              color: '#ffffff',
-              mb: 0.5
-            }}>
-              Driver Groups
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-              Manage driver groups, SACCO fleets, and hierarchical organization structure
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<PlusIcon />}
+      <PageHeader
+        category="Fleet & People"
+        title="Driver Operating Groups"
+        subtitle="Manage driver groups, SACCO fleets, and hierarchical organization structures."
+        icon={<UsersIcon className="text-amber-500" />}
+        actions={
+          <button
             onClick={handleCreateGroup}
-            sx={{
-              background: 'linear-gradient(to right, #F59E0B, #D97706)',
-              color: '#000000',
-              boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
-              fontWeight: 'bold',
-              px: 2,
-              py: 0.75,
-              fontSize: '0.75rem',
-              borderRadius: '3px',
-              textTransform: 'none',
-              whiteSpace: 'nowrap',
-              '&:hover': {
-                background: 'linear-gradient(to right, #FBBF24, #F59E0B)',
-              }
-            }}
+            className="btn-primary flex items-center gap-1.5"
           >
+            <PlusIcon fontSize="small" />
             Create Group
-          </Button>
-        </Box>
-        {/* Golden Gradient Separator */}
-        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
-      </Box>
+          </button>
+        }
+      />
 
       {/* Stats Cards */}
       <Grid container spacing={3} sx={{ mb: 4 }}>

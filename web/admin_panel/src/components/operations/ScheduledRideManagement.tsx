@@ -149,14 +149,14 @@ export const ScheduledRideManagement: React.FC = () => {
                         p: 3,
                         bgcolor: '#131722',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 3
+                        borderRadius: '3px'
                     }}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.05em' }}>TOTAL SCHEDULED</Typography>
                                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: '#f8fafc' }}>{stats.total}</Typography>
                             </Box>
-                            <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B' }}>
+                            <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B', borderRadius: '3px' }}>
                                 <EventIcon />
                             </Avatar>
                         </Box>
@@ -167,14 +167,14 @@ export const ScheduledRideManagement: React.FC = () => {
                         p: 3,
                         bgcolor: '#131722',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 3
+                        borderRadius: '3px'
                     }}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.05em' }}>PENDING</Typography>
                                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: '#F59E0B' }}>{stats.pending}</Typography>
                             </Box>
-                            <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B' }}>
+                            <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.15)', color: '#F59E0B', borderRadius: '3px' }}>
                                 <ScheduleIcon />
                             </Avatar>
                         </Box>
@@ -185,14 +185,14 @@ export const ScheduledRideManagement: React.FC = () => {
                         p: 3,
                         bgcolor: '#131722',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 3
+                        borderRadius: '3px'
                     }}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
                                 <Typography variant="caption" sx={{ color: '#94a3b8', fontWeight: 'bold', letterSpacing: '0.05em' }}>ASSIGNED</Typography>
                                 <Typography variant="h4" fontWeight="bold" sx={{ mt: 1, color: '#38bdf8' }}>{stats.assigned}</Typography>
                             </Box>
-                            <Avatar sx={{ bgcolor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8' }}>
+                            <Avatar sx={{ bgcolor: 'rgba(56, 189, 248, 0.15)', color: '#38bdf8', borderRadius: '3px' }}>
                                 <CarIcon />
                             </Avatar>
                         </Box>
@@ -203,7 +203,7 @@ export const ScheduledRideManagement: React.FC = () => {
                         p: 3,
                         bgcolor: '#131722',
                         border: '1px solid rgba(255, 255, 255, 0.08)',
-                        borderRadius: 3
+                        borderRadius: '3px'
                     }}>
                         <Box display="flex" alignItems="center" justifyContent="space-between">
                             <Box>
@@ -212,7 +212,7 @@ export const ScheduledRideManagement: React.FC = () => {
                                     {stats.totalValue.toLocaleString()}
                                 </Typography>
                             </Box>
-                            <Avatar sx={{ bgcolor: 'rgba(16, 185, 129, 0.15)', color: '#10B981' }}>
+                            <Avatar sx={{ bgcolor: 'rgba(16, 185, 129, 0.15)', color: '#10B981', borderRadius: '3px' }}>
                                 <TimelineIcon />
                             </Avatar>
                         </Box>
@@ -222,14 +222,14 @@ export const ScheduledRideManagement: React.FC = () => {
 
             {/* Filters & Control */}
             <Paper sx={{
-                p: 2.5,
-                mb: 4,
-                borderRadius: 3,
+                p: 2,
+                mb: 3,
+                borderRadius: '3px',
                 bgcolor: '#131722',
                 border: '1px solid rgba(255, 255, 255, 0.08)'
             }}>
                 <Grid container spacing={2} alignItems="center">
-                    <Grid item xs={12} md={6}>
+                    <Grid item xs={12} md={8}>
                         <TextField
                             fullWidth
                             variant="outlined"
@@ -239,62 +239,46 @@ export const ScheduledRideManagement: React.FC = () => {
                             InputProps={{
                                 startAdornment: (
                                     <InputAdornment position="start">
-                                        <SearchIcon sx={{ color: '#94a3b8' }} />
+                                        <SearchIcon sx={{ color: '#94a3b8', fontSize: 18 }} />
                                     </InputAdornment>
                                 ),
                                 sx: {
-                                    borderRadius: 2,
-                                    bgcolor: 'rgba(255, 255, 255, 0.03)',
+                                    borderRadius: '3px',
+                                    bgcolor: '#0a0a0a',
                                     color: 'white',
                                     border: '1px solid rgba(255, 255, 255, 0.08)',
+                                    fontSize: '0.75rem',
                                     '& input::placeholder': { color: '#64748b', opacity: 1 },
                                     '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                                    '&.Mui-focused': { border: '1px solid #F59E0B' }
+                                    '&.Mui-focused': { border: '1px solid rgba(245, 158, 11, 0.65)' }
                                 }
                             }}
                             size="small"
                         />
                     </Grid>
-                    <Grid item xs={12} md={4}>
-                        <FormControl fullWidth size="small">
-                            <InputLabel sx={{ color: '#94a3b8', '&.Mui-focused': { color: '#F59E0B' } }}>Filter Status</InputLabel>
-                            <Select
-                                value={filterStatus}
-                                label="Filter Status"
-                                onChange={(e) => setFilterStatus(e.target.value)}
-                                sx={{
-                                    borderRadius: 2,
-                                    bgcolor: 'rgba(255, 255, 255, 0.03)',
-                                    color: 'white',
-                                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                                    '& .MuiOutlinedInput-notchedOutline': { border: 'none' },
-                                    '&.Mui-focused': { border: '1px solid #F59E0B' },
-                                    '& .MuiSvgIcon-root': { color: '#94a3b8' }
-                                }}
-                                MenuProps={{
-                                    PaperProps: {
-                                        sx: {
-                                            bgcolor: '#131722',
-                                            border: '1px solid rgba(255, 255, 255, 0.1)',
-                                            color: 'white'
-                                        }
-                                    }
-                                }}
-                            >
-                                <MenuItem value="ALL">All Statuses</MenuItem>
-                                <MenuItem value="PENDING">Pending</MenuItem>
-                                <MenuItem value="ASSIGNED">Assigned</MenuItem>
-                                <MenuItem value="COMPLETED">Completed</MenuItem>
-                                <MenuItem value="CANCELLED">Cancelled</MenuItem>
-                            </Select>
-                        </FormControl>
-                    </Grid>
                 </Grid>
             </Paper>
 
+            {/* Status Filter Tabs - Gamification Gold Pill style */}
+            <div className="flex items-center gap-2 border-b border-white/10 pb-2 mb-4 overflow-x-auto">
+                {['ALL', 'PENDING', 'ASSIGNED', 'COMPLETED', 'CANCELLED'].map((status) => (
+                    <button
+                        key={status}
+                        onClick={() => setFilterStatus(status)}
+                        className={`transition-all cursor-pointer whitespace-nowrap ${
+                            filterStatus === status
+                                ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                                : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
+                        }`}
+                    >
+                        {status}
+                    </button>
+                ))}
+            </div>
+
             {/* Main Data Table */}
             <TableContainer component={Paper} elevation={0} sx={{
-                borderRadius: 3,
+                borderRadius: '3px',
                 border: '1px solid rgba(255, 255, 255, 0.08)',
                 bgcolor: '#131722',
                 overflow: 'hidden'

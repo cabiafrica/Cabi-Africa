@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
+import { PageHeader } from '../common/PageHeader';
 import {
     Assessment,
     DirectionsCar,
@@ -99,25 +100,24 @@ export const DriverPerformanceReport: React.FC = () => {
 
     return (
         <div className="space-y-6">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-                        <Assessment className="text-amber-500" />
-                        Driver Performance Report
-                    </h1>
-                    <p className="text-slate-400 mt-1 text-sm">Overview of fleet metrics and driver efficiency.</p>
-                </div>
-                <button className="flex items-center gap-2 px-4 py-2 bg-white/[0.04] border border-white/10 hover:border-amber-500/30 rounded-xl text-slate-200 hover:text-amber-400 transition-colors shadow-sm font-medium text-sm">
-                    <Download fontSize="small" />
-                    Export CSV
-                </button>
-            </div>
+            <PageHeader
+                category="Fleet & People"
+                title="Driver Performance & Fleet Metrics"
+                subtitle="Comprehensive overview of driver ratings, acceptance rates, and gross earnings."
+                icon={<Assessment className="text-amber-500" />}
+                actions={
+                    <button className="btn-secondary flex items-center gap-1.5">
+                        <Download fontSize="small" />
+                        Export CSV
+                    </button>
+                }
+            />
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {cards.map((card, idx) => (
-                    <div key={idx} className="bg-[#131722] p-6 rounded-2xl shadow-sm border border-white/10 transition-all hover:border-white/20">
+                    <div key={idx} className="bg-[#131722] p-6 rounded-[3px] shadow-sm border border-white/10 transition-all hover:border-amber-500/30">
                         <div className="flex justify-between items-start mb-4">
-                            <div className={`p-3 rounded-xl ${card.bgClass} ${card.textClass}`}>
+                            <div className={`p-2.5 rounded-[3px] ${card.bgClass} ${card.textClass}`}>
                                 <card.icon fontSize="medium" />
                             </div>
                             {card.growth !== undefined && (

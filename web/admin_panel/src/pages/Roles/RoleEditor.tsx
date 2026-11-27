@@ -126,14 +126,14 @@ const RoleEditor: React.FC = () => {
             <form onSubmit={handleSubmit} className="max-w-7xl mx-auto space-y-6">
 
                 {/* Header */}
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-card-dark p-4 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm mb-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white dark:bg-[#131722] p-4 rounded-[3px] border border-slate-200 dark:border-white/10 shadow-sm mb-6">
                     <div className="flex items-center gap-3">
-                        <IconButton onClick={() => navigate('/roles')} className="text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-700">
+                        <IconButton onClick={() => navigate('/roles')} className="text-slate-500 hover:bg-white/5 rounded-[3px]">
                             <ArrowBackIcon />
                         </IconButton>
                         <div>
                             <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <SecurityIcon className="text-brand-yellow" />
+                                <SecurityIcon className="text-amber-500" />
                                 {isEditMode ? 'Edit Role' : 'Create Access Role'}
                             </h1>
                             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -145,13 +145,13 @@ const RoleEditor: React.FC = () => {
                         <button
                             type="button"
                             onClick={() => navigate('/roles')}
-                            className="bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded text-xs font-medium transition-colors"
+                            className="bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded-[3px] text-xs font-medium transition-colors"
                         >
                             Cancel
                         </button>
                         <button
                             type="submit"
-                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5"
+                            className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded-[3px] text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5"
                         >
                             <SaveIcon fontSize="small" />
                             Save Configuration
@@ -161,7 +161,7 @@ const RoleEditor: React.FC = () => {
 
                 {/* Main Configuration Card */}
                 <Grow in={true} timeout={300}>
-                    <div className="bg-white dark:bg-card-dark p-6 rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm">
+                    <div className="bg-white dark:bg-[#131722] p-6 rounded-[3px] border border-slate-200 dark:border-white/10 shadow-sm">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <TextField
                                 fullWidth
@@ -171,7 +171,7 @@ const RoleEditor: React.FC = () => {
                                 onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
                                 required
                                 variant="outlined"
-                                className="bg-white dark:bg-surface-dark"
+                                className="bg-white dark:bg-[#0a0a0a] rounded-[3px]"
                                 InputLabelProps={{ className: "dark:text-slate-400" }}
                                 InputProps={{ className: "dark:text-white" }}
                             />
@@ -184,7 +184,7 @@ const RoleEditor: React.FC = () => {
                                 helperText={!isEditMode && "Uppercase, underscores only. Cannot be changed later."}
                                 required
                                 variant="outlined"
-                                className="bg-white dark:bg-surface-dark"
+                                className="bg-white dark:bg-[#0a0a0a] rounded-[3px]"
                                 InputProps={{
                                     startAdornment: <InputAdornment position="start"><SecurityIcon className="text-slate-400" /></InputAdornment>,
                                     className: "dark:text-white"
@@ -200,7 +200,7 @@ const RoleEditor: React.FC = () => {
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                                     variant="outlined"
-                                    className="bg-white dark:bg-surface-dark"
+                                    className="bg-white dark:bg-[#0a0a0a] rounded-[3px]"
                                     InputLabelProps={{ className: "dark:text-slate-400" }}
                                     InputProps={{ className: "dark:text-white" }}
                                 />
@@ -221,13 +221,13 @@ const RoleEditor: React.FC = () => {
                                             <div
                                                 key={opt.value}
                                                 onClick={() => setFormData({ ...formData, platform: opt.value })}
-                                                className={`cursor-pointer p-4 rounded-xl border text-center transition-all duration-200
+                                                className={`cursor-pointer p-4 rounded-[3px] border text-center transition-all duration-200
                                                     ${isSelected
-                                                        ? 'bg-amber-500/15 border-brand-yellow ring-1 ring-brand-yellow text-brand-yellow shadow-sm'
-                                                        : 'bg-slate-50 dark:bg-surface-dark border-slate-200 dark:border-white/10 text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800'
+                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold border-amber-500 shadow-sm shadow-amber-500/20'
+                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
                                                     }`}
                                             >
-                                                <div className={`mb-2 ${isSelected ? 'text-brand-yellow' : 'text-slate-400'}`}>
+                                                <div className={`mb-2 ${isSelected ? 'text-black' : 'text-slate-400'}`}>
                                                     {opt.icon}
                                                 </div>
                                                 <p className="font-semibold text-sm">{opt.label}</p>
@@ -272,7 +272,7 @@ const RoleEditor: React.FC = () => {
                                 placeholder="Search permissions..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 bg-white dark:bg-card-dark border border-slate-300 dark:border-slate-600 rounded-lg text-slate-900 dark:text-white focus:ring-2 focus:ring-brand-yellow outline-none shadow-sm w-full sm:w-64"
+                                className="pl-10 pr-4 py-2 bg-white dark:bg-[#0a0a0a] border border-slate-300 dark:border-white/10 rounded-[3px] text-slate-900 dark:text-white focus:ring-1 focus:ring-amber-500/65 focus:border-amber-500/65 outline-none shadow-sm w-full sm:w-64 text-xs"
                             />
                         </div>
                     </div>
@@ -298,13 +298,13 @@ const RoleEditor: React.FC = () => {
                             return (
                                 <Grow in={true} timeout={300 + (index * 100)} key={category}>
                                     <div
-                                        className="bg-white dark:bg-card-dark rounded-xl ring-1 ring-slate-200 dark:ring-slate-700 shadow-sm hover:shadow-md transition-all duration-200"
+                                        className="bg-white dark:bg-[#131722] rounded-[3px] border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md transition-all duration-200"
                                         onMouseEnter={() => setHoveredCategory(category)}
                                         onMouseLeave={() => setHoveredCategory(null)}
                                     >
-                                        <div className="p-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-slate-50/50 dark:bg-card-dark">
+                                        <div className="p-4 border-b border-slate-100 dark:border-white/10 flex items-center justify-between bg-slate-50/50 dark:bg-[#0a0a0a]">
                                             <div className="flex items-center gap-2">
-                                                <div className="w-1 h-5 bg-brand-yellow rounded-full"></div>
+                                                <div className="w-1 h-5 bg-amber-500 rounded-[1px]"></div>
                                                 <h3 className="font-bold text-slate-800 dark:text-slate-200">{category}</h3>
                                             </div>
                                             <Tooltip title={allChecked ? "Deselect All" : "Select All"}>
@@ -326,10 +326,10 @@ const RoleEditor: React.FC = () => {
                                                     <div
                                                         key={perm}
                                                         onClick={() => handlePermissionChange(perm, !isSelected)}
-                                                        className={`flex items-start gap-2 p-2 rounded-lg cursor-pointer transition-colors
+                                                        className={`flex items-start gap-2 p-2 rounded-[3px] cursor-pointer transition-colors
                                                             ${isSelected
-                                                                ? 'bg-amber-500/10 border border-brand-yellow/30'
-                                                                : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                                                                ? 'bg-amber-500/10 border border-amber-500/30'
+                                                                : 'hover:bg-white/5'
                                                             }`}
                                                     >
                                                         <Checkbox
@@ -344,7 +344,7 @@ const RoleEditor: React.FC = () => {
                                                             }}
                                                         />
                                                         <div>
-                                                            <p className={`text-sm font-medium ${isSelected ? 'text-brand-yellow' : 'text-slate-700 dark:text-slate-300'}`}>
+                                                            <p className={`text-sm font-medium ${isSelected ? 'text-amber-400' : 'text-slate-700 dark:text-slate-300'}`}>
                                                                 {perm.replace(prefixes[0] || '', '').replace(/_/g, ' ').toLowerCase()}
                                                             </p>
                                                             <p className="text-xs text-slate-400 mt-0.5 font-mono opacity-70">

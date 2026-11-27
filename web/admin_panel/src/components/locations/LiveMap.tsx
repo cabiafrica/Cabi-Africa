@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { adminService } from '../../services/adminService';
 import { CabiMap, MapMarker } from '../CabiMap';
+import { PageHeader } from '../common/PageHeader';
 import {
     DirectionsCar,
     Wifi,
@@ -82,122 +83,140 @@ export const LiveMap: React.FC = () => {
     }, [drivers, filter]);
 
     return (
-        <div className="relative h-[calc(100vh-100px)] bg-slate-100 dark:bg-surface-dark rounded-xl overflow-hidden shadow-lg border border-slate-200 dark:border-white/10">
-            {/* Map Container */}
-            <div className="absolute inset-0 z-0">
-                <CabiMap
-                    markers={markers}
-                    center={[-1.2921, 36.8219]} // Nairobi
-                    zoom={13}
-                    height="100%"
-                />
-            </div>
+        <div className="space-y-4">
+            <PageHeader
+                category="Command Center"
+                title="Real-Time Fleet Telemetry & Live Map"
+                subtitle="Live vehicle tracking, operational availability, and dynamic trip dispatch map."
+                icon={<DirectionsCar className="text-amber-500" />}
+                actions={
+                    <button
+                        onClick={fetchDrivers}
+                        className="btn-secondary flex items-center gap-1.5"
+                        title="Refresh Map"
+                    >
+                        <Refresh fontSize="small" className={isAutoRefresh ? "animate-spin" : ""} />
+                        Refresh
+                    </button>
+                }
+            />
 
-            {/* Floating Control Panel */}
-            <div className="absolute top-4 left-4 z-10 w-80 flex flex-col gap-4">
-
-                {/* Stats Card */}
-                <div className="bg-white/95 dark:bg-card-dark/95 backdrop-blur-md p-4 rounded-xl shadow-xl border border-slate-200 dark:border-white/10">
-                    <div className="flex justify-between items-start mb-4">
-                        <div>
-                            <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
-                                <Map fontSize="small" className="text-amber-600" />
-                                Live Operations
-                            </h2>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
-                                Updated: {lastUpdated.toLocaleTimeString()}
-                            </p>
-                        </div>
-                        <button
-                            onClick={fetchDrivers}
-                            className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg text-slate-500 transition-colors"
-                            title="Refresh Now"
-                        >
-                            <Refresh fontSize="small" className={isAutoRefresh ? "animate-spin-slow" : ""} />
-                        </button>
-                    </div>
-
-                    <div className="grid grid-cols-3 gap-2">
-                        <div
-                            onClick={() => setFilter('AVAILABLE')}
-                            className={`p-2 rounded-lg cursor-pointer transition-all border ${filter === 'AVAILABLE'
-                                    ? 'bg-green-50 border-green-200 dark:bg-green-900/30 dark:border-green-800'
-                                    : 'bg-slate-50 border-transparent hover:bg-slate-100 dark:bg-slate-700/50'
-                                }`}
-                        >
-                            <div className="text-green-600 dark:text-green-400 mb-1"><Wifi fontSize="small" /></div>
-                            <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.available}</div>
-                            <div className="text-[10px] font-semibold text-slate-500 uppercase">Available</div>
-                        </div>
-
-                        <div
-                            onClick={() => setFilter('ON_TRIP')}
-                            className={`p-2 rounded-lg cursor-pointer transition-all border ${filter === 'ON_TRIP'
-                                    ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/30 dark:border-amber-800'
-                                    : 'bg-slate-50 border-transparent hover:bg-slate-100 dark:bg-slate-700/50'
-                                }`}
-                        >
-                            <div className="text-amber-600 dark:text-amber-400 mb-1"><DirectionsCar fontSize="small" /></div>
-                            <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.onTrip}</div>
-                            <div className="text-[10px] font-semibold text-slate-500 uppercase">On Trip</div>
-                        </div>
-
-                        <div
-                            onClick={() => setFilter('OFFLINE')}
-                            className={`p-2 rounded-lg cursor-pointer transition-all border ${filter === 'OFFLINE'
-                                    ? 'bg-slate-200 border-slate-300 dark:bg-slate-600 dark:border-slate-500'
-                                    : 'bg-slate-50 border-transparent hover:bg-slate-100 dark:bg-slate-700/50'
-                                }`}
-                        >
-                            <div className="text-slate-500 dark:text-slate-400 mb-1"><WifiOff fontSize="small" /></div>
-                            <div className="text-2xl font-bold text-slate-900 dark:text-white">{stats.offline}</div>
-                            <div className="text-[10px] font-semibold text-slate-500 uppercase">Offline</div>
-                        </div>
-                    </div>
+            <div className="relative h-[calc(100vh-210px)] bg-[#131722] rounded-[3px] overflow-hidden shadow-lg border border-white/10">
+                {/* Map Container */}
+                <div className="absolute inset-0 z-0">
+                    <CabiMap
+                        markers={markers}
+                        center={[-1.2921, 36.8219]} // Nairobi
+                        zoom={13}
+                        height="100%"
+                    />
                 </div>
 
-                {/* Filters */}
-                <div className="bg-white/95 dark:bg-card-dark/95 backdrop-blur-md p-3 rounded-xl shadow-xl border border-slate-200 dark:border-white/10 flex flex-col gap-2">
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs font-bold text-slate-500 uppercase flex items-center gap-1">
-                            <Layers fontSize="small" /> Map Filters
-                        </span>
-                        {filter !== 'ALL' && (
+                {/* Floating Control Panel */}
+                <div className="absolute top-4 left-4 z-10 w-80 flex flex-col gap-3">
+                    {/* Stats Card */}
+                    <div className="bg-[#131722]/95 backdrop-blur-md p-4 rounded-[3px] shadow-xl border border-white/10">
+                        <div className="flex justify-between items-start mb-3">
+                            <div>
+                                <h2 className="text-sm font-bold text-white flex items-center gap-2">
+                                    <Map fontSize="small" className="text-amber-500" />
+                                    Live Operations
+                                </h2>
+                                <p className="text-[11px] text-slate-400">
+                                    Updated: {lastUpdated.toLocaleTimeString()}
+                                </p>
+                            </div>
                             <button
-                                onClick={() => setFilter('ALL')}
-                                className="text-xs text-amber-600 font-bold hover:underline"
+                                onClick={fetchDrivers}
+                                className="p-1 hover:bg-white/10 rounded-[3px] text-slate-400 hover:text-white transition-colors"
+                                title="Refresh Now"
                             >
-                                Clear
+                                <Refresh fontSize="small" className={isAutoRefresh ? "animate-spin" : ""} />
                             </button>
-                        )}
-                    </div>
-                    <div className="flex flex-wrap gap-2">
-                        {['ALL', 'AVAILABLE', 'ON_TRIP', 'OFFLINE'].map((f) => (
-                            <button
-                                key={f}
-                                onClick={() => setFilter(f as any)}
-                                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-all ${filter === f
-                                        ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900 shadow-md'
-                                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-700 dark:text-slate-300'
+                        </div>
+
+                        <div className="grid grid-cols-3 gap-2">
+                            <div
+                                onClick={() => setFilter('AVAILABLE')}
+                                className={`p-2 rounded-[3px] cursor-pointer transition-all border ${filter === 'AVAILABLE'
+                                        ? 'bg-emerald-500/10 border-emerald-500/30'
+                                        : 'bg-[#0a0a0a] border-white/5 hover:bg-white/5'
                                     }`}
                             >
-                                {f.replace('_', ' ')}
-                            </button>
-                        ))}
+                                <div className="text-emerald-400 mb-1"><Wifi fontSize="small" /></div>
+                                <div className="text-xl font-bold text-white">{stats.available}</div>
+                                <div className="text-[10px] font-semibold text-slate-400 uppercase">Available</div>
+                            </div>
+
+                            <div
+                                onClick={() => setFilter('ON_TRIP')}
+                                className={`p-2 rounded-[3px] cursor-pointer transition-all border ${filter === 'ON_TRIP'
+                                        ? 'bg-amber-500/10 border-amber-500/30'
+                                        : 'bg-[#0a0a0a] border-white/5 hover:bg-white/5'
+                                    }`}
+                            >
+                                <div className="text-amber-400 mb-1"><DirectionsCar fontSize="small" /></div>
+                                <div className="text-xl font-bold text-white">{stats.onTrip}</div>
+                                <div className="text-[10px] font-semibold text-slate-400 uppercase">On Trip</div>
+                            </div>
+
+                            <div
+                                onClick={() => setFilter('OFFLINE')}
+                                className={`p-2 rounded-[3px] cursor-pointer transition-all border ${filter === 'OFFLINE'
+                                        ? 'bg-white/10 border-white/20'
+                                        : 'bg-[#0a0a0a] border-white/5 hover:bg-white/5'
+                                    }`}
+                            >
+                                <div className="text-slate-400 mb-1"><WifiOff fontSize="small" /></div>
+                                <div className="text-xl font-bold text-white">{stats.offline}</div>
+                                <div className="text-[10px] font-semibold text-slate-400 uppercase">Offline</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Filters */}
+                    <div className="bg-[#131722]/95 backdrop-blur-md p-3 rounded-[3px] shadow-xl border border-white/10 flex flex-col gap-2">
+                        <div className="flex items-center justify-between">
+                            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                                <Layers fontSize="small" /> Map Filters
+                            </span>
+                            {filter !== 'ALL' && (
+                                <button
+                                    onClick={() => setFilter('ALL')}
+                                    className="text-[11px] text-amber-400 font-bold hover:underline"
+                                >
+                                    Clear
+                                </button>
+                            )}
+                        </div>
+                        <div className="flex flex-wrap gap-1.5">
+                            {['ALL', 'AVAILABLE', 'ON_TRIP', 'OFFLINE'].map((f) => (
+                                <button
+                                    key={f}
+                                    onClick={() => setFilter(f as any)}
+                                    className={`px-2.5 py-1 rounded-[3px] text-xs font-semibold transition-all border ${filter === f
+                                            ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black border-amber-500 font-bold shadow-sm'
+                                            : 'bg-[#0a0a0a] text-slate-300 border-white/10 hover:bg-white/5'
+                                        }`}
+                                >
+                                    {f.replace('_', ' ')}
+                                </button>
+                            ))}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            {/* Legend / Status Bar (Bottom) */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 bg-white/90 dark:bg-surface-dark/90 backdrop-blur px-6 py-2 rounded-full shadow-lg border border-slate-200 dark:border-white/10 flex gap-6 text-xs font-medium">
-                <div className="flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></span>
-                    <span className="text-slate-700 dark:text-slate-300">Live Updates Active</span>
-                </div>
-                <div className="w-px h-4 bg-slate-300 dark:bg-slate-600"></div>
-                <div className="flex items-center gap-2">
-                    <span className="text-slate-500">Total Fleet:</span>
-                    <span className="font-bold text-slate-900 dark:text-white">{stats.total}</span>
+                {/* Legend / Status Bar (Bottom) */}
+                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 bg-[#131722]/95 backdrop-blur px-4 py-1.5 rounded-[3px] shadow-lg border border-white/10 flex gap-4 text-xs font-medium">
+                    <div className="flex items-center gap-2">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.6)] animate-pulse"></span>
+                        <span className="text-slate-200">Live Updates Active</span>
+                    </div>
+                    <div className="w-px h-3.5 bg-white/10"></div>
+                    <div className="flex items-center gap-1.5">
+                        <span className="text-slate-400">Total Fleet:</span>
+                        <span className="font-bold text-white">{stats.total}</span>
+                    </div>
                 </div>
             </div>
         </div>

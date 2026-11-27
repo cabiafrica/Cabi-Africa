@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { PageHeader } from '../../components/common/PageHeader';
 import {
     Box, Typography, Button, Paper, Table, TableBody, TableCell,
     TableContainer, TableHead, TableRow, IconButton, Chip, TextField, InputAdornment, Grow, Avatar, Tooltip
@@ -84,52 +85,27 @@ const RolesList: React.FC = () => {
         <Box sx={{
             p: { xs: 2, md: 4 },
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #121212 0%, #000000 100%)',
             color: 'white'
         }}>
             {/* Header Section */}
-            <Box mb={3}>
-                <Box display="flex" justifyContent="space-between" alignItems="center">
-                    <Box>
-                        <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
-                            GROWTH & PLATFORM
-                        </Typography>
-                        <Typography variant="h4" fontWeight="800" sx={{
-                            color: '#ffffff',
-                            mb: 0.5
-                        }}>
-                            Roles & Permissions
-                        </Typography>
-                        <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-                            Manage system access levels and permissions across all platforms
-                        </Typography>
-                    </Box>
-                    <Button
-                        variant="contained"
-                        startIcon={<AddIcon />}
+            <PageHeader
+                category="Growth & Platform"
+                title="Roles & Permissions"
+                subtitle="Manage system access levels and permissions across all operational platforms"
+                icon={<SecurityIcon className="w-5 h-5 text-amber-500" />}
+                action={
+                    <button
                         onClick={() => navigate('/roles/new')}
-                        sx={{
-                            background: 'linear-gradient(to right, #F59E0B, #D97706)',
-                            color: '#000000',
-                            boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
-                            '&:hover': { background: 'linear-gradient(to right, #FBBF24, #F59E0B)' },
-                            fontWeight: 'bold',
-                            px: 2,
-                            py: 0.75,
-                            fontSize: '0.75rem',
-                            whiteSpace: 'nowrap',
-                            borderRadius: '3px',
-                        }}
+                        className="btn-primary flex items-center gap-1.5"
                     >
-                        Create New Role
-                    </Button>
-                </Box>
-                {/* Golden Gradient Separator */}
-                <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
-            </Box>
+                        <AddIcon fontSize="small" />
+                        <span>Create New Role</span>
+                    </button>
+                }
+            />
 
             {/* Search Bar */}
-            <Box mb={3}>
+            <Box mb={3} mt={3}>
                 <TextField
                     fullWidth
                     variant="filled"
@@ -137,13 +113,14 @@ const RolesList: React.FC = () => {
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
                     InputProps={{
-                        startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: 'gray' }} /></InputAdornment>,
+                        startAdornment: <InputAdornment position="start"><SearchIcon sx={{ color: '#94a3b8' }} /></InputAdornment>,
                         sx: {
-                            background: 'rgba(255,255,255,0.05)',
-                            borderRadius: 2,
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            background: '#0a0a0a',
+                            borderRadius: '3px',
+                            border: '1px solid rgba(255,255,255,0.1)',
                             color: 'white',
-                            '&:hover': { background: 'rgba(255,255,255,0.08)' }
+                            fontSize: '0.8125rem',
+                            '&:hover': { background: '#131722' }
                         }
                     }}
                 />
@@ -151,10 +128,9 @@ const RolesList: React.FC = () => {
 
             {/* Roles Table */}
             <TableContainer component={Paper} elevation={0} sx={{
-                background: 'rgba(30, 30, 30, 0.4)',
-                backdropFilter: 'blur(20px)',
+                background: '#131722',
                 border: '1px solid rgba(255,255,255,0.1)',
-                borderRadius: 4
+                borderRadius: '3px'
             }}>
                 <Table>
                     <TableHead>

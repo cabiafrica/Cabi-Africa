@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, Badge } from '../../services/adminService';
 import { BadgeForm } from '../forms/BadgeForm';
+import { PageHeader } from '../common/PageHeader';
 import {
   MilitaryTech,
   Add,
@@ -44,42 +45,41 @@ export const BadgeManagement: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <MilitaryTech className="text-amber-600 dark:text-amber-400" />
-            Badge Management
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">Configure gamification badges and qualification rules.</p>
-        </div>
-        <button
-          onClick={() => setEditingBadge('new')}
-          className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all flex items-center gap-1.5"
-        >
-          <Add fontSize="small" />
-          Create New Badge
-        </button>
-      </div>
+      <PageHeader
+        category="Growth & Platform"
+        title="Driver Badge Management"
+        subtitle="Configure gamification badges, legacy tiers, and qualification rules"
+        icon={<MilitaryTech className="w-5 h-5 text-amber-500" />}
+        action={
+          <button
+            onClick={() => setEditingBadge('new')}
+            className="btn-primary flex items-center gap-1.5"
+          >
+            <Add fontSize="small" />
+            <span>Create New Badge</span>
+          </button>
+        }
+      />
 
-      <div className="bg-white dark:bg-card-dark shadow-sm rounded-xl border border-slate-200 dark:border-white/10 overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark flex justify-between items-center">
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100">All Badges</h3>
-          <span className="bg-amber-500/15 text-brand-yellow border border-brand-yellow/30 text-xs font-semibold px-2.5 py-0.5 rounded-full">
+      <div className="bg-[#131722] shadow-sm rounded-[3px] border border-white/10 overflow-hidden">
+        <div className="px-5 py-3.5 border-b border-white/10 bg-[#0a0a0a] flex justify-between items-center">
+          <h3 className="font-semibold text-white text-xs">All Badges</h3>
+          <span className="bg-amber-500/15 text-amber-400 border border-amber-500/30 text-[10px] font-semibold px-2 py-0.5 rounded-[3px]">
             {badges.length} Total
           </span>
         </div>
 
         <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-            <thead className="bg-slate-50 dark:bg-surface-dark">
+          <table className="min-w-full divide-y divide-white/5 text-xs">
+            <thead className="bg-[#0a0a0a]">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Description</th>
-                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Rules</th>
-                <th className="px-6 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Actions</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Name</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Description</th>
+                <th className="px-5 py-3 text-left text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Rules</th>
+                <th className="px-5 py-3 text-right text-[11px] font-semibold text-gray-400 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
+            <tbody className="bg-[#131722] divide-y divide-white/5">
               {loading ? (
                 <tr><td colSpan={4} className="px-6 py-12 text-center text-slate-500 dark:text-slate-400">Loading badges...</td></tr>
               ) : badges.length === 0 ? (

@@ -264,7 +264,7 @@ export const OccurrenceList = () => {
                 sx: {
                   bgcolor: '#131722',
                   border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 3,
+                  borderRadius: '3px',
                   boxShadow: '0 20px 40px rgba(0,0,0,0.6)',
                   minWidth: 240,
                   p: 1,
@@ -287,7 +287,7 @@ export const OccurrenceList = () => {
                   onClick={() => setSelectedSeverity(sev.id)}
                   selected={selectedSeverity === sev.id}
                   sx={{
-                    borderRadius: 1.5,
+                    borderRadius: '3px',
                     fontSize: '0.85rem',
                     color: selectedSeverity === sev.id ? '#F59E0B' : 'white',
                     fontWeight: selectedSeverity === sev.id ? 700 : 400,
@@ -319,7 +319,7 @@ export const OccurrenceList = () => {
                   onClick={() => setSelectedCategory(cat.id)}
                   selected={selectedCategory === cat.id}
                   sx={{
-                    borderRadius: 1.5,
+                    borderRadius: '3px',
                     fontSize: '0.85rem',
                     color: selectedCategory === cat.id ? '#F59E0B' : 'white',
                     fontWeight: selectedCategory === cat.id ? 700 : 400,
@@ -340,7 +340,7 @@ export const OccurrenceList = () => {
                       setFilterAnchorEl(null);
                     }}
                     sx={{
-                      borderRadius: 1.5,
+                      borderRadius: '3px',
                       fontSize: '0.85rem',
                       color: '#ef4444',
                       fontWeight: 700,
@@ -353,38 +353,31 @@ export const OccurrenceList = () => {
               )}
             </Menu>
 
-        {/* Status Quick Filter Chips */}
-        <Stack direction="row" spacing={1.5} mb={3}>
+        {/* Status Quick Filter Tabs - Gamification Gold Pill style */}
+        <div className="flex items-center gap-2 border-b border-white/10 pb-2 mb-4 overflow-x-auto">
           {[
-            { id: 'ALL', label: 'All Incidents', count: countByStatus('ALL'), color: '#FFD700' },
-            { id: 'OPEN', label: 'Open (Urgent)', count: countByStatus('OPEN'), color: '#ef4444' },
-            { id: 'UNDER_INVESTIGATION', label: 'Investigating', count: countByStatus('UNDER_INVESTIGATION'), color: '#f59e0b' },
-            { id: 'DISPUTED', label: 'Disputed', count: countByStatus('DISPUTED'), color: '#D4AF37' },
-            { id: 'RESOLVED', label: 'Resolved', count: countByStatus('RESOLVED'), color: '#10b981' },
+            { id: 'ALL', label: 'All Incidents', count: countByStatus('ALL') },
+            { id: 'OPEN', label: 'Open (Urgent)', count: countByStatus('OPEN') },
+            { id: 'UNDER_INVESTIGATION', label: 'Investigating', count: countByStatus('UNDER_INVESTIGATION') },
+            { id: 'DISPUTED', label: 'Disputed', count: countByStatus('DISPUTED') },
+            { id: 'RESOLVED', label: 'Resolved', count: countByStatus('RESOLVED') },
           ].map((tab) => (
-            <Chip
+            <button
               key={tab.id}
-              label={`${tab.label} (${tab.count})`}
               onClick={() => setSelectedStatus(tab.id)}
-              sx={{
-                bgcolor: selectedStatus === tab.id ? `${tab.color}25` : 'rgba(255,255,255,0.05)',
-                color: selectedStatus === tab.id ? tab.color : 'text.secondary',
-                border: `1px solid ${selectedStatus === tab.id ? tab.color : 'rgba(255,255,255,0.1)'}`,
-                fontWeight: selectedStatus === tab.id ? 800 : 500,
-                fontSize: '0.8rem',
-                cursor: 'pointer',
-                transition: 'all 0.2s',
-                '&:hover': {
-                  bgcolor: `${tab.color}15`,
-                  borderColor: tab.color,
-                },
-              }}
-            />
+              className={`transition-all cursor-pointer whitespace-nowrap ${
+                selectedStatus === tab.id
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
+              }`}
+            >
+              {tab.label} ({tab.count})
+            </button>
           ))}
-        </Stack>
+        </div>
 
         {error && (
-          <Alert severity="error" sx={{ mb: 4, borderRadius: 2, bgcolor: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <Alert severity="error" sx={{ mb: 4, borderRadius: '3px', bgcolor: 'rgba(239, 68, 68, 0.1)', color: '#fca5a5', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
             {error}
           </Alert>
         )}
@@ -392,7 +385,7 @@ export const OccurrenceList = () => {
         <TableContainer component={Paper} sx={{ 
           background: GLASS_BG, 
           backdropFilter: 'blur(20px)',
-          borderRadius: 4, 
+          borderRadius: '3px', 
           border: `1px solid ${CARD_BORDER}`,
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)',
           overflow: 'hidden'

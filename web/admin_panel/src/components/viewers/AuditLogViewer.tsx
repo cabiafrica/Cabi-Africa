@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, AuditLog, AuditLogFilters } from '../../services/adminService';
+import { PageHeader } from '../common/PageHeader';
+import HistoryIcon from '@mui/icons-material/History';
 
 export const AuditLogViewer: React.FC = () => {
   const [logs, setLogs] = useState<AuditLog[]>([]);
@@ -37,102 +39,109 @@ export const AuditLogViewer: React.FC = () => {
   };
 
   return (
-    <div className="bg-white dark:bg-card-dark shadow rounded-lg overflow-hidden">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-surface-dark">
-        <h2 className="text-xl font-semibold text-slate-800 dark:text-slate-100 mb-4">Audit Log</h2>
+    <div className="space-y-6">
+      <PageHeader
+        category="Growth & Platform"
+        title="System Audit Logs"
+        description="Immutable chronological record of administrative operations and critical platform mutations."
+        icon={<HistoryIcon className="text-amber-500" />}
+      />
 
-        <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-          <input
-            type="text"
-            name="userEmail"
-            placeholder="Filter by User Email..."
-            value={filters.userEmail}
-            onChange={handleFilterChange}
-            aria-label="Filter by User Email"
-            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100 placeholder:text-slate-400"
-          />
-          <input
-            type="text"
-            name="action"
-            placeholder="Filter by Action..."
-            value={filters.action}
-            onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-          />
-          <input
-            type="date"
-            name="startDate"
-            value={filters.startDate}
-            onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-          />
-          <input
-            type="date"
-            name="endDate"
-            value={filters.endDate}
-            onChange={handleFilterChange}
-            className="border-slate-300 dark:border-slate-600 focus:ring-amber-500 focus:border-amber-500 block w-full shadow-sm sm:text-sm border rounded-md p-2 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-          />
-          <button
-            type="submit"
-            className="w-full inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-gray-800 hover:bg-gray-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors"
-          >
-            Apply Filters
-          </button>
-        </form>
-      </div>
+      <div className="bg-white dark:bg-[#131722] shadow rounded-[3px] border border-slate-200 dark:border-white/10 overflow-hidden">
+        <div className="px-6 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-[#0a0a0a]">
+          <form onSubmit={handleFilterSubmit} className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3">
+            <input
+              type="text"
+              name="userEmail"
+              placeholder="Filter by User Email..."
+              value={filters.userEmail}
+              onChange={handleFilterChange}
+              aria-label="Filter by User Email"
+              className="border-slate-300 dark:border-white/10 focus:ring-1 focus:ring-amber-500/65 focus:border-amber-500/65 block w-full text-xs border rounded-[3px] p-2 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 placeholder:text-slate-500 outline-none"
+            />
+            <input
+              type="text"
+              name="action"
+              placeholder="Filter by Action..."
+              value={filters.action}
+              onChange={handleFilterChange}
+              className="border-slate-300 dark:border-white/10 focus:ring-1 focus:ring-amber-500/65 focus:border-amber-500/65 block w-full text-xs border rounded-[3px] p-2 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 placeholder:text-slate-500 outline-none"
+            />
+            <input
+              type="date"
+              name="startDate"
+              value={filters.startDate}
+              onChange={handleFilterChange}
+              className="border-slate-300 dark:border-white/10 focus:ring-1 focus:ring-amber-500/65 focus:border-amber-500/65 block w-full text-xs border rounded-[3px] p-2 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 outline-none"
+            />
+            <input
+              type="date"
+              name="endDate"
+              value={filters.endDate}
+              onChange={handleFilterChange}
+              className="border-slate-300 dark:border-white/10 focus:ring-1 focus:ring-amber-500/65 focus:border-amber-500/65 block w-full text-xs border rounded-[3px] p-2 bg-white dark:bg-[#131722] text-slate-900 dark:text-slate-100 outline-none"
+            />
+            <button
+              type="submit"
+              className="w-full inline-flex justify-center items-center py-2 px-3.5 border border-transparent shadow-sm shadow-amber-500/20 text-xs font-semibold rounded-[3px] text-black bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 focus:outline-none transition-all active:scale-95"
+            >
+              Apply Filters
+            </button>
+          </form>
+        </div>
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-200 dark:divide-slate-700">
-          <thead className="bg-slate-50 dark:bg-surface-dark">
-            <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Timestamp</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">User</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Action</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">Details</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider">IP Address</th>
-            </tr>
-          </thead>
-          <tbody className="bg-white dark:bg-card-dark divide-y divide-slate-200 dark:divide-slate-700">
-            {isLoading ? (
+        <div className="overflow-x-auto">
+          <table className="min-w-full divide-y divide-slate-200 dark:divide-white/10">
+            <thead className="bg-slate-50 dark:bg-[#0a0a0a]">
               <tr>
-                <td colSpan={5} className="px-6 py-10 text-center text-gray-500">
-                  <div className="flex justify-center items-center">
-                    <svg className="animate-spin h-5 w-5 mr-3 text-gray-500" viewBox="0 0 24 24">
-                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                    Loading logs...
-                  </div>
-                </td>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Timestamp</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">User</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Action</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">Details</th>
+                <th className="px-6 py-3 text-left text-xs font-semibold text-slate-400 uppercase tracking-wider">IP Address</th>
               </tr>
-            ) : logs.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="px-6 py-10 text-center text-slate-500 dark:text-slate-400">No logs found.</td>
-              </tr>
-            ) : (
-              logs.map(log => (
-                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">
-                    {new Date(log.timestamp).toLocaleString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-slate-900 dark:text-slate-100">
-                    {log.adminUserEmail}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-700 dark:text-slate-300">
-                    <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-xs font-bold border border-slate-300 dark:border-slate-600">{log.action}</span>
-                  </td>
-                  <td className="px-6 py-4 text-sm text-slate-500 dark:text-slate-400 font-mono text-xs max-w-xs truncate">
-                    {JSON.stringify(log.details)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 font-mono">
-                    {log.ipAddress}
+            </thead>
+            <tbody className="bg-white dark:bg-[#131722] divide-y divide-slate-200 dark:divide-white/10">
+              {isLoading ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400">
+                    <div className="flex justify-center items-center">
+                      <svg className="animate-spin h-5 w-5 mr-3 text-amber-500" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                      </svg>
+                      Loading logs...
+                    </div>
                   </td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : logs.length === 0 ? (
+                <tr>
+                  <td colSpan={5} className="px-6 py-10 text-center text-slate-400">No logs found.</td>
+                </tr>
+              ) : (
+                logs.map(log => (
+                  <tr key={log.id} className="hover:bg-white/5 transition-colors">
+                    <td className="px-6 py-3.5 whitespace-nowrap text-xs text-slate-400 font-mono">
+                      {new Date(log.timestamp).toLocaleString()}
+                    </td>
+                    <td className="px-6 py-3.5 whitespace-nowrap text-xs font-semibold text-slate-900 dark:text-slate-100">
+                      {log.adminUserEmail}
+                    </td>
+                    <td className="px-6 py-3.5 whitespace-nowrap text-xs text-slate-300">
+                      <span className="px-2 py-0.5 bg-amber-500/10 text-amber-400 rounded-[3px] text-[11px] font-bold border border-amber-500/20">{log.action}</span>
+                    </td>
+                    <td className="px-6 py-3.5 text-xs text-slate-400 font-mono max-w-xs truncate">
+                      {JSON.stringify(log.details)}
+                    </td>
+                    <td className="px-6 py-3.5 whitespace-nowrap text-xs text-slate-400 font-mono">
+                      {log.ipAddress}
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );

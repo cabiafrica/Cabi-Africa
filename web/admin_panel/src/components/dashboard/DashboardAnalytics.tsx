@@ -13,29 +13,35 @@ import {
     ElectricBolt,
     Security
 } from '@mui/icons-material';
+import { PageHeader } from '../common/PageHeader';
 
 const GOLD_GRADIENT = 'linear-gradient(135deg, #FFD700 0%, #B8860B 100%)';
 
 export const DashboardAnalytics: React.FC = () => {
     return (
-        <div className="space-y-8 animate-fade-in px-4">
-            {/* Header section could be here, but usually it's in the layout */}
+        <div className="space-y-6 animate-fade-in">
+            <PageHeader
+                category="Command Center"
+                title="Executive Telemetry & Analytics"
+                subtitle="Real-time ecosystem vital signs, gross bookings, and network performance."
+                icon={<TrendingUp className="text-amber-500" />}
+            />
             
             <TabGroup>
-                <TabList className="mt-4 border-b border-white/5" variant="line">
-                    <Tab className="ui-selected:text-primary ui-selected:border-primary text-slate-400 font-medium px-6">Overview</Tab>
-                    <Tab className="ui-selected:text-primary ui-selected:border-primary text-slate-400 font-medium px-6">Network Growth</Tab>
-                    <Tab className="ui-selected:text-primary ui-selected:border-primary text-slate-400 font-medium px-6">Financial Intelligence</Tab>
+                <TabList className="mt-2 flex gap-2 border-b border-white/10 pb-2">
+                    <Tab className="ui-selected:bg-gradient-to-r ui-selected:from-amber-500 ui-selected:to-amber-600 ui-selected:text-black ui-selected:font-bold ui-selected:shadow-sm ui-selected:shadow-amber-500/20 text-slate-400 font-semibold px-4 py-1.5 text-xs rounded-[3px] transition-all outline-none border border-white/5 ui-selected:border-amber-500">Overview</Tab>
+                    <Tab className="ui-selected:bg-gradient-to-r ui-selected:from-amber-500 ui-selected:to-amber-600 ui-selected:text-black ui-selected:font-bold ui-selected:shadow-sm ui-selected:shadow-amber-500/20 text-slate-400 font-semibold px-4 py-1.5 text-xs rounded-[3px] transition-all outline-none border border-white/5 ui-selected:border-amber-500">Network Growth</Tab>
+                    <Tab className="ui-selected:bg-gradient-to-r ui-selected:from-amber-500 ui-selected:to-amber-600 ui-selected:text-black ui-selected:font-bold ui-selected:shadow-sm ui-selected:shadow-amber-500/20 text-slate-400 font-semibold px-4 py-1.5 text-xs rounded-[3px] transition-all outline-none border border-white/5 ui-selected:border-amber-500">Financial Intelligence</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel>
-                        <div className="space-y-8 mt-8">
+                        <div className="space-y-8 mt-6">
                             {/* Top KPIs */}
                             <Grid numItems={1} numItemsSm={2} numItemsLg={3} className="gap-6">
                                 {kpiData.map((item) => (
                                     <Card 
                                         key={item.title} 
-                                        className="bg-slate-900/40 backdrop-blur-md ring-1 ring-white/10 rounded-2xl p-6 relative overflow-hidden"
+                                        className="bg-[#131722] border border-white/10 rounded-[3px] p-6 relative overflow-hidden"
                                     >
                                         <div className="absolute top-0 right-0 p-4 opacity-10">
                                             <TrendingUp sx={{ fontSize: 60, color: '#FFD700' }} />
@@ -70,10 +76,10 @@ export const DashboardAnalytics: React.FC = () => {
                             </Grid>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                <Card className="bg-slate-900/40 backdrop-blur-md ring-1 ring-white/10 rounded-2xl p-6 lg:col-span-1">
+                                <Card className="bg-[#131722] border border-white/10 rounded-[3px] p-6 lg:col-span-1">
                                     <Flex className="mb-6">
                                         <div className="flex items-center gap-3">
-                                            <div className="p-2 bg-red-500/20 rounded-lg">
+                                            <div className="p-2 bg-rose-500/10 border border-rose-500/20 rounded-[3px]">
                                                 <NotificationsActive sx={{ color: '#ef4444' }} />
                                             </div>
                                             <Title className="text-white font-bold">Priority Alerts</Title>
@@ -104,30 +110,30 @@ export const DashboardAnalytics: React.FC = () => {
                                     </List>
                                 </Card>
 
-                                <Card className="bg-slate-900/40 backdrop-blur-md ring-1 ring-white/10 rounded-2xl p-6 lg:col-span-2 relative overflow-hidden">
+                                <Card className="bg-[#131722] border border-white/10 rounded-[3px] p-6 lg:col-span-2 relative overflow-hidden">
                                     <div className="absolute top-0 right-0 p-8 opacity-5">
                                         <Security sx={{ fontSize: 120, color: '#FFD700' }} />
                                     </div>
                                     <div className="relative z-10 h-full flex flex-col justify-between">
                                         <div>
                                             <div className="flex items-center gap-3 mb-4">
-                                                <div className="p-2 bg-primary/20 rounded-lg">
-                                                    <Assignment sx={{ color: '#FFD700' }} />
+                                                <div className="p-2 bg-amber-500/10 border border-amber-500/20 rounded-[3px]">
+                                                    <Assignment sx={{ color: '#F59E0B' }} />
                                                 </div>
                                                 <Title className="text-white font-bold">Operational Command</Title>
                                             </div>
-                                            <Metric className="text-primary font-bold mb-4">Ready for Review</Metric>
+                                            <Metric className="text-amber-400 font-bold mb-4">Ready for Review</Metric>
                                             <Text className="text-slate-400 max-w-lg leading-relaxed">
                                                 Your administrative dashboard is synced with real-time field operations. 
                                                 Currently, there are <span className="text-white font-medium">0 document verifications</span> and 
                                                 <span className="text-white font-medium"> 0 urgent support tickets</span> requiring attention.
                                             </Text>
                                         </div>
-                                        <div className="mt-8 flex gap-4">
-                                            <button className="bg-primary text-black px-8 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-primary-dark transition-all transform hover:scale-105 shadow-[0_10px_20px_rgba(255,215,0,0.2)]">
+                                        <div className="mt-8 flex gap-3">
+                                            <button className="btn-primary">
                                                 Execute Verification
                                             </button>
-                                            <button className="bg-white/5 text-white border border-white/10 px-8 py-3 rounded-xl font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
+                                            <button className="btn-secondary">
                                                 Audit Logs
                                             </button>
                                         </div>

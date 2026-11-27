@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FaCheckCircle, FaTimesCircle, FaExclamationTriangle, FaRobot, FaUser } from 'react-icons/fa';
 import { Search } from 'lucide-react';
 import apiClient from '../services/apiClient';
+import { PageHeader } from './common/PageHeader';
 
 // Mock Interfaces based on Area 3 specs
 interface DriverDocument {
@@ -100,13 +101,19 @@ export const DriverApprovalDashboard: React.FC = () => {
   );
 
   return (
-    <div className="h-[calc(100vh-theme(spacing.16))] flex flex-col bg-[#0B0E17] border-t border-white/10">
-      <div className="flex-1 flex overflow-hidden">
-        
+    <div className="space-y-4">
+      <PageHeader
+        category="Fleet & People"
+        title="Driver Registration Approvals"
+        subtitle="AI-assisted document verification, background compliance, and manual application adjudication."
+        icon={<FaRobot className="text-amber-500 text-xl" />}
+      />
+
+      <div className="h-[calc(100vh-210px)] flex bg-[#0B0E17] border border-white/10 rounded-[3px] overflow-hidden">
         {/* Left Sidebar - List */}
         <div className="w-1/3 bg-[#131722] border-r border-white/10 flex flex-col">
           <div className="p-4 border-b border-white/10">
-            <h2 className="text-xl font-bold text-white mb-4">Pending Registrations</h2>
+            <h2 className="text-sm font-bold text-white mb-3">Pending Registrations</h2>
             <div className="relative">
               <Search className="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
               <input 
@@ -114,7 +121,7 @@ export const DriverApprovalDashboard: React.FC = () => {
                 placeholder="Search name, ID, or plate..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-white/10 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none bg-white/[0.03] text-white placeholder-slate-500 text-sm"
+                className="w-full pl-10 pr-4 py-2 border border-white/10 rounded-[3px] focus:outline-none bg-[#0a0a0a] text-white placeholder-slate-500 text-xs"
               />
             </div>
           </div>
@@ -128,10 +135,10 @@ export const DriverApprovalDashboard: React.FC = () => {
               >
                 <div className="flex justify-between items-start mb-2">
                   <div>
-                    <h3 className="font-semibold text-white">{driver.name}</h3>
+                    <h3 className="font-semibold text-white text-sm">{driver.name}</h3>
                     <p className="text-xs text-slate-400 font-mono mt-0.5">{driver.id}</p>
                   </div>
-                  <div className={`px-2 py-0.5 rounded font-bold text-xs ${getScoreColor(driver.overallAiScore)}`}>
+                  <div className={`px-2 py-0.5 rounded-[3px] font-bold text-xs ${getScoreColor(driver.overallAiScore)}`}>
                     {driver.overallAiScore}% AI
                   </div>
                 </div>
@@ -148,88 +155,92 @@ export const DriverApprovalDashboard: React.FC = () => {
         </div>
 
         {/* Right Content - Details */}
-        <div className="w-2/3 bg-[#0B0E17] flex flex-col overflow-y-auto">
+        <div className="w-2/3 bg-[#0a0a0a] flex flex-col overflow-y-auto">
           {selectedDriver ? (
-            <div className="p-8 max-w-4xl mx-auto w-full">
+            <div className="p-6 max-w-4xl mx-auto w-full space-y-6">
               
               {/* Header */}
-              <div className="flex justify-between items-start mb-8 bg-[#131722] p-6 rounded-2xl shadow-sm border border-white/10">
+              <div className="flex justify-between items-start bg-[#131722] p-5 rounded-[3px] shadow-sm border border-white/10">
                 <div>
-                  <h1 className="text-2xl font-bold text-white">{selectedDriver.name}</h1>
-                  <div className="flex items-center gap-3 mt-2 text-slate-400 text-sm">
+                  <h1 className="text-xl font-bold text-white">{selectedDriver.name}</h1>
+                  <div className="flex items-center gap-3 mt-1.5 text-slate-400 text-xs">
                     <span>{selectedDriver.email}</span>
                     <span>•</span>
                     <span>{selectedDriver.phone}</span>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className={`inline-flex items-center justify-center w-14 h-14 rounded-2xl text-xl font-bold ${getScoreColor(selectedDriver.overallAiScore)}`}>
+                  <div className={`inline-flex items-center justify-center w-12 h-12 rounded-[3px] text-lg font-bold ${getScoreColor(selectedDriver.overallAiScore)}`}>
                     {selectedDriver.overallAiScore}
                   </div>
-                  <div className="text-xs font-semibold text-slate-500 mt-2 uppercase tracking-wider">Overall AI Match</div>
+                  <div className="text-[10px] font-semibold text-slate-400 mt-1 uppercase tracking-wider">Overall AI Match</div>
                 </div>
               </div>
 
               {/* Documents Grid */}
-              <h3 className="text-lg font-bold text-white mb-4">Identity & Documents</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                {selectedDriver.documents.map((doc, idx) => (
-                  <div key={idx} className="bg-[#131722] rounded-2xl overflow-hidden shadow-sm border border-white/10">
-                    <div className="h-36 bg-white/[0.02] relative group cursor-pointer flex items-center justify-center text-slate-500 hover:text-amber-500 transition-colors">
-                       <span className="text-xs font-medium">Click to view document</span>
-                    </div>
-                    <div className="p-4 border-t border-white/10">
-                      <div className="flex justify-between items-center mb-2">
-                        <span className="font-semibold text-white text-sm">{doc.name}</span>
-                        {doc.aiScore && (
-                          <span className={`px-2 py-0.5 rounded text-xs font-bold ${getScoreColor(doc.aiScore)}`}>
-                            {doc.aiScore}%
-                          </span>
-                        )}
+              <div>
+                <h3 className="text-sm font-bold text-white mb-3">Identity & Verification Documents</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {selectedDriver.documents.map((doc, idx) => (
+                    <div key={idx} className="bg-[#131722] rounded-[3px] overflow-hidden shadow-sm border border-white/10">
+                      <div className="h-28 bg-[#0a0a0a] relative group cursor-pointer flex items-center justify-center text-slate-500 hover:text-amber-500 transition-colors">
+                         <span className="text-xs font-medium">Click to view document</span>
                       </div>
-                      <div className="flex items-center gap-2 text-xs">
-                        {doc.status === 'VERIFIED' && <FaCheckCircle className="text-emerald-400" />}
-                        {doc.status === 'PENDING' && <FaExclamationTriangle className="text-amber-400" />}
-                        {doc.status === 'REJECTED' && <FaTimesCircle className="text-rose-400" />}
-                        <span className="text-slate-400">{doc.status}</span>
+                      <div className="p-3 border-t border-white/10">
+                        <div className="flex justify-between items-center mb-1.5">
+                          <span className="font-semibold text-white text-xs truncate">{doc.name}</span>
+                          {doc.aiScore && (
+                            <span className={`px-1.5 py-0.5 rounded-[3px] text-[10px] font-bold ${getScoreColor(doc.aiScore)}`}>
+                              {doc.aiScore}%
+                            </span>
+                          )}
+                        </div>
+                        <div className="flex items-center gap-1.5 text-xs">
+                          {doc.status === 'VERIFIED' && <FaCheckCircle className="text-emerald-400 text-xs" />}
+                          {doc.status === 'PENDING' && <FaExclamationTriangle className="text-amber-400 text-xs" />}
+                          {doc.status === 'REJECTED' && <FaTimesCircle className="text-rose-400 text-xs" />}
+                          <span className="text-slate-400 text-xs">{doc.status}</span>
+                        </div>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
 
               {/* Vehicle Info */}
-              <h3 className="text-lg font-bold text-white mb-4">Vehicle Details</h3>
-              <div className="bg-[#131722] rounded-2xl p-6 shadow-sm border border-white/10 mb-8 flex items-center justify-between">
-                <div>
-                  <h4 className="text-xl font-bold text-white">{selectedDriver.vehicle.make} {selectedDriver.vehicle.model}</h4>
-                  <div className="flex items-center gap-3 mt-2">
-                    <span className="font-mono bg-white/[0.05] border border-white/10 px-3 py-1 rounded-lg text-amber-400 font-bold tracking-widest text-sm">{selectedDriver.vehicle.plate}</span>
-                    {selectedDriver.vehicle.allowCoDriver && (
-                      <span className="bg-amber-500/15 text-amber-400 border border-amber-500/30 px-2.5 py-0.5 rounded text-xs font-bold">CO-DRIVER ALLOWED</span>
-                    )}
+              <div>
+                <h3 className="text-sm font-bold text-white mb-3">Vehicle Details</h3>
+                <div className="bg-[#131722] rounded-[3px] p-5 shadow-sm border border-white/10 flex items-center justify-between">
+                  <div>
+                    <h4 className="text-base font-bold text-white">{selectedDriver.vehicle.make} {selectedDriver.vehicle.model}</h4>
+                    <div className="flex items-center gap-2.5 mt-2">
+                      <span className="font-mono bg-[#0a0a0a] border border-white/10 px-2.5 py-0.5 rounded-[3px] text-amber-400 font-bold tracking-widest text-xs">{selectedDriver.vehicle.plate}</span>
+                      {selectedDriver.vehicle.allowCoDriver && (
+                        <span className="bg-amber-500/10 text-amber-400 border border-amber-500/20 px-2 py-0.5 rounded-[3px] text-[10px] font-bold">CO-DRIVER ALLOWED</span>
+                      )}
+                    </div>
                   </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-xs text-slate-500 mb-1">Vehicle AI Verification</div>
-                  {selectedDriver.vehicle.aiVerified 
-                    ? <span className="text-emerald-400 font-bold text-sm flex items-center gap-1.5 justify-end"><FaCheckCircle /> Verified</span>
-                    : <span className="text-rose-400 font-bold text-sm flex items-center gap-1.5 justify-end"><FaTimesCircle /> Failed/Pending</span>}
+                  <div className="text-right">
+                    <div className="text-[11px] text-slate-400 mb-1">Vehicle AI Verification</div>
+                    {selectedDriver.vehicle.aiVerified 
+                      ? <span className="text-emerald-400 font-bold text-xs flex items-center gap-1 justify-end"><FaCheckCircle /> Verified</span>
+                      : <span className="text-rose-400 font-bold text-xs flex items-center gap-1 justify-end"><FaTimesCircle /> Failed/Pending</span>}
+                  </div>
                 </div>
               </div>
 
               {/* Action Bar */}
               {selectedDriver.status !== 'APPROVED' && selectedDriver.status !== 'REJECTED' && (
-                <div className="bg-[#131722] rounded-2xl p-6 shadow-sm border border-white/10 flex gap-4">
+                <div className="bg-[#131722] rounded-[3px] p-4 shadow-sm border border-white/10 flex gap-3">
                   <button
                     onClick={() => setShowApproveModal(true)}
-                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center gap-2 shadow-lg shadow-emerald-900/20"
+                    className="flex-1 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 text-white font-bold py-2.5 rounded-[3px] transition-all text-xs flex justify-center items-center gap-1.5 shadow-sm"
                   >
                     <FaCheckCircle /> Approve Registration
                   </button>
                   <button
                     onClick={() => setShowRejectModal(true)}
-                    className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-3.5 rounded-xl transition-colors text-sm flex justify-center items-center gap-2 shadow-lg shadow-rose-900/20"
+                    className="flex-1 bg-rose-600 hover:bg-rose-500 text-white font-bold py-2.5 rounded-[3px] transition-all text-xs flex justify-center items-center gap-1.5 shadow-sm"
                   >
                     <FaTimesCircle /> Reject & Require Action
                   </button>
@@ -240,7 +251,7 @@ export const DriverApprovalDashboard: React.FC = () => {
           ) : (
             <div className="flex-1 flex flex-col items-center justify-center text-slate-500">
                <FaUser className="text-5xl mb-4 text-slate-700" />
-               <p className="text-lg font-medium text-slate-400">Select an application to review</p>
+               <p className="text-sm font-medium text-slate-400">Select an application to review</p>
             </div>
           )}
         </div>

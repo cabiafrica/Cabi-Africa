@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { PageHeader } from './common/PageHeader';
 import {
   MonetizationOn,
   Save,
@@ -96,67 +97,45 @@ export const ReferralConfiguration: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <MonetizationOn className="text-amber-600 dark:text-amber-400" />
-            Referral Program & Anti-Fraud Engine
-          </h1>
-          <p className="text-slate-500 dark:text-slate-400 mt-1">
-            Configure trip-activity incentives, multi-tier downline caps, margin protections, 72h escrow, and collusion safeguards.
-          </p>
-        </div>
-        <button
-          onClick={handleSave}
-          disabled={saveStatus !== 'idle'}
-          className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded text-xs font-semibold shadow-sm shadow-amber-500/20 active:scale-95 transition-all whitespace-nowrap shrink-0 ${saveStatus === 'saved'
-            ? 'bg-emerald-600 text-white'
-            : 'bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black disabled:opacity-50'
-            }`}
-        >
-          {saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved Successfully' : 'Save Configuration'}
-          {saveStatus === 'saved' ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
-        </button>
-      </div>
+      <PageHeader
+        category="Growth & Platform"
+        title="Referral Program & Anti-Fraud Engine"
+        subtitle="Configure trip-activity incentives, multi-tier downline caps, margin protections, 72h escrow, and collusion safeguards"
+        icon={<MonetizationOn className="w-5 h-5 text-amber-500" />}
+        action={
+          <button
+            onClick={handleSave}
+            disabled={saveStatus !== 'idle'}
+            className="btn-primary flex items-center gap-1.5 disabled:opacity-50"
+          >
+            <span>{saveStatus === 'saving' ? 'Saving...' : saveStatus === 'saved' ? 'Saved Successfully' : 'Save Configuration'}</span>
+            {saveStatus === 'saved' ? <CheckCircle fontSize="small" /> : <Save fontSize="small" />}
+          </button>
+        }
+      />
 
-      <div className="bg-white dark:bg-card-dark rounded-xl shadow-sm border border-slate-200 dark:border-white/10 overflow-hidden">
-        <div className="flex border-b border-slate-200 dark:border-white/10 overflow-x-auto">
-          <button
-            onClick={() => setActiveTab('driver')}
-            className={`flex items-center gap-2 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'driver'
-              ? 'border-amber-600 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/10'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
+      <div className="bg-[#131722] rounded-[3px] shadow-sm border border-white/10 overflow-hidden">
+        {/* Tabs - Gamification Gold Pill style */}
+        <div className="flex gap-2 border-b border-white/10 overflow-x-auto p-4 pb-3">
+          {[
+            { id: 'driver', label: 'Driver Program (2% / 1%)', icon: <DirectionsCar fontSize="small" /> },
+            { id: 'passenger', label: 'Passenger Program (Promo)', icon: <Person fontSize="small" /> },
+            { id: 'qualifiers', label: 'Qualifiers & 72h Escrow', icon: <VerifiedUser fontSize="small" /> },
+            { id: 'fraud', label: 'Fraud Detection', icon: <Security fontSize="small" /> },
+          ].map((tab) => (
+            <button
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id as any)}
+              className={`flex items-center gap-1.5 transition-all cursor-pointer whitespace-nowrap ${
+                activeTab === tab.id
+                  ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs'
+                  : 'text-slate-400 hover:text-white hover:bg-white/5 border border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold'
               }`}
-          >
-            <DirectionsCar fontSize="small" /> Driver Program (2% / 1%)
-          </button>
-          <button
-            onClick={() => setActiveTab('passenger')}
-            className={`flex items-center gap-2 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'passenger'
-              ? 'border-amber-600 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/10'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <Person fontSize="small" /> Passenger Program (Promo)
-          </button>
-          <button
-            onClick={() => setActiveTab('qualifiers')}
-            className={`flex items-center gap-2 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'qualifiers'
-              ? 'border-amber-600 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/10'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <VerifiedUser fontSize="small" /> Qualifiers & 72h Escrow
-          </button>
-          <button
-            onClick={() => setActiveTab('fraud')}
-            className={`flex items-center gap-2 py-4 px-6 text-sm font-medium border-b-2 transition-colors ${activeTab === 'fraud'
-              ? 'border-amber-600 text-amber-600 dark:text-amber-400 bg-amber-50/50 dark:bg-amber-900/10'
-              : 'border-transparent text-slate-500 hover:text-slate-700'
-              }`}
-          >
-            <Security fontSize="small" /> Fraud Detection
-          </button>
+            >
+              {tab.icon}
+              <span>{tab.label}</span>
+            </button>
+          ))}
         </div>
 
         <div className="p-6">

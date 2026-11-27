@@ -35,7 +35,7 @@ const PulseDot = ({ color = '#F59E0B' }) => (
 const CrisisCard = ({ title, icon, children, color = '#FFD700', sx = {} }: any) => (
   <Paper sx={{ 
     p: 2.5, background: GLASS_BG, backdropFilter: 'blur(20px)',
-    borderRadius: 4, border: `1px solid ${CARD_BORDER}`,
+    borderRadius: '3px', border: `1px solid ${CARD_BORDER}`,
     height: '100%', display: 'flex', flexDirection: 'column', gap: 2,
     boxShadow: '0 8px 32px rgba(0,0,0,0.2)', ...sx
   }}>
@@ -264,7 +264,7 @@ export const SosIncidentDashboard = () => {
               onClick={handleListenIn}
               disabled={isResolved}
               sx={{ 
-                borderRadius: 2, px: 3, fontWeight: 800,
+                borderRadius: '3px', px: 2.5, py: 1, fontWeight: 700, fontSize: '0.75rem',
                 bgcolor: isListening ? '#EF4444' : 'transparent',
                 borderColor: isListening ? '#EF4444' : CARD_BORDER,
                 color: 'white',
@@ -278,8 +278,8 @@ export const SosIncidentDashboard = () => {
               onClick={() => setIsResolveModalOpen(true)}
               disabled={isResolved}
               sx={{ 
-                background: GOLD_GRADIENT, color: 'black', fontWeight: 900, 
-                px: 4, borderRadius: 2, boxShadow: '0 8px 16px rgba(255,215,0,0.2)'
+                background: GOLD_GRADIENT, color: 'black', fontWeight: 700, fontSize: '0.75rem',
+                px: 3, py: 1, borderRadius: '3px', boxShadow: '0 4px 12px rgba(245,158,11,0.2)'
               }}
             >
               RESOLVE INCIDENT
@@ -486,20 +486,20 @@ export const SosIncidentDashboard = () => {
           <Box sx={{
             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
             width: 450, background: GLASS_BG, backdropFilter: 'blur(30px)',
-            borderRadius: 4, border: `1px solid ${CARD_BORDER}`, p: 4, outline: 'none'
+            borderRadius: '3px', border: `1px solid ${CARD_BORDER}`, p: 4, outline: 'none'
           }}>
             <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, color: '#FFD700' }}>DE-ESCALATE INCIDENT</Typography>
             <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>Formalize the resolution of this crisis event.</Typography>
             <TextField
               fullWidth multiline rows={4} label="Resolution Protocol Notes" variant="outlined"
               value={resolutionNote} onChange={e => setResolutionNote(e.target.value)}
-              sx={{ mb: 3, '& .MuiOutlinedInput-root': { color: 'white', bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 2 } }}
+              sx={{ mb: 3, '& .MuiOutlinedInput-root': { color: 'white', bgcolor: 'rgba(0,0,0,0.2)', borderRadius: '3px' } }}
             />
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button onClick={() => setIsResolveModalOpen(false)} sx={{ color: 'text.secondary' }}>ABORT</Button>
+              <Button onClick={() => setIsResolveModalOpen(false)} sx={{ color: 'text.secondary', borderRadius: '3px' }}>ABORT</Button>
               <Button 
                 variant="contained" onClick={handleConfirmResolution} disabled={isResolving}
-                sx={{ background: GOLD_GRADIENT, color: 'black', fontWeight: 900, borderRadius: 2, px: 4 }}
+                sx={{ background: GOLD_GRADIENT, color: 'black', fontWeight: 900, borderRadius: '3px', px: 4 }}
               >
                 {isResolving ? <CircularProgress size={20} /> : 'RESOLVE'}
               </Button>
@@ -512,7 +512,7 @@ export const SosIncidentDashboard = () => {
           <Box sx={{
             position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)',
             width: 500, background: GLASS_BG, backdropFilter: 'blur(30px)',
-            borderRadius: 4, border: `1px solid ${CARD_BORDER}`, p: 4, outline: 'none',
+            borderRadius: '3px', border: `1px solid ${CARD_BORDER}`, p: 4, outline: 'none',
             boxShadow: '0 24px 48px rgba(0,0,0,0.5)'
           }}>
             <Box display="flex" alignItems="center" gap={2} mb={3}>
@@ -521,19 +521,19 @@ export const SosIncidentDashboard = () => {
             </Box>
 
             {/* Objector Intelligence */}
-            <Box display="flex" alignItems="center" gap={2} sx={{ mb: 3, p: 1.5, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)' }}>
+            <Box display="flex" alignItems="center" gap={2} sx={{ mb: 3, p: 1.5, borderRadius: '3px', bgcolor: 'rgba(255,255,255,0.03)' }}>
               <Avatar src={reviewingStatement?.objectorPhoto} sx={{ width: 48, height: 48, border: '2px solid #FFD700' }} />
               <Box>
                 <Typography variant="subtitle2" sx={{ fontWeight: 800, color: 'white' }}>{reviewingStatement?.objectorName}</Typography>
                 <Stack direction="row" spacing={1} alignItems="center">
-                  <Chip label={reviewingStatement?.role} size="small" sx={{ height: 16, fontSize: 9, fontWeight: 900, bgcolor: '#FFD700', color: 'black' }} />
+                  <Chip label={reviewingStatement?.role} size="small" sx={{ height: 16, fontSize: 9, fontWeight: 900, bgcolor: '#FFD700', color: 'black', borderRadius: '3px' }} />
                   <Rating value={reviewingStatement?.objectorRating || 0} readOnly size="small" sx={{ fontSize: 12 }} />
                 </Stack>
               </Box>
             </Box>
             
             <Typography variant="caption" sx={{ color: 'text.secondary', mb: 1, display: 'block', fontWeight: 800 }}>SOURCE STATEMENT</Typography>
-            <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', mb: 3 }}>
+            <Box sx={{ p: 2, borderRadius: '3px', bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)', mb: 3 }}>
               <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'rgba(255,255,255,0.9)' }}>"{reviewingStatement?.text}"</Typography>
             </Box>
 
@@ -541,15 +541,15 @@ export const SosIncidentDashboard = () => {
             <TextField
               fullWidth multiline rows={3} placeholder="Enter the rationale for this determination..." variant="outlined"
               value={reviewNote} onChange={e => setReviewNote(e.target.value)}
-              sx={{ mb: 4, '& .MuiOutlinedInput-root': { color: 'white', bgcolor: 'rgba(0,0,0,0.2)', borderRadius: 2 } }}
+              sx={{ mb: 4, '& .MuiOutlinedInput-root': { color: 'white', bgcolor: 'rgba(0,0,0,0.2)', borderRadius: '3px' } }}
             />
 
             <Stack direction="row" spacing={2} justifyContent="flex-end">
-              <Button onClick={() => setReviewingStatement(null)} disabled={isSubmittingReview} sx={{ color: 'text.secondary' }}>CANCEL</Button>
+              <Button onClick={() => setReviewingStatement(null)} disabled={isSubmittingReview} sx={{ color: 'text.secondary', borderRadius: '3px' }}>CANCEL</Button>
               <Button 
                 onClick={() => handleReviewStatement('REJECTED')} 
                 disabled={isSubmittingReview}
-                sx={{ color: '#EF4444', fontWeight: 800, border: '1px solid rgba(239, 68, 68, 0.2)', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}
+                sx={{ color: '#EF4444', fontWeight: 800, border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '3px', '&:hover': { bgcolor: 'rgba(239, 68, 68, 0.1)' } }}
               >
                 REJECT
               </Button>
@@ -557,7 +557,7 @@ export const SosIncidentDashboard = () => {
                 onClick={() => handleReviewStatement('ACCEPTED')} 
                 disabled={isSubmittingReview}
                 variant="contained" 
-                sx={{ background: GOLD_GRADIENT, color: 'black', fontWeight: 900, px: 4 }}
+                sx={{ background: GOLD_GRADIENT, color: 'black', fontWeight: 900, px: 4, borderRadius: '3px' }}
               >
                 {isSubmittingReview ? <CircularProgress size={20} color="inherit" /> : 'ACCEPT'}
               </Button>

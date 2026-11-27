@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { adminService, AdminUser } from '../../services/adminService';
 import { UserForm } from '../forms/UserForm';
+import { PageHeader } from '../common/PageHeader';
 import {
   Box,
   Paper,
@@ -79,52 +80,25 @@ export const UserManagement: React.FC = () => {
 
   return (
     <Box sx={{ p: { xs: 2, md: 0 } }}>
-      {/* Header */}
-      <Box mb={3}>
-        <Box display="flex" justifyContent="space-between" alignItems="center">
-          <Box>
-            <Typography variant="overline" sx={{ color: '#F59E0B', fontWeight: 700, letterSpacing: '0.1em', display: 'block', mb: 0.5 }}>
-              FLEET & PEOPLE
-            </Typography>
-            <Typography variant="h4" fontWeight="800" sx={{
-              color: '#ffffff',
-              mb: 0.5
-            }}>
-              Admin User Management
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#94a3b8' }}>
-              Manage system administrators and their access roles.
-            </Typography>
-          </Box>
-          <Button
-            variant="contained"
-            startIcon={<AddIcon />}
+      <PageHeader
+        category="Fleet & People"
+        title="Admin User Management"
+        subtitle="Manage system administrators and their operational access roles."
+        icon={<SupervisorAccount className="text-amber-500" />}
+        actions={
+          <button
             onClick={() => setEditingUser('new')}
-            sx={{
-              background: 'linear-gradient(to right, #F59E0B, #D97706)',
-              color: '#000000',
-              boxShadow: '0 2px 8px 0 rgba(245, 158, 11, 0.25)',
-              fontWeight: 700,
-              px: 2,
-              py: 0.75,
-              borderRadius: '3px',
-              fontSize: '0.75rem',
-              textTransform: 'none',
-              '&:hover': {
-                background: 'linear-gradient(to right, #FBBF24, #F59E0B)',
-              }
-            }}
+            className="btn-primary flex items-center gap-1.5"
           >
+            <AddIcon fontSize="small" />
             Create New User
-          </Button>
-        </Box>
-        {/* Golden Gradient Separator */}
-        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
-      </Box>
+          </button>
+        }
+      />
 
       {/* Content Card */}
       <Paper elevation={0} sx={{
-        borderRadius: 3,
+        borderRadius: '3px',
         border: '1px solid rgba(255, 255, 255, 0.08)',
         overflow: 'hidden',
         background: '#131722',
