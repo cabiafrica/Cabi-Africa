@@ -80,8 +80,14 @@ export const PHRASE_MAP: Record<string, Record<SupportedLang, string>> = {
         fr: 'Captain de Précision & Transit Urbain en Afrique.',
         ar: 'سائقون محترفون ونقل حضري دقيق في جميع أنحاء أفريقيا.',
     },
+    'book your ride': {
+        en: 'Book Your Ride',
+        sw: 'Agiza Safari Yako',
+        fr: 'Réservez Votre Trajet',
+        ar: 'احجز رحلتك',
+    },
     'neural deployment unit': {
-        en: 'Neural Deployment Unit',
+        en: 'Book Your Ride',
         sw: 'Kitengo cha Kuelekeza Safari',
         fr: 'Unité de Déploiement',
         ar: 'وحدة التوجيه الذكي',

@@ -61,15 +61,15 @@ export default function LoginPage() {
             {/* Glass Card */}
             <div className="relative z-10 w-full max-w-md px-3 sm:px-6 py-6 sm:py-8 m-2 sm:m-4">
                 {/* Card Background with Golden/Yellow Tint Border */}
-                <div className="absolute inset-0 bg-white/90 dark:bg-white/5 backdrop-blur-xl rounded-2xl border border-slate-200 dark:border-white/10 shadow-2xl dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"></div>
+                <div className="absolute inset-0 bg-white/90 dark:bg-white/5 backdrop-blur-xl rounded-[3px] border border-slate-200 dark:border-white/10 shadow-2xl dark:shadow-[0_8px_32px_0_rgba(0,0,0,0.5)]"></div>
 
                 {/* Glow Border Effect (Golden) */}
-                <div className="absolute -inset-[1px] bg-gradient-to-r from-brand-yellow/40 to-yellow-600/40 rounded-2xl opacity-30 blur-sm group-hover:opacity-100 transition duration-1000"></div>
+                <div className="absolute -inset-[1px] bg-gradient-to-r from-brand-yellow/40 to-yellow-600/40 rounded-[3px] opacity-30 blur-sm group-hover:opacity-100 transition duration-1000"></div>
 
                 <div className="relative p-5 sm:p-8">
                     {/* Logo Section */}
                     <div className="flex flex-col items-center justify-center mb-6 sm:mb-8">
-                        <div className="px-6 py-3.5 rounded-2xl border border-[#D4AF37]/30 bg-slate-50 dark:bg-surface-dark/80 shadow-[0_0_25px_rgba(245,158,11,0.12)] mb-4">
+                        <div className="mb-4">
                             <BrandLogo size="lg" />
                         </div>
                         <h2 className="text-2xl font-bold text-slate-900 dark:text-white tracking-wide">Authenticate</h2>
@@ -176,7 +176,7 @@ export default function LoginPage() {
 
             {/* Footer / Copyright */}
             <div className="relative sm:absolute bottom-4 sm:bottom-6 w-full text-center mt-6 sm:mt-0 pb-4 sm:pb-0">
-                <p className="text-gray-600 text-xs tracking-wide">© 2024 Cabi Africa. All rights reserved.</p>
+                <p className="text-gray-600 text-xs tracking-wide">© 2026 Cabi Africa. All rights reserved.</p>
             </div>
         </div>
     );

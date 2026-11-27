@@ -275,24 +275,18 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/login"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-[3px] bg-brand-yellow text-black text-xs font-black uppercase tracking-wider shadow-sm hover:bg-primary-highlight transition-colors"
+                                                        className="flex items-center gap-3 px-3.5 py-2.5 rounded-[3px] bg-brand-yellow text-black text-xs font-black uppercase tracking-wider shadow-sm hover:bg-primary-highlight transition-colors"
                                                     >
-                                                        <span className="flex items-center gap-3">
-                                                            <LogIn className="h-4 w-4" />
-                                                            Authenticate
-                                                        </span>
-                                                        <span className="px-1.5 py-0.5 rounded-[3px] bg-black/15 text-[10px] font-mono">VIP</span>
+                                                        <LogIn className="h-4 w-4" />
+                                                        <span>Authenticate</span>
                                                     </Link>
                                                     <Link
                                                         href="/register"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-[3px] border border-slate-200 dark:border-white/15 text-slate-800 dark:text-white text-xs font-black uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3.5 py-2.5 rounded-[3px] border border-slate-200 dark:border-white/15 text-slate-800 dark:text-white text-xs font-black uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
-                                                        <span className="flex items-center gap-3">
-                                                            <UserPlus className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
-                                                            Sign Up
-                                                        </span>
-                                                        <span className="text-[10px] font-mono text-emerald-600 dark:text-emerald-400">Instant</span>
+                                                        <UserPlus className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
+                                                        <span>Sign Up</span>
                                                     </Link>
                                                 </div>
 
