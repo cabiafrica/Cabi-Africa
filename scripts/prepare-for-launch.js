@@ -60,6 +60,17 @@ async function prepareForLaunch() {
 
         // Step 5: Clean Driver & Vehicle Data
         console.log('🧹 Step 5: Cleaning Driver & Vehicle Data...');
+        await prisma.driverWealthEnrollment?.deleteMany({}).catch(() => {});
+        await prisma.welfareDeduction?.deleteMany({}).catch(() => {});
+        await prisma.welfareEnrollment?.deleteMany({}).catch(() => {});
+        await prisma.commissionLedger?.deleteMany({}).catch(() => {});
+        await prisma.saccoLedger?.deleteMany({}).catch(() => {});
+        await prisma.transactionLedger?.deleteMany({}).catch(() => {});
+        await prisma.userBadge?.deleteMany({}).catch(() => {});
+        await prisma.vehicleShift?.deleteMany({}).catch(() => {});
+        await prisma.vehicleDriver?.deleteMany({}).catch(() => {});
+        await prisma.vehicleBenefitClaim?.deleteMany({}).catch(() => {});
+        await prisma.driverFinancialConsent?.deleteMany({}).catch(() => {});
         const invitationCount = await prisma.invitation.deleteMany({});
         const vehicleCount = await prisma.vehicle.deleteMany({});
         const documentFileCount = await prisma.document.deleteMany({});
@@ -108,8 +119,8 @@ async function prepareForLaunch() {
         console.log(`   Using password: ${superAdminPassword.replace(/./g, '*')}`);
 
         const superAdminData = {
-            fullName: 'Super Admin',
-            email: process.env.SUPER_ADMIN_EMAIL || 'mailtosamkaranja@gmail.com',
+            fullName: 'Cabi Super Administrator',
+            email: process.env.SUPER_ADMIN_EMAIL || 'superadmin@cabi.africa',
             phone: process.env.SUPER_ADMIN_PHONE || '+254711786722',
             username: 'superadmin',
             password: await bcrypt.hash(superAdminPassword, 10),

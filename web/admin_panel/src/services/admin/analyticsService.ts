@@ -15,8 +15,30 @@ export class AnalyticsService {
     }
 
     async getLiveDrivers(): Promise<any[]> {
-        const res = await apiClient.get('/v1/analytics/live-drivers');
-        return res.data;
+        try {
+            const res = await apiClient.get('/dispatch/drivers');
+            const raw = Array.isArray(res.data) ? res.data : (res.data?.data || []);
+            return raw.map((d: any) => {
+                const lat = d.currentLocation?.lat ?? d.lat ?? -1.286389;
+                const lng = d.currentLocation?.lng ?? d.lng ?? 36.817223;
+                let status = 'OFFLINE';
+                if (d.isOnline) {
+                    status = (d.status === 'ON_TRIP' || d.status === 'BUSY') ? 'ON_TRIP' : 'AVAILABLE';
+                }
+                return {
+                    id: d.id,
+                    name: d.user?.fullName || d.fullName || 'Driver',
+                    lat: typeof lat === 'number' && !isNaN(lat) ? lat : -1.286389,
+                    lng: typeof lng === 'number' && !isNaN(lng) ? lng : 36.817223,
+                    status,
+                    vehicle: d.vehicle,
+                    rating: d.averageRating || d.rating || 5.0,
+                };
+            });
+        } catch (err) {
+            console.warn('Failed to fetch live drivers from dispatch service:', err);
+            return [];
+        }
     }
 
     async getFraudAlerts(): Promise<any[]> {

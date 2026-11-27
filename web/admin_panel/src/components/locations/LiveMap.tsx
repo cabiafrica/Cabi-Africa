@@ -29,19 +29,25 @@ export const LiveMap: React.FC = () => {
     const [isAutoRefresh, setIsAutoRefresh] = useState(true);
 
     const fetchDrivers = () => {
-        adminService.getLiveDrivers().then(data => {
-            setDrivers(data);
-            setLastUpdated(new Date());
+        adminService.getLiveDrivers()
+            .then((data = []) => {
+                const driverList = Array.isArray(data) ? data : [];
+                setDrivers(driverList);
+                setLastUpdated(new Date());
 
-            // Calculate Stats
-            const newStats = {
-                total: data.length,
-                available: data.filter((d: any) => d.status === 'AVAILABLE').length,
-                onTrip: data.filter((d: any) => d.status === 'ON_TRIP').length,
-                offline: data.filter((d: any) => d.status === 'OFFLINE').length
-            };
-            setStats(newStats);
-        });
+                // Calculate Stats
+                const newStats = {
+                    total: driverList.length,
+                    available: driverList.filter((d: any) => d.status === 'AVAILABLE').length,
+                    onTrip: driverList.filter((d: any) => d.status === 'ON_TRIP').length,
+                    offline: driverList.filter((d: any) => d.status === 'OFFLINE').length
+                };
+                setStats(newStats);
+            })
+            .catch((err) => {
+                console.warn('Error fetching live drivers:', err);
+                setDrivers([]);
+            });
     };
 
     useEffect(() => {
@@ -59,13 +65,16 @@ export const LiveMap: React.FC = () => {
             ? drivers
             : drivers.filter(d => d.status === filter);
 
-        const newMarkers: MapMarker[] = filteredDrivers.map((d: any) => ({
-            id: d.id,
-            position: [d.lat, d.lng],
-            type: 'driver',
-            // We could customize icons here based on status if CabiMap supported dynamic icons better
-            // For now, we rely on the popup content
-            popup: `
+        const newMarkers: MapMarker[] = filteredDrivers
+            .filter((d: any) => d && typeof d.lat === 'number' && typeof d.lng === 'number' && !isNaN(d.lat) && !isNaN(d.lng))
+            .map((d: any) => ({
+                id: d.id,
+                position: [d.lat, d.lng],
+                type: 'driver',
+                status: d.status === 'AVAILABLE' ? 'online' : d.status === 'ON_TRIP' ? 'busy' : 'offline',
+                // We could customize icons here based on status if CabiMap supported dynamic icons better
+                // For now, we rely on the popup content
+                popup: `
                 <div class="p-2 min-w-[150px]">
                     <h3 class="font-bold text-sm mb-1">${d.name || 'Unknown Driver'}</h3>
                     <div class="flex items-center gap-2 text-xs">

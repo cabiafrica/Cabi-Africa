@@ -149,6 +149,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
     useEffect(() => {
         if (!mapContainerRef.current || mapRef.current) return;
+        if ((mapContainerRef.current as any)._leaflet_id) {
+            delete (mapContainerRef.current as any)._leaflet_id;
+        }
 
         const map = L.map(mapContainerRef.current, {
             zoomControl: false // Custom zoom control styling can be added later
@@ -191,6 +194,10 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         markersLayerRef.current.clearLayers();
 
         markers.forEach((marker) => {
+            if (!marker.position || !Array.isArray(marker.position) || typeof marker.position[0] !== 'number' || typeof marker.position[1] !== 'number' || isNaN(marker.position[0]) || isNaN(marker.position[1])) {
+                return;
+            }
+
             let icon: L.Icon | L.DivIcon;
 
             if (marker.icon) {
