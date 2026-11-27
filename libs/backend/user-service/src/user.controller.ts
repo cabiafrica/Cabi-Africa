@@ -40,6 +40,18 @@ export class UserController {
         return this.userService.getPendingDrivers();
     }
 
+    @Get('all')
+    async getAllUsers(@Req() req: any) {
+        this.assertAdmin(req);
+        return this.userService.getAllPlatformUsers();
+    }
+
+    @Get('suspended/all')
+    async getSuspendedUsers(@Req() req: any) {
+        this.assertAdmin(req);
+        return this.userService.getSuspendedUsers();
+    }
+
     @Get(':id/profile')
     async getProfile(@Req() req: any, @Param('id') id: string) {
         this.assertSelfOrAdmin(req, id);

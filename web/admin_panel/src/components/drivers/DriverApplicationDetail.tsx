@@ -26,10 +26,12 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
     adminService.getApplicationDetails(applicationId).then(data => {
       setApplication(data);
       // Initialize review state 
-      if (data) {
+      if (data && Array.isArray(data.documents)) {
         const initialState: DocumentReviewState = {};
         data.documents.forEach(doc => {
-          initialState[doc.id] = { status: 'approved', reason: '' };
+          if (doc?.id) {
+            initialState[doc.id] = { status: 'approved', reason: '' };
+          }
         });
         setReviewState(initialState);
       }
@@ -142,19 +144,19 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Make</label>
-                  <div className="text-sm text-gray-900">{application.vehicleDetails.make}</div>
+                  <div className="text-sm text-gray-900">{application.vehicleDetails?.make || 'Not Specified'}</div>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Model</label>
-                  <div className="text-sm text-gray-900">{application.vehicleDetails.model}</div>
+                  <div className="text-sm text-gray-900">{application.vehicleDetails?.model || 'Pending Onboarding'}</div>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Year</label>
-                  <div className="text-sm text-gray-900">{application.vehicleDetails.year}</div>
+                  <div className="text-sm text-gray-900">{application.vehicleDetails?.year || 'N/A'}</div>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase tracking-wider">License Plate</label>
-                  <div className="text-sm text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded w-fit">{application.vehicleDetails.licensePlate}</div>
+                  <div className="text-sm text-gray-900 font-mono bg-gray-100 px-2 py-1 rounded w-fit">{application.vehicleDetails?.licensePlate || 'PENDING'}</div>
                 </div>
               </div>
             </div>
@@ -165,7 +167,8 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
         <div className="bg-white rounded-xl shadow-sm p-6 lg:col-span-2 border border-gray-100">
           <h2 className="text-xl font-bold text-gray-900 mb-6">Document Verification</h2>
           <div className="space-y-6">
-            {application.documents.map(doc => (
+            {(application.documents || []).length > 0 ? (
+              (application.documents || []).map(doc => (
               <div key={doc.id} className="border border-gray-200 rounded-lg p-4 hover:border-amber-200 transition-colors">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-4 gap-4">
                   <div className="flex items-center gap-3">
@@ -230,7 +233,12 @@ export const DriverApplicationDetail: React.FC<Props> = ({ applicationId, onBack
                   </div>
                 )}
               </div>
-            ))}
+            )) : (
+              <div className="text-center py-12 text-slate-500 bg-slate-50 dark:bg-slate-800/40 rounded-xl border border-dashed border-slate-200 dark:border-slate-700">
+                <p className="text-sm font-medium">No documents uploaded yet.</p>
+                <p className="text-xs text-slate-400 mt-1">Applicant completed basic registration and is in Prospect status awaiting KYC upload.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>

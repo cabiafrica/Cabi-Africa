@@ -1244,6 +1244,64 @@ export class UserService {
     return drivers.map(({ password: _pwd, phoneOtpCode: _otp, resetPasswordToken: _rst, ...safe }: any) => safe);
   }
 
+  async getAllPlatformUsers() {
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        privacySettings: true,
+      },
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+
+    return users.map((u) => {
+      const privacy = (u.privacySettings as any) || {};
+      return {
+        id: u.id,
+        name: u.fullName || 'User',
+        email: u.email || 'N/A',
+        phone: u.phone || 'N/A',
+        type: u.role === LegacyRole.DRIVER ? 'DRIVER' : 'PASSENGER',
+        isDistressResponder: false,
+        registrationDate: u.createdAt.toISOString(),
+        status: privacy.isSuspended ? 'SUSPENDED' : 'ACTIVE',
+      };
+    });
+  }
+
+  async getSuspendedUsers() {
+    const users = await this.prisma.user.findMany({
+      select: {
+        id: true,
+        fullName: true,
+        email: true,
+        phone: true,
+        role: true,
+        createdAt: true,
+        privacySettings: true,
+      },
+      take: 500,
+    });
+
+    return users
+      .filter((u) => (u.privacySettings as any)?.isSuspended === true)
+      .map((u) => {
+        const privacy = (u.privacySettings as any) || {};
+        return {
+          id: u.id,
+          email: u.email,
+          fullName: u.fullName,
+          suspensionReason: privacy.suspensionReason || 'Administrative Review',
+          suspensionDate: privacy.suspendedAt || u.createdAt.toISOString(),
+        };
+      });
+  }
+
   async updateUserStatus(userId: string, status: string) {
     const updated = await this.prisma.user.update({
       where: { id: userId },

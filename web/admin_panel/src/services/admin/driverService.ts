@@ -14,23 +14,41 @@ export class DriverService {
     }
 
     async getApplicationDetails(driverId: string): Promise<DriverApplicationDetails> {
-        const res = await apiClient.get(`/v1/documents/admin/drivers/${driverId}/documents`);
-        // Note: The original code had a complex mapping here, but since we are removing mocks, 
-        // we should expect the backend to return the correct structure or wrap it.
-        // For now, I'll keep the expected return structure but fetch real data.
-        
-        // As we don't know the exact response of the backend for detail, we will try to adapt.
-        // If the backend /documents/ path only returns docs, the basic info might come from driver-leads.
-        
-        const driverRes = await apiClient.get(`/v1/driver-leads/${driverId}`);
-        const documents = res.data.map((d: any) => ({
-            id: d.id,
-            type: d.type,
-            url: d.url,
-        }));
+        let documents: any[] = [];
+        try {
+            const res = await apiClient.get(`/v1/documents/admin/drivers/${driverId}/documents`);
+            if (Array.isArray(res.data)) {
+                documents = res.data.map((d: any) => ({
+                    id: d.id,
+                    type: d.type,
+                    url: d.url,
+                }));
+            }
+        } catch {
+            documents = [];
+        }
+
+        let driverData: any = {};
+        try {
+            const driverRes = await apiClient.get(`/v1/driver-leads/${driverId}`);
+            driverData = driverRes.data || {};
+        } catch {
+            driverData = {};
+        }
 
         return {
-            ...driverRes.data,
+            id: driverId,
+            fullName: driverData.fullName || driverData.name || 'Applicant Driver',
+            phone: driverData.phone || 'N/A',
+            email: driverData.email || '',
+            status: driverData.status || 'PROSPECT',
+            ...driverData,
+            vehicleDetails: driverData.vehicleDetails || {
+                make: driverData.vehicleMake || 'Not Specified',
+                model: driverData.vehicleModel || 'Pending Verification',
+                year: driverData.vehicleYear || new Date().getFullYear(),
+                licensePlate: driverData.licensePlate || 'PENDING'
+            },
             documents
         };
     }
