@@ -49,8 +49,16 @@ const roles = [
         permissions: [
             Permission.DISPATCH_DASHBOARD_VIEW,
             Permission.DISPATCH_RIDE_ASSIGN,
+            Permission.DISPATCH_RIDE_REASSIGN,
+            Permission.DISPATCH_RIDE_CANCEL,
+            Permission.DISPATCH_RIDE_FORCE_COMPLETE,
+            Permission.DISPATCH_TRIP_DETAILS_VIEW,
+            Permission.DISPATCH_COMMUNICATE_DRIVER,
+            Permission.DISPATCH_COMMUNICATE_PASSENGER,
             Permission.DISPATCH_RIDE_MONITOR,
             Permission.DISPATCH_REAL_TIME_MAP,
+            Permission.TRIPS_VIEW_ALL,
+            Permission.TRIPS_VIEW_DETAILS,
             Permission.DRIVER_DOCUMENTS_VIEW, // To check if driver is valid
             Permission.OCCURRENCE_CREATE,
             Permission.OCCURRENCE_VIEW
