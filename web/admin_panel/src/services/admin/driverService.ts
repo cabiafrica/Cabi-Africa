@@ -106,9 +106,52 @@ export class DriverService {
     }
 
     async getDriverPerformanceReport(driverId?: string): Promise<any> {
-        const url = driverId ? `/v1/drivers/${driverId}/performance` : '/v1/drivers/performance/aggregate';
-        const res = await apiClient.get(url);
-        return res.data;
+        try {
+            if (driverId) {
+                const res = await apiClient.get(`/v1/drivers/${driverId}/performance`);
+                return res.data;
+            }
+            // Fetch live dispatch metrics & driver records
+            const [metricsRes, driversRes] = await Promise.all([
+                apiClient.get('/dispatch/metrics').catch(() => ({ data: {} })),
+                apiClient.get('/dispatch/drivers').catch(() => ({ data: [] }))
+            ]);
+
+            const metrics = metricsRes.data || {};
+            const drivers = Array.isArray(driversRes.data) ? driversRes.data : [];
+
+            const totalRides = metrics.completedToday ?? 0;
+            const earnings = metrics.revenue ?? 0;
+            const avgRating = drivers.length > 0
+                ? Number((drivers.reduce((acc: number, d: any) => acc + (d.averageRating || 5.0), 0) / drivers.length).toFixed(2))
+                : 0.0;
+            const acceptanceRate = drivers.length > 0
+                ? Number((drivers.reduce((acc: number, d: any) => acc + (d.acceptanceRate || 100), 0) / drivers.length).toFixed(1))
+                : 0.0;
+
+            return {
+                totalRides,
+                earnings,
+                avgRating,
+                acceptanceRate,
+                weeklyGrowth: 0.0,
+                earningsGrowth: 0.0,
+                ratingGrowth: 0.0,
+                acceptanceGrowth: 0.0
+            };
+        } catch (err) {
+            console.warn('Unable to aggregate driver performance metrics:', err);
+            return {
+                totalRides: 0,
+                earnings: 0,
+                avgRating: 0.0,
+                acceptanceRate: 0.0,
+                weeklyGrowth: 0.0,
+                earningsGrowth: 0.0,
+                ratingGrowth: 0.0,
+                acceptanceGrowth: 0.0
+            };
+        }
     }
 
     async getExpiringDocuments(): Promise<ExpiringDocumentResult[]> {

@@ -21,34 +21,34 @@ export const DriverPerformanceReport: React.FC = () => {
             if (data && data.totalRides !== undefined) {
                 setReport({
                     ...data,
-                    weeklyGrowth: 12.5,
-                    earningsGrowth: 6.8,
-                    ratingGrowth: 0.1,
-                    acceptanceGrowth: 5.4
+                    weeklyGrowth: data.weeklyGrowth ?? 0,
+                    earningsGrowth: data.earningsGrowth ?? 0,
+                    ratingGrowth: data.ratingGrowth ?? 0,
+                    acceptanceGrowth: data.acceptanceGrowth ?? 0
                 });
             } else {
                 setReport({
-                    totalRides: 1420,
-                    earnings: 852000,
-                    avgRating: 4.88,
-                    acceptanceRate: 94.2,
-                    weeklyGrowth: 12.5,
-                    earningsGrowth: 6.8,
-                    ratingGrowth: 0.1,
-                    acceptanceGrowth: 5.4
+                    totalRides: 0,
+                    earnings: 0,
+                    avgRating: 0.0,
+                    acceptanceRate: 0.0,
+                    weeklyGrowth: 0,
+                    earningsGrowth: 0,
+                    ratingGrowth: 0,
+                    acceptanceGrowth: 0
                 });
             }
         }).catch((err) => {
-            console.warn('Fallback to baseline performance data:', err);
+            console.warn('Fallback to zero baseline performance data:', err);
             setReport({
-                totalRides: 1420,
-                earnings: 852000,
-                avgRating: 4.88,
-                acceptanceRate: 94.2,
-                weeklyGrowth: 12.5,
-                earningsGrowth: 6.8,
-                ratingGrowth: 0.1,
-                acceptanceGrowth: 5.4
+                totalRides: 0,
+                earnings: 0,
+                avgRating: 0.0,
+                acceptanceRate: 0.0,
+                weeklyGrowth: 0,
+                earningsGrowth: 0,
+                ratingGrowth: 0,
+                acceptanceGrowth: 0
             });
         }).finally(() => setLoading(false));
     }, []);
@@ -66,7 +66,7 @@ export const DriverPerformanceReport: React.FC = () => {
     const cards = [
         {
             label: "Total Rides",
-            value: report.totalRides.toLocaleString(),
+            value: (report.totalRides ?? 0).toLocaleString(),
             icon: DirectionsCar,
             growth: report.weeklyGrowth,
             bgClass: "bg-amber-500/10",
@@ -74,7 +74,7 @@ export const DriverPerformanceReport: React.FC = () => {
         },
         {
             label: "Total Earnings",
-            value: `KES ${report.earnings.toLocaleString()}`,
+            value: `KES ${(report.earnings ?? 0).toLocaleString()}`,
             icon: MonetizationOn,
             growth: report.earningsGrowth,
             bgClass: "bg-emerald-500/10",
@@ -82,7 +82,7 @@ export const DriverPerformanceReport: React.FC = () => {
         },
         {
             label: "Avg Rating",
-            value: report.avgRating,
+            value: report.avgRating ? Number(report.avgRating).toFixed(2) : "0.00",
             icon: Star,
             growth: report.ratingGrowth,
             bgClass: "bg-amber-500/10",
@@ -90,7 +90,7 @@ export const DriverPerformanceReport: React.FC = () => {
         },
         {
             label: "Acceptance Rate",
-            value: `${report.acceptanceRate}%`,
+            value: `${report.acceptanceRate ?? 0}%`,
             icon: ThumbUp,
             growth: report.acceptanceGrowth,
             bgClass: "bg-emerald-500/10",
