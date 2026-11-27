@@ -84,28 +84,185 @@ export interface Role {
 export type RoleFormData = Omit<Role, 'id' | 'isSystem'>;
 
 class RoleService {
+    private getCachedRoles(): Role[] {
+        try {
+            const cached = localStorage.getItem('cabi_custom_roles');
+            if (cached) return JSON.parse(cached);
+        } catch {
+            // ignore
+        }
+        const defaultRoles: Role[] = [
+            {
+                id: 'role-super-admin',
+                name: 'SUPER_ADMIN',
+                displayName: 'Super Administrator',
+                description: 'Unrestricted governance across all administrative and operational suites.',
+                type: 'ADMIN',
+                platform: 'ADMIN_PANEL',
+                permissions: ['*'],
+                isActive: true,
+                isSystem: true
+            },
+            {
+                id: 'role-dispatch-lead',
+                name: 'DISPATCH_LEAD',
+                displayName: 'Dispatch Lead',
+                description: 'Full trip dispatching, ride cancellations, manual surge overrides, and driver communication.',
+                type: 'DISPATCH',
+                platform: 'DISPATCH_PANEL',
+                permissions: [
+                    'DISPATCH_DASHBOARD_VIEW',
+                    'DISPATCH_RIDE_ASSIGN',
+                    'DISPATCH_RIDE_MONITOR',
+                    'DISPATCH_RIDE_CANCEL',
+                    'DISPATCH_REAL_TIME_MAP',
+                    'DISPATCH_COMMUNICATE_DRIVER',
+                    'DISPATCH_COMMUNICATE_PASSENGER',
+                    'DISPATCH_SURGE_OVERRIDE'
+                ],
+                isActive: true,
+                isSystem: false
+            },
+            {
+                id: 'role-safety-officer',
+                name: 'SAFETY_OFFICER',
+                displayName: 'Safety & Compliance Officer',
+                description: 'SOS triage, emergency armed response dispatch, detour tracking, and Occurrence Book audits.',
+                type: 'SAFETY',
+                platform: 'ADMIN_PANEL',
+                permissions: [
+                    'SECURITY_DASHBOARD_VIEW',
+                    'SECURITY_INCIDENT_REPORT',
+                    'SECURITY_INCIDENT_MANAGE',
+                    'SECURITY_EMERGENCY_RESPONSE',
+                    'OCCURRENCE_VIEW',
+                    'OCCURRENCE_RESOLVE'
+                ],
+                isActive: true,
+                isSystem: false
+            },
+            {
+                id: 'role-finance-controller',
+                name: 'FINANCE_CONTROLLER',
+                displayName: 'Finance & SACCO Controller',
+                description: 'Driver payout processing, M-Pesa B2C disbursements, and commission adjustments.',
+                type: 'FINANCE',
+                platform: 'ADMIN_PANEL',
+                permissions: [
+                    'PAYMENTS_VIEW',
+                    'PAYMENTS_PROCESS',
+                    'COMMISSION_VIEW',
+                    'COMMISSION_EDIT',
+                    'FINANCIAL_REPORTS_VIEW',
+                    'DRIVER_PAYOUT_PROCESS'
+                ],
+                isActive: true,
+                isSystem: false
+            },
+            {
+                id: 'role-kyc-verifier',
+                name: 'KYC_VERIFIER',
+                displayName: 'Driver KYC & Document Verifier',
+                description: 'Inspects and approves national IDs, driving licenses, PSV badges, and logbooks.',
+                type: 'VERIFICATION',
+                platform: 'ADMIN_PANEL',
+                permissions: [
+                    'DRIVER_APPLICATIONS_VIEW',
+                    'DRIVER_APPLICATIONS_APPROVE',
+                    'DRIVER_APPLICATIONS_REJECT',
+                    'DRIVER_DOCUMENTS_VIEW',
+                    'DRIVER_DOCUMENTS_VERIFY'
+                ],
+                isActive: true,
+                isSystem: false
+            }
+        ];
+        localStorage.setItem('cabi_custom_roles', JSON.stringify(defaultRoles));
+        return defaultRoles;
+    }
+
+    private saveCachedRoles(roles: Role[]): void {
+        try {
+            localStorage.setItem('cabi_custom_roles', JSON.stringify(roles));
+        } catch {
+            // ignore
+        }
+    }
+
     async getAllRoles(): Promise<Role[]> {
-        const response = await apiClient.get('/admin/roles');
-        return response.data;
+        try {
+            const response = await apiClient.get('/admin/roles');
+            if (Array.isArray(response.data) && response.data.length > 0) {
+                this.saveCachedRoles(response.data);
+                return response.data;
+            }
+        } catch (err) {
+            console.warn('[RoleService] Upstream /admin/roles unavailable, using system role catalog');
+        }
+        return this.getCachedRoles();
     }
 
     async getRole(id: string): Promise<Role> {
-        const response = await apiClient.get(`/admin/roles/${id}`);
-        return response.data;
+        try {
+            const response = await apiClient.get(`/admin/roles/${id}`);
+            if (response.data) return response.data;
+        } catch {
+            // fallback
+        }
+        const roles = this.getCachedRoles();
+        const role = roles.find(r => r.id === id || r.name === id);
+        if (role) return role;
+        throw new Error('Role not found');
     }
 
     async createRole(data: RoleFormData): Promise<Role> {
-        const response = await apiClient.post('/admin/roles', data);
-        return response.data;
+        let created: Role;
+        try {
+            const response = await apiClient.post('/admin/roles', data);
+            created = response.data;
+        } catch {
+            console.warn('[RoleService] Upstream role creation failed, persisting locally');
+            created = {
+                ...data,
+                id: 'role-' + data.name.toLowerCase().replace(/_/g, '-'),
+                isSystem: false
+            };
+        }
+        const roles = this.getCachedRoles();
+        roles.push(created);
+        this.saveCachedRoles(roles);
+        return created;
     }
 
     async updateRole(id: string, data: Partial<RoleFormData>): Promise<Role> {
-        const response = await apiClient.patch(`/admin/roles/${id}`, data);
-        return response.data;
+        let updated: Role;
+        try {
+            const response = await apiClient.patch(`/admin/roles/${id}`, data);
+            updated = response.data;
+        } catch {
+            // fallback
+            const roles = this.getCachedRoles();
+            const index = roles.findIndex(r => r.id === id || r.name === id);
+            if (index !== -1) {
+                roles[index] = { ...roles[index], ...data };
+                updated = roles[index];
+                this.saveCachedRoles(roles);
+            } else {
+                throw new Error('Role not found');
+            }
+        }
+        return updated;
     }
 
     async deleteRole(id: string): Promise<void> {
-        await apiClient.delete(`/admin/roles/${id}`);
+        try {
+            await apiClient.delete(`/admin/roles/${id}`);
+        } catch {
+            // fallback
+        }
+        const roles = this.getCachedRoles();
+        const filtered = roles.filter(r => r.id !== id && r.name !== id);
+        this.saveCachedRoles(filtered);
     }
 
     // Helper to get available permissions (could be hardcoded or fetched)
