@@ -47,6 +47,15 @@ export default function TrackingPage() {
     if (loading) return <div className="p-8 text-center text-gray-600 dark:text-gray-400">Loading trip status...</div>;
     if (!trackingData) return <div className="p-8 text-center text-red-600">Trip not found.</div>;
 
+    const [progressRatio, setProgressRatio] = useState<number>(0.45);
+
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setProgressRatio((prev) => (prev >= 0.95 ? 0.20 : prev + 0.02));
+        }, 3000);
+        return () => clearInterval(timer);
+    }, []);
+
     const markers: any[] = [
         ...(trackingData.driver
             ? [
@@ -163,6 +172,7 @@ export default function TrackingPage() {
                     <CabiMap
                         markers={markers}
                         route={liveRoute}
+                        progressRatio={progressRatio}
                         height="100%"
                         showTraffic={showTraffic}
                     />

@@ -60,6 +60,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   // Real-time Meter Metrics
   double _distanceKm = 0.0;
   int _durationSeconds = 0;
+  double _tripProgressRatio = 0.0; // Covered road distance progress (turns grey)
   double _currentFare = 150.0;
   double _unroundedFare = 150.0;
 
@@ -389,7 +390,8 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
               _distanceKm += 0.06;
             }
 
-            // Realtime fare update
+            // Realtime road coverage progress & fare update
+            _tripProgressRatio = (_distanceKm / 4.5).clamp(0.0, 1.0);
             _recalculateFare();
 
             final double latDiff =
@@ -971,6 +973,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                     ),
                   ],
                   routePoints: _getNavRoutePoints(),
+                  progressRatio: _tripProgressRatio,
                   trafficSegments: _getNavTrafficSegments(),
                   alternativeRoutes: _getNavAlternativeRoutes(),
                   showUserLocation: true,

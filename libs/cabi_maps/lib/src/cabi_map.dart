@@ -128,6 +128,40 @@ class _CabiMapState extends State<CabiMap> {
     }
   }
 
+  List<Marker> _generateAlternativeTurnMarkers(List<LatLng> points, bool isDark) {
+    if (points.length < 2) return const [];
+    final markers = <Marker>[];
+    final step = math.max(3, (points.length / 5).floor());
+    for (int i = 0; i < points.length - 1; i += step) {
+      final p1 = points[i];
+      final p2 = points[math.min(i + 1, points.length - 1)];
+      final mid = LatLng(
+        (p1.latitude + p2.latitude) / 2,
+        (p1.longitude + p2.longitude) / 2,
+      );
+      final double dy = p2.latitude - p1.latitude;
+      final double dx = (p2.longitude - p1.longitude) * math.cos(p1.latitude * math.pi / 180);
+      final double angle = math.atan2(dx, dy);
+
+      markers.add(
+        Marker(
+          point: mid,
+          width: 16,
+          height: 16,
+          child: Transform.rotate(
+            angle: angle,
+            child: Icon(
+              Icons.navigation,
+              size: 11,
+              color: isDark ? const Color(0x6694A3B8) : const Color(0x7764748B),
+            ),
+          ),
+        ),
+      );
+    }
+    return markers;
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool isDark = widget.theme == CabiMapTheme.dark;
@@ -158,19 +192,36 @@ class _CabiMapState extends State<CabiMap> {
         ),
       ),
       children: [
-        // Universal clean basemap tile layer (CartoDB Positron for light, Dark Matter for dark)
+        // Universal clean basemap tile layer (Monochrome black & white / grey shaded, Light & Dark modes)
         TileLayer(
           key: ValueKey('cabi_clean_map_${widget.theme.name}'),
-          urlTemplate: isDark
-              ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
-              : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
-          subdomains: const ['a', 'b', 'c', 'd'],
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.cabi.app',
-          maxZoom: 20,
+          maxZoom: 19,
+          tileBuilder: (context, tileWidget, tile) {
+            return ColorFiltered(
+              colorFilter: isDark
+                  ? const ColorFilter.matrix(<double>[
+                      // Dark Mode: Inverted monochrome obsidian, highlighting roads and removing green clutter
+                      -0.2126 * 0.82, -0.7152 * 0.82, -0.0722 * 0.82, 0, 205,
+                      -0.2126 * 0.82, -0.7152 * 0.82, -0.0722 * 0.82, 0, 210,
+                      -0.2126 * 0.82, -0.7152 * 0.82, -0.0722 * 0.82, 0, 220,
+                      0,              0,              0,             1, 0,
+                    ])
+                  : const ColorFilter.matrix(<double>[
+                      // Light Mode: Clean desaturated black/white/grey shaded roads and major landmarks
+                      0.2126 * 0.95, 0.7152 * 0.95, 0.0722 * 0.95, 0, 10,
+                      0.2126 * 0.95, 0.7152 * 0.95, 0.0722 * 0.95, 0, 10,
+                      0.2126 * 0.95, 0.7152 * 0.95, 0.0722 * 0.95, 0, 10,
+                      0,             0,             0,            1, 0,
+                    ]),
+              child: tileWidget,
+            );
+          },
         ),
 
         // Up to 2 Alternative Routes in Faint Colors (beneath primary route)
-        if (widget.alternativeRoutes != null && widget.alternativeRoutes!.isNotEmpty)
+        if (widget.alternativeRoutes != null && widget.alternativeRoutes!.isNotEmpty) ...[
           PolylineLayer(
             polylines: widget.alternativeRoutes!.map((alt) {
               return Polyline(
@@ -184,6 +235,13 @@ class _CabiMapState extends State<CabiMap> {
               );
             }).toList(),
           ),
+          // In-map directional turn chevrons on alternative routes (turn by turn in faint color)
+          ...widget.alternativeRoutes!.map((alt) {
+            return MarkerLayer(
+              markers: _generateAlternativeTurnMarkers(alt.points, isDark),
+            );
+          }),
+        ],
 
         // Primary Route Polyline (Covered portion turns grey; remaining portion highlights in gold)
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty) ...[

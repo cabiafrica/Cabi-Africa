@@ -689,9 +689,11 @@ class _BookingScreenState extends State<BookingScreen> {
                   decoration: BoxDecoration(
                     color: isDark ? const Color(0xFF141418) : AppTheme.porcelainSurface,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: isSelected ? gold : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
-                      width: isSelected ? 1.5 : 1.0,
+                    border: Border(
+                      bottom: BorderSide(
+                        color: isSelected ? gold : (isDark ? Colors.white12 : AppTheme.porcelainOutline),
+                        width: isSelected ? 2.0 : 0.8,
+                      ),
                     ),
                   ),
                   child: Row(

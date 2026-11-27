@@ -376,6 +376,7 @@ extension _HomeScreenLogic on _HomeScreenState {
     _rideUpdateTimer?.cancel();
     _arrivalTimer?.cancel();
     _tripTimer?.cancel();
+    _tripProgressRatio = 0.0;
     _tripStatus = TripStatus.idle;
     _roadRoute = null;
     _pickupLocation = null;
@@ -484,7 +485,26 @@ extension _HomeScreenLogic on _HomeScreenState {
     }
 
     // Add specific assigned counterpart driver marker if driver found or on trip
-    if (_tripStatus == TripStatus.driverFound || _tripStatus == TripStatus.onTrip) {
+    if (_tripStatus == TripStatus.onTrip && _roadRoute != null && _roadRoute!.isNotEmpty) {
+      final int splitIdx = (_roadRoute!.length * _tripProgressRatio).floor().clamp(0, _roadRoute!.length - 1);
+      final LatLng livePos = _roadRoute![splitIdx];
+      double bearing = 38.0;
+      if (splitIdx < _roadRoute!.length - 1) {
+        final p1 = livePos;
+        final p2 = _roadRoute![splitIdx + 1];
+        final dy = p2.latitude - p1.latitude;
+        final dx = (p2.longitude - p1.longitude) * math.cos(p1.latitude * math.pi / 180);
+        bearing = math.atan2(dx, dy) * 180 / math.pi;
+      }
+      markers.add(CabiMapMarker.driver(
+        position: livePos,
+        driverId: 'assigned-driver',
+        isOnline: true,
+        bearing: bearing,
+        isMoving: true,
+        category: _selectedVehicleType ?? 'STANDARD',
+      ));
+    } else if (_tripStatus == TripStatus.driverFound || _tripStatus == TripStatus.onTrip) {
       markers.add(CabiMapMarker.driver(
         position: const LatLng(-1.287000, 36.816000), // Live counterpart driver pos
         driverId: 'assigned-driver',
@@ -685,7 +705,43 @@ extension _HomeScreenLogic on _HomeScreenState {
   }
 
   void _startTripSimulation() {
-    // Real trip simulation is handled by backend status updates
+    _tripTimer?.cancel();
+    _tripProgressRatio = 0.05;
+    _tripTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!mounted || _tripStatus != TripStatus.onTrip) {
+        timer.cancel();
+        return;
+      }
+      _updateState(() {
+        if (_tripProgressRatio < 0.95) {
+          _tripProgressRatio += 0.03;
+          _updateDynamicAlternativeRoutes();
+        }
+      });
+    });
+  }
+
+  void _updateDynamicAlternativeRoutes() {
+    if (_roadRoute == null || _roadRoute!.length < 4) return;
+    final int splitIdx = (_roadRoute!.length * _tripProgressRatio).floor();
+    if (splitIdx >= _roadRoute!.length - 2) return;
+
+    final remaining = _roadRoute!.sublist(splitIdx);
+    if (remaining.length < 3) return;
+
+    final alt1 = <LatLng>[];
+    final alt2 = <LatLng>[];
+    for (int i = 0; i < remaining.length; i++) {
+      final t = i / (remaining.length - 1);
+      final curve1 = 0.0035 * (1.0 - (2 * t - 1) * (2 * t - 1));
+      final curve2 = -0.0035 * (1.0 - (2 * t - 1) * (2 * t - 1));
+      alt1.add(LatLng(remaining[i].latitude + curve1, remaining[i].longitude + curve1 * 0.8));
+      alt2.add(LatLng(remaining[i].latitude + curve2, remaining[i].longitude - curve2 * 0.6));
+    }
+    _alternativeRoutes = [
+      AlternativeRoute(points: alt1, label: 'Via Ring Road', extraTime: '+2 min'),
+      AlternativeRoute(points: alt2, label: 'Via Expressway', extraTime: '+4 min'),
+    ];
   }
 
   Future<void> _startSearchSimulation() async {

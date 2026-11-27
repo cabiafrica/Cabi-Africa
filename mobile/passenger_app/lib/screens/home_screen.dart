@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math' as math;
 import 'dart:ui';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
@@ -79,6 +80,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   Timer? _arrivalTimer;
   Timer? _tripTimer;
+  double _tripProgressRatio = 0.0; // Dynamic route progress (turns covered segment grey)
   final double _currentFare = 0.0;
   final double _distanceKm = 0.0;
   final int _tripDurationSeconds = 0;
@@ -232,6 +234,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 : CabiMapTheme.light,
             markers: _getMarkers(),
             routePoints: _getRoute(),
+            progressRatio: _tripProgressRatio,
             alternativeRoutes: _alternativeRoutes,
             trafficSegments: _trafficSegments,
             onSelectAlternativeRoute: (index) {

@@ -2847,11 +2847,13 @@ extension _HomeScreenPanels on _HomeScreenState {
                         color: isSelected
                             ? fleetColor.withValues(alpha: isDark ? 0.22 : 0.12)
                             : (isDark ? AppTheme.surfaceContainerHigh : Colors.white),
-                        border: Border.all(
-                          color: isSelected
-                              ? fleetColor
-                              : fleetColor.withValues(alpha: isDark ? 0.40 : 0.25),
-                          width: isSelected ? 2.0 : 1.0,
+                        border: Border(
+                          bottom: BorderSide(
+                            color: isSelected
+                                ? fleetColor
+                                : (isDark ? Colors.white10 : AppTheme.porcelainOutline),
+                            width: isSelected ? 2.0 : 0.8,
+                          ),
                         ),
                         boxShadow: [
                           BoxShadow(
@@ -3462,11 +3464,13 @@ extension _HomeScreenPanels on _HomeScreenState {
                 ? accentColor.withValues(alpha: isDark ? 0.22 : 0.12)
                 : (isDark ? AppTheme.surfaceContainerHigh : Colors.white),
             borderRadius: BorderRadius.circular(14),
-            border: Border.all(
-              color: isSelected
-                  ? accentColor
-                  : accentColor.withValues(alpha: isDark ? 0.20 : 0.15),
-              width: isSelected ? 1.6 : 0.8,
+            border: Border(
+              bottom: BorderSide(
+                color: isSelected
+                    ? accentColor
+                    : (isDark ? Colors.white10 : AppTheme.porcelainOutline),
+                width: isSelected ? 2.0 : 0.8,
+              ),
             ),
             boxShadow: [
               BoxShadow(
