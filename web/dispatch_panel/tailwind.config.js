@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+    darkMode: 'class',
     content: [
         './index.html',
         './src/**/*.{js,ts,jsx,tsx}',
@@ -23,12 +24,12 @@ export default {
                 success: '#10B981',
                 error: '#EF4444',
                 background: {
-                    light: '#F3F4F6',
+                    light: '#F8FAFC',
                     dark: '#0a0a0a',
                 },
                 surface: {
                     light: '#FFFFFF',
-                    dark: '#121212',
+                    dark: '#131722',
                 },
                 brand: {
                     black: '#0a0a0a',
@@ -39,9 +40,20 @@ export default {
                     accent: '#22D3EE',
                 },
                 'executive-gold': '#D4AF37',
-                'surface-dark': '#0A0A0B',
-                'card-dark': '#141416',
+                'surface-dark': '#131722',
+                'card-dark': '#131722',
                 'telemetry-cyan': '#22D3EE',
+            },
+            borderRadius: {
+                none: '0px',
+                sm: '2px',
+                DEFAULT: '3px',
+                md: '3px',
+                lg: '4px',
+                xl: '4px',
+                '2xl': '4px',
+                '3xl': '4px',
+                full: '9999px',
             },
         },
     },

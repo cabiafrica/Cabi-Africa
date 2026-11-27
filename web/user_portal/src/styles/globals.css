@@ -28,7 +28,7 @@
         @apply bg-slate-300 dark:bg-white/10 rounded-full hover:bg-slate-400 dark:hover:bg-white/20 transition-colors;
     }
 
-    /* Form input base styling matching user login forms - clean, well padded, high contrast */
+    /* Form input base styling - crisp 3px border radius, well padded, high contrast, softened focus ring */
     :where(
         input[type="text"],
         input[type="email"],
@@ -43,11 +43,18 @@
         textarea,
         select
     ) {
-        @apply px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-brand-yellow focus:border-brand-yellow/50 transition-all duration-300;
+        @apply px-4 py-3 sm:py-3.5 rounded-[3px] border border-slate-200 dark:border-white/10 bg-white dark:bg-black/40 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500/25 focus:border-amber-500/60 transition-all duration-200;
     }
 }
 
 @layer utilities {
+    /* Golden Gradient Separator */
+    .golden-separator {
+        height: 2px;
+        width: 100%;
+        background: linear-gradient(90deg, rgba(245, 158, 11, 0.8) 0%, rgba(245, 158, 11, 0.2) 60%, transparent 100%);
+    }
+
     /* Glassmorphism Variants (Stitch CABI. Design System) */
     .glass-premium {
         @apply bg-white/80 dark:bg-[#141416]/80 backdrop-blur-2xl border border-slate-200/80 dark:border-[#D4AF37]/15 shadow-[0_8px_32px_0_rgba(0,0,0,0.18)] dark:shadow-[0_12px_40px_0_rgba(0,0,0,0.45)];

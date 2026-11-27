@@ -57,6 +57,15 @@ module.exports = {
                 'on-surface-variant': '#d8c3ad',
                 'outline-variant': '#534434',
             },
+            borderRadius: {
+                DEFAULT: '3px',
+                sm: '3px',
+                md: '3px',
+                lg: '3px',
+                xl: '3px',
+                '2xl': '3px',
+                '3xl': '3px',
+            },
             backgroundImage: {
                 'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
                 'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',

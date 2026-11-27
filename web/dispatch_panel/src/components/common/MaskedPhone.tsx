@@ -27,7 +27,7 @@ export const MaskedPhone: React.FC<MaskedPhoneProps> = ({ phone, className = 'te
                     e.stopPropagation();
                     setRevealed((prev) => !prev);
                 }}
-                className="text-slate-500 hover:text-amber-400 transition-colors p-0.5 rounded cursor-pointer"
+                className="text-slate-500 hover:text-amber-400 transition-colors p-0.5 rounded-[3px] cursor-pointer"
                 title={revealed ? 'Hide telephone number' : 'Click to reveal telephone number'}
             >
                 {revealed ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}

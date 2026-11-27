@@ -122,20 +122,20 @@ const LiveMap = ({ drivers, rideRequests, surgeZones, emergencyAlerts = [] }: Li
     return (
         <div className="space-y-6">
             {/* Map Container */}
-            <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-hidden">
-                <div className="p-4 border-b border-slate-800/50 flex items-center justify-between">
+            <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] overflow-hidden shadow-sm">
+                <div className="p-4 border-b border-slate-200 dark:border-slate-800/50 flex items-center justify-between">
                     <div>
-                        <h3 className="text-lg font-semibold text-white">Live Map View</h3>
-                        <p className="text-sm text-slate-400">Real-time driver and trip tracking</p>
+                        <h3 className="text-base font-bold text-slate-900 dark:text-white">Live Map View</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400">Real-time driver and trip tracking across regions</p>
                     </div>
                     <label className="flex items-center gap-2 cursor-pointer">
                         <input
                             type="checkbox"
                             checked={showOnlineOnly}
                             onChange={(e) => setShowOnlineOnly(e.target.checked)}
-                            className="rounded border-slate-600 text-amber-600 focus:ring-amber-500 bg-slate-700"
+                            className="rounded-[2px] border-slate-300 dark:border-slate-600 text-amber-500 focus:ring-amber-500 bg-white dark:bg-slate-700"
                         />
-                        <span className="text-sm text-slate-300">Show online only</span>
+                        <span className="text-xs font-semibold text-slate-700 dark:text-slate-300">Show online only</span>
                     </label>
                 </div>
 
@@ -149,60 +149,60 @@ const LiveMap = ({ drivers, rideRequests, surgeZones, emergencyAlerts = [] }: Li
                     />
 
                     {/* Legend */}
-                    <div className="absolute bottom-4 left-4 bg-slate-800/95 backdrop-blur-xl border border-slate-700 rounded-xl p-4 shadow-lg z-[1000]">
-                        <h4 className="text-sm font-semibold text-white mb-3">Map Legend</h4>
-                        <div className="space-y-2">
+                    <div className="absolute bottom-4 left-4 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-[3px] p-4 shadow-lg z-[1000]">
+                        <h4 className="text-xs font-bold uppercase tracking-wider text-slate-900 dark:text-white mb-2.5">Map Legend</h4>
+                        <div className="space-y-1.5">
                             {emergencyAlerts.length > 0 && (
-                                <div className="flex items-center gap-2 animate-pulse pb-1 border-b border-slate-700">
-                                    <div className="w-3 h-3 rounded-full bg-red-600 shadow-[0_0_8px_rgba(239,68,68,0.9)]"></div>
-                                    <span className="text-xs font-bold text-red-400">🚨 SOS Distress Active ({emergencyAlerts.length})</span>
+                                <div className="flex items-center gap-2 animate-pulse pb-1 border-b border-slate-200 dark:border-slate-700">
+                                    <div className="w-2.5 h-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(239,68,68,0.9)]"></div>
+                                    <span className="text-[11px] font-bold text-red-600 dark:text-red-400">🚨 SOS Distress Active ({emergencyAlerts.length})</span>
                                 </div>
                             )}
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-green-500"></div>
-                                <span className="text-xs text-slate-300">Available Drivers ({onlineDrivers.filter(d => d.status === 'online').length})</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-emerald-500"></div>
+                                <span className="text-xs text-slate-700 dark:text-slate-300">Available Drivers ({onlineDrivers.filter(d => d.status === 'online').length})</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                <span className="text-xs text-slate-300">On Trip ({onlineDrivers.filter(d => d.status === 'busy').length})</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-amber-500"></div>
+                                <span className="text-xs text-slate-700 dark:text-slate-300">On Trip ({onlineDrivers.filter(d => d.status === 'busy').length})</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-amber-500"></div>
-                                <span className="text-xs text-slate-300">Pickup Points ({activeRides.length})</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-cyan-500"></div>
+                                <span className="text-xs text-slate-700 dark:text-slate-300">Pickup Points ({activeRides.length})</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded-full bg-red-500"></div>
-                                <span className="text-xs text-slate-300">Dropoff Points ({activeRides.length})</span>
+                                <div className="w-2.5 h-2.5 rounded-full bg-rose-500"></div>
+                                <span className="text-xs text-slate-700 dark:text-slate-300">Dropoff Points ({activeRides.length})</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Selected Driver Info */}
                     {selectedDriver && (
-                        <div className="absolute top-4 left-4 bg-slate-800/95 backdrop-blur-xl border border-slate-700 rounded-xl p-4 shadow-lg z-[1000] max-w-xs">
-                            <div className="flex items-start justify-between mb-2">
-                                <h4 className="text-sm font-semibold text-white">{selectedDriver.name}</h4>
+                        <div className="absolute top-4 left-4 bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-slate-200 dark:border-slate-700 rounded-[3px] p-4 shadow-xl z-[1000] max-w-xs">
+                            <div className="flex items-start justify-between mb-2 pb-1 border-b border-slate-100 dark:border-slate-700">
+                                <h4 className="text-sm font-bold text-slate-900 dark:text-white">{selectedDriver.name}</h4>
                                 <button
                                     onClick={() => setSelectedDriver(null)}
-                                    className="text-slate-400 hover:text-white"
+                                    className="text-slate-400 hover:text-slate-600 dark:hover:text-white"
                                 >
                                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                     </svg>
                                 </button>
                             </div>
-                            <div className="space-y-1 text-xs text-slate-300">
-                                <p>ID: {selectedDriver.id}</p>
-                                <p>Status: <span className={`font-semibold ${selectedDriver.status === 'online' ? 'text-green-400' :
-                                    selectedDriver.status === 'busy' ? 'text-yellow-400' :
-                                        'text-gray-400'
+                            <div className="space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                                <p>ID: <span className="font-mono font-semibold">{selectedDriver.id}</span></p>
+                                <p>Status: <span className={`font-bold ${selectedDriver.status === 'online' ? 'text-emerald-600 dark:text-emerald-400' :
+                                    selectedDriver.status === 'busy' ? 'text-amber-600 dark:text-amber-400' :
+                                        'text-slate-400'
                                     }`}>{selectedDriver.status}</span></p>
                                 <p>Rating: ⭐ {selectedDriver.rating.toFixed(1)}</p>
                                 {selectedDriverRide && (
-                                    <div className="mt-2 pt-2 border-t border-slate-700">
-                                        <p className="font-semibold text-white">Current Trip:</p>
-                                        <p>{selectedDriverRide.passengerName}</p>
-                                        <p className="text-slate-400">{selectedDriverRide.pickupLocation.address} → {selectedDriverRide.dropoffLocation.address}</p>
+                                    <div className="mt-2 pt-2 border-t border-slate-100 dark:border-slate-700">
+                                        <p className="font-bold text-slate-900 dark:text-white">Current Trip:</p>
+                                        <p className="font-medium">{selectedDriverRide.passengerName}</p>
+                                        <p className="text-slate-500 text-[11px]">{selectedDriverRide.pickupLocation.address} → {selectedDriverRide.dropoffLocation.address}</p>
                                     </div>
                                 )}
                             </div>
@@ -213,55 +213,55 @@ const LiveMap = ({ drivers, rideRequests, surgeZones, emergencyAlerts = [] }: Li
 
             {/* Map Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4">
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-amber-500/20 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-[3px] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>
                         </div>
                         <div>
-                            <p className="text-xs text-slate-500">Total Drivers</p>
-                            <p className="text-2xl font-bold text-white">{drivers.length}</p>
+                            <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Total Drivers</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{drivers.length}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4">
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-green-500/20 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-[3px] bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
                         <div>
-                            <p className="text-xs text-slate-500">Online</p>
-                            <p className="text-2xl font-bold text-white">{onlineDrivers.length}</p>
+                            <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Online</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{onlineDrivers.length}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4">
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-yellow-500/20 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-[3px] bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                             </svg>
                         </div>
                         <div>
-                            <p className="text-xs text-slate-500">Active Trips</p>
-                            <p className="text-2xl font-bold text-white">{activeRides.length}</p>
+                            <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Active Trips</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{activeRides.length}</p>
                         </div>
                     </div>
                 </div>
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4">
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-4 shadow-sm">
                     <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-lg bg-red-500/20 flex items-center justify-center">
-                            <svg className="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div className="w-10 h-10 rounded-[3px] bg-red-500/10 border border-red-500/20 flex items-center justify-center">
+                            <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                             </svg>
                         </div>
                         <div>
-                            <p className="text-xs text-slate-500">Surge Zones</p>
-                            <p className="text-2xl font-bold text-white">{surgeZones.length}</p>
+                            <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Surge Zones</p>
+                            <p className="text-2xl font-black text-slate-900 dark:text-white">{surgeZones.length}</p>
                         </div>
                     </div>
                 </div>

@@ -115,16 +115,16 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                 <AdvancedFilters filters={filterConfigs} onFilterChange={setFilters} onClear={() => setFilters({})} />
 
                 {/* View Style Toggle */}
-                <div className="flex items-center gap-1 bg-slate-900/50 border border-slate-800/50 rounded-xl p-1">
+                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-1">
                     <button
                         onClick={() => setViewStyle('grid')}
-                        className={`p-2 rounded-lg transition-all ${viewStyle === 'grid'
-                            ? 'bg-amber-500 text-black'
-                            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        className={`p-1.5 rounded-[3px] transition-all ${viewStyle === 'grid'
+                            ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-sm'
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
                             }`}
                         title="Grid View"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -135,13 +135,13 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     </button>
                     <button
                         onClick={() => setViewStyle('list')}
-                        className={`p-2 rounded-lg transition-all ${viewStyle === 'list'
-                            ? 'bg-amber-500 text-black'
-                            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        className={`p-1.5 rounded-[3px] transition-all ${viewStyle === 'list'
+                            ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-sm'
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
                             }`}
                         title="List View"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -152,13 +152,13 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     </button>
                     <button
                         onClick={() => setViewStyle('table')}
-                        className={`p-2 rounded-lg transition-all ${viewStyle === 'table'
-                            ? 'bg-amber-500 text-black'
-                            : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                        className={`p-1.5 rounded-[3px] transition-all ${viewStyle === 'table'
+                            ? 'bg-gradient-to-r from-amber-400 to-amber-500 text-black font-bold shadow-sm'
+                            : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-slate-800'
                             }`}
                         title="Table View"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path
                                 strokeLinecap="round"
                                 strokeLinejoin="round"
@@ -172,25 +172,25 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
-                    <p className="text-sm text-amber-400 mb-1">Total Passengers</p>
-                    <p className="text-3xl font-bold text-white">{filteredPassengers.length}</p>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-amber-600 dark:text-amber-400 mb-1">Total Passengers</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">{filteredPassengers.length}</p>
                 </div>
-                <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
-                    <p className="text-sm text-green-400 mb-1">Active</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-emerald-600 dark:text-emerald-400 mb-1">Active</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         {filteredPassengers.filter((p) => p.status === 'active').length}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
-                    <p className="text-sm text-cyan-400 mb-1">Total Rides</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-cyan-600 dark:text-cyan-400 mb-1">Total Rides</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         {filteredPassengers.reduce((sum, p) => sum + p.totalRides, 0).toLocaleString()}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-orange-600/10 to-orange-600/5 border border-orange-500/20 rounded-xl p-4">
-                    <p className="text-sm text-orange-400 mb-1">Total Revenue</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-orange-500/10 border border-orange-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-orange-600 dark:text-orange-400 mb-1">Total Revenue</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         KES {filteredPassengers.reduce((sum, p) => sum + p.totalSpent, 0).toLocaleString()}
                     </p>
                 </div>
@@ -203,23 +203,23 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div
                             key={passenger.id}
                             onClick={() => setSelectedPassenger(passenger)}
-                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-6 hover:border-amber-500/50 transition-all cursor-pointer group"
+                            className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-6 hover:border-amber-500/50 transition-all cursor-pointer group shadow-sm"
                         >
                             {/* Passenger Header */}
                             <div className="flex items-start justify-between mb-4">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg">
+                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-lg shadow-sm">
                                         {passenger.name.charAt(0)}
                                     </div>
                                     <div>
-                                        <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
+                                        <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
                                             {passenger.name}
                                         </h3>
-                                        <p className="text-xs text-slate-500 font-mono">{passenger.id}</p>
+                                        <p className="text-xs text-slate-500 dark:text-slate-400 font-mono">{passenger.id}</p>
                                     </div>
                                 </div>
                                 <span
-                                    className={`text-xs font-medium px-2 py-1 rounded-full border ${getStatusColor(
+                                    className={`text-[10px] font-bold px-2 py-0.5 rounded-[3px] border ${getStatusColor(
                                         passenger.status
                                     )}`}
                                 >
@@ -234,38 +234,38 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                         <Star
                                             key={i}
                                             className={`w-4 h-4 ${i < Math.floor(passenger.rating)
-                                                ? 'text-yellow-400 fill-yellow-400'
-                                                : 'text-slate-700'
+                                                ? 'text-amber-500 fill-amber-500'
+                                                : 'text-slate-200 dark:text-slate-700'
                                                 }`}
                                         />
                                     ))}
                                 </div>
-                                <span className="text-sm font-semibold text-white">{passenger.rating.toFixed(1)}</span>
+                                <span className="text-sm font-bold text-slate-900 dark:text-white">{passenger.rating.toFixed(1)}</span>
                             </div>
 
                             {/* Stats */}
                             <div className="grid grid-cols-2 gap-3 mb-4">
                                 <div>
-                                    <p className="text-xs text-slate-500">Total Rides</p>
-                                    <p className="text-lg font-bold text-white">{passenger.totalRides}</p>
+                                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Total Rides</p>
+                                    <p className="text-base font-black text-slate-900 dark:text-white">{passenger.totalRides}</p>
                                 </div>
                                 <div>
-                                    <p className="text-xs text-slate-500">Total Spent</p>
-                                    <p className="text-lg font-bold text-green-400">
+                                    <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Total Spent</p>
+                                    <p className="text-base font-black text-emerald-600 dark:text-emerald-400">
                                         KES {(passenger.totalSpent / 1000).toFixed(1)}k
                                     </p>
                                 </div>
                             </div>
 
                             {/* Contact */}
-                            <div className="space-y-2 pt-4 border-t border-slate-800">
-                                <div className="flex items-center gap-2 text-sm text-slate-400">
-                                    <Phone className="w-4 h-4" />
-                                    <MaskedPhone phone={passenger.phone} className="text-sm text-slate-300" />
+                            <div className="space-y-1.5 pt-3 border-t border-slate-100 dark:border-slate-800">
+                                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                    <Phone className="w-3.5 h-3.5 text-slate-400" />
+                                    <MaskedPhone phone={passenger.phone} className="text-xs font-medium text-slate-700 dark:text-slate-300" />
                                 </div>
-                                <div className="flex items-center gap-2 text-sm text-slate-400">
-                                    <Mail className="w-4 h-4" />
-                                    <span className="truncate">{passenger.email}</span>
+                                <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+                                    <Mail className="w-3.5 h-3.5 text-slate-400" />
+                                    <span className="truncate text-slate-700 dark:text-slate-300">{passenger.email}</span>
                                 </div>
                             </div>
                         </div>
@@ -280,55 +280,55 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div
                             key={passenger.id}
                             onClick={() => setSelectedPassenger(passenger)}
-                            className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-xl p-4 hover:border-amber-500/50 transition-all cursor-pointer group"
+                            className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-4 hover:border-amber-500/50 transition-all cursor-pointer group shadow-sm"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-4 flex-1">
-                                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-base flex-shrink-0 shadow-sm">
                                         {passenger.name.charAt(0)}
                                     </div>
                                     <div className="flex-1 min-w-0">
                                         <div className="flex items-center gap-3 mb-1">
-                                            <h3 className="font-semibold text-white group-hover:text-amber-400 transition-colors">
+                                            <h3 className="font-bold text-slate-900 dark:text-white group-hover:text-amber-500 transition-colors">
                                                 {passenger.name}
                                             </h3>
                                             <span
-                                                className={`text-xs font-medium px-2 py-0.5 rounded-full border ${getStatusColor(
+                                                className={`text-[10px] font-bold px-2 py-0.5 rounded-[3px] border ${getStatusColor(
                                                     passenger.status
                                                 )}`}
                                             >
                                                 {passenger.status}
                                             </span>
                                         </div>
-                                        <div className="flex items-center gap-4 text-sm text-slate-400">
+                                        <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
                                             <span className="flex items-center gap-1">
-                                                <Phone className="w-3 h-3" />
-                                                <MaskedPhone phone={passenger.phone} className="text-xs text-slate-300" />
+                                                <Phone className="w-3 h-3 text-slate-400" />
+                                                <MaskedPhone phone={passenger.phone} className="text-xs font-medium text-slate-700 dark:text-slate-300" />
                                             </span>
                                             <span className="flex items-center gap-1">
-                                                <Mail className="w-3 h-3" />
-                                                {passenger.email}
+                                                <Mail className="w-3 h-3 text-slate-400" />
+                                                <span className="text-slate-700 dark:text-slate-300">{passenger.email}</span>
                                             </span>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-6">
                                     <div className="text-center">
-                                        <p className="text-xs text-slate-500">Rating</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Rating</p>
                                         <div className="flex items-center gap-1">
-                                            <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                                            <span className="text-sm font-semibold text-white">
+                                            <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                            <span className="text-xs font-bold text-slate-900 dark:text-white">
                                                 {passenger.rating.toFixed(1)}
                                             </span>
                                         </div>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xs text-slate-500">Rides</p>
-                                        <p className="text-sm font-semibold text-white">{passenger.totalRides}</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Rides</p>
+                                        <p className="text-xs font-bold text-slate-900 dark:text-white">{passenger.totalRides}</p>
                                     </div>
                                     <div className="text-center">
-                                        <p className="text-xs text-slate-500">Spent</p>
-                                        <p className="text-sm font-semibold text-green-400">
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Spent</p>
+                                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                                             KES {(passenger.totalSpent / 1000).toFixed(1)}k
                                         </p>
                                     </div>
@@ -341,23 +341,23 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
 
             {/* Table View */}
             {viewStyle === 'table' && (
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-hidden">
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] overflow-hidden shadow-sm">
                     <div className="overflow-x-auto">
                         <table className="w-full">
-                            <thead className="bg-slate-800/50">
+                            <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                                 <tr>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                                         Passenger
                                     </th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Contact</th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Status</th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Rating</th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Rides</th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Contact</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Status</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Rating</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Rides</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
                                         Total Spent
                                     </th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Payment</th>
-                                    <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Joined</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Payment</th>
+                                    <th className="text-left py-3 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Joined</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -365,62 +365,62 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                     <tr
                                         key={passenger.id}
                                         onClick={() => setSelectedPassenger(passenger)}
-                                        className="border-t border-slate-800/50 hover:bg-slate-800/30 transition-colors cursor-pointer"
+                                        className="border-t border-slate-100 dark:border-slate-800/50 hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition-colors cursor-pointer"
                                     >
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold">
+                                                <div className="w-9 h-9 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-xs shadow-sm">
                                                     {passenger.name.charAt(0)}
                                                 </div>
                                                 <div>
-                                                    <p className="text-sm font-medium text-white">{passenger.name}</p>
-                                                    <p className="text-xs text-slate-500 font-mono">{passenger.id}</p>
+                                                    <p className="text-xs font-bold text-slate-900 dark:text-white">{passenger.name}</p>
+                                                    <p className="text-[10px] text-slate-400 font-mono">{passenger.id}</p>
                                                 </div>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <div className="space-y-1">
-                                                <MaskedPhone phone={passenger.phone} className="text-sm text-slate-300" />
-                                                <p className="text-xs text-slate-500">{passenger.email}</p>
+                                        <td className="py-3.5 px-6">
+                                            <div className="space-y-0.5">
+                                                <MaskedPhone phone={passenger.phone} className="text-xs text-slate-700 dark:text-slate-300 font-medium" />
+                                                <p className="text-[11px] text-slate-500">{passenger.email}</p>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-6">
                                             <span
-                                                className={`text-xs font-medium px-3 py-1 rounded-full border ${getStatusColor(
+                                                className={`text-[10px] font-bold px-2 py-0.5 rounded-[3px] border ${getStatusColor(
                                                     passenger.status
                                                 )}`}
                                             >
                                                 {passenger.status}
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-6">
                                             <div className="flex items-center gap-1">
-                                                <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                                                <span className="text-sm font-semibold text-white">
+                                                <Star className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+                                                <span className="text-xs font-bold text-slate-900 dark:text-white">
                                                     {passenger.rating.toFixed(1)}
                                                 </span>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
+                                        <td className="py-3.5 px-6">
                                             <div>
-                                                <p className="text-sm font-semibold text-white">{passenger.totalRides}</p>
-                                                <p className="text-xs text-slate-500">
+                                                <p className="text-xs font-bold text-slate-900 dark:text-white">{passenger.totalRides}</p>
+                                                <p className="text-[10px] text-slate-400">
                                                     {passenger.completedRides} completed
                                                 </p>
                                             </div>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-sm font-semibold text-green-400">
+                                        <td className="py-3.5 px-6">
+                                            <span className="text-xs font-bold text-emerald-600 dark:text-emerald-400">
                                                 KES {passenger.totalSpent.toLocaleString()}
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-sm text-slate-300 capitalize">
+                                        <td className="py-3.5 px-6">
+                                            <span className="text-xs text-slate-700 dark:text-slate-300 capitalize font-medium">
                                                 {passenger.preferredPaymentMethod.replace('-', ' ')}
                                             </span>
                                         </td>
-                                        <td className="py-4 px-6">
-                                            <span className="text-sm text-slate-300">
+                                        <td className="py-3.5 px-6">
+                                            <span className="text-xs text-slate-500 dark:text-slate-400">
                                                 {new Date(passenger.joinedDate).toLocaleDateString()}
                                             </span>
                                         </td>
@@ -433,8 +433,8 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
             )}
 
             {filteredPassengers.length === 0 && (
-                <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl p-12 text-center">
-                    <p className="text-slate-500">No passengers found matching your criteria</p>
+                <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-12 text-center">
+                    <p className="text-slate-500 text-xs">No passengers found matching your criteria</p>
                 </div>
             )}
 
@@ -445,21 +445,21 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                     onClick={() => setSelectedPassenger(null)}
                 >
                     <div
-                        className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3px] max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6">
+                        <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6">
                             <div className="flex items-start justify-between">
                                 <div className="flex items-center gap-4">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-amber-400 to-yellow-600 flex items-center justify-center text-white font-bold text-2xl">
+                                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-amber-400 to-amber-600 flex items-center justify-center text-black font-bold text-xl shadow-sm">
                                         {selectedPassenger.name.charAt(0)}
                                     </div>
                                     <div>
-                                        <h3 className="text-2xl font-bold text-white">{selectedPassenger.name}</h3>
-                                        <p className="text-sm text-slate-400 font-mono mt-1">{selectedPassenger.id}</p>
+                                        <h3 className="text-xl font-bold text-slate-900 dark:text-white">{selectedPassenger.name}</h3>
+                                        <p className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold mt-0.5">{selectedPassenger.id}</p>
                                         <span
-                                            className={`inline-block text-xs font-medium px-2 py-1 rounded-full border mt-2 ${getStatusColor(
+                                            className={`inline-block text-[10px] font-bold px-2 py-0.5 rounded-[3px] border mt-2 ${getStatusColor(
                                                 selectedPassenger.status
                                             )}`}
                                         >
@@ -469,10 +469,10 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                 </div>
                                 <button
                                     onClick={() => setSelectedPassenger(null)}
-                                    className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                                    className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[3px] transition-colors"
                                 >
                                     <svg
-                                        className="w-5 h-5 text-slate-400"
+                                        className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-white"
                                         fill="none"
                                         stroke="currentColor"
                                         viewBox="0 0 24 24"
@@ -492,77 +492,77 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                         <div className="p-6 space-y-6">
                             {/* Stats Overview */}
                             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <TrendingUp className="w-4 h-4 text-amber-400" />
-                                        <p className="text-xs text-amber-400">Total Rides</p>
+                                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[3px] p-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <TrendingUp className="w-4 h-4 text-amber-600 dark:text-amber-400" />
+                                        <p className="text-xs font-bold text-amber-600 dark:text-amber-400">Total Rides</p>
                                     </div>
-                                    <p className="text-2xl font-bold text-white">{selectedPassenger.totalRides}</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{selectedPassenger.totalRides}</p>
                                 </div>
-                                <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <DollarSign className="w-4 h-4 text-green-400" />
-                                        <p className="text-xs text-green-400">Total Spent</p>
+                                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-[3px] p-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <DollarSign className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+                                        <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400">Spent</p>
                                     </div>
-                                    <p className="text-2xl font-bold text-white">
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white">
                                         KES {selectedPassenger.totalSpent.toLocaleString()}
                                     </p>
                                 </div>
-                                <div className="bg-gradient-to-br from-yellow-600/10 to-yellow-600/5 border border-yellow-500/20 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <Star className="w-4 h-4 text-yellow-400" />
-                                        <p className="text-xs text-yellow-400">Rating</p>
+                                <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-[3px] p-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <Star className="w-4 h-4 text-amber-500" />
+                                        <p className="text-xs font-bold text-amber-600 dark:text-amber-400">Rating</p>
                                     </div>
-                                    <p className="text-2xl font-bold text-white">{selectedPassenger.rating.toFixed(1)}</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{selectedPassenger.rating.toFixed(1)}</p>
                                 </div>
-                                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
-                                    <div className="flex items-center gap-2 mb-2">
-                                        <TrendingUp className="w-4 h-4 text-cyan-400" />
-                                        <p className="text-xs text-cyan-400">Completed</p>
+                                <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-[3px] p-4">
+                                    <div className="flex items-center gap-2 mb-1">
+                                        <TrendingUp className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
+                                        <p className="text-xs font-bold text-cyan-600 dark:text-cyan-400">Completed</p>
                                     </div>
-                                    <p className="text-2xl font-bold text-white">{selectedPassenger.completedRides}</p>
+                                    <p className="text-2xl font-black text-slate-900 dark:text-white">{selectedPassenger.completedRides}</p>
                                 </div>
                             </div>
 
                             {/* Contact Information */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Contact Information</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Contact Information</h4>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-2">
-                                        <Phone className="w-4 h-4 text-slate-500" />
-                                        <MaskedPhone phone={selectedPassenger.phone} className="text-sm text-white" />
+                                        <Phone className="w-4 h-4 text-slate-400" />
+                                        <MaskedPhone phone={selectedPassenger.phone} className="text-sm font-semibold text-slate-900 dark:text-white" />
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Mail className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-white">{selectedPassenger.email}</span>
+                                        <Mail className="w-4 h-4 text-slate-400" />
+                                        <span className="text-sm font-medium text-slate-900 dark:text-white">{selectedPassenger.email}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Payment Preference */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Payment Information</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Payment Information</h4>
                                 <div className="flex items-center gap-2">
-                                    <CreditCard className="w-4 h-4 text-slate-500" />
-                                    <span className="text-sm text-white capitalize">
+                                    <CreditCard className="w-4 h-4 text-amber-500" />
+                                    <span className="text-sm font-semibold text-slate-900 dark:text-white capitalize">
                                         {selectedPassenger.preferredPaymentMethod.replace('-', ' ')}
                                     </span>
                                 </div>
                             </div>
 
                             {/* Activity Timeline */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-2">
-                                <h4 className="text-sm font-semibold text-white">Activity Timeline</h4>
-                                <div className="space-y-2 text-sm">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-2">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Activity Timeline</h4>
+                                <div className="space-y-1.5 text-xs">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-400">Joined</span>
-                                        <span className="text-white">
+                                        <span className="text-slate-500">Joined</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">
                                             {new Date(selectedPassenger.joinedDate).toLocaleDateString()}
                                         </span>
                                     </div>
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-400">Last Ride</span>
-                                        <span className="text-white">
+                                        <span className="text-slate-500">Last Ride</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">
                                             {new Date(selectedPassenger.lastRideDate).toLocaleDateString()}
                                         </span>
                                     </div>
@@ -570,20 +570,20 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                             </div>
 
                             {/* Ride Statistics */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Ride Statistics</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Ride Statistics</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-xs text-slate-500">Completed Rides</p>
-                                        <p className="text-lg font-bold text-green-400">{selectedPassenger.completedRides}</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Completed Rides</p>
+                                        <p className="text-base font-black text-emerald-600 dark:text-emerald-400">{selectedPassenger.completedRides}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Cancelled Rides</p>
-                                        <p className="text-lg font-bold text-red-400">{selectedPassenger.cancelledRides}</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Cancelled Rides</p>
+                                        <p className="text-base font-black text-red-600 dark:text-red-400">{selectedPassenger.cancelledRides}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Completion Rate</p>
-                                        <p className="text-lg font-bold text-white">
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Completion Rate</p>
+                                        <p className="text-base font-black text-slate-900 dark:text-white">
                                             {selectedPassenger.totalRides > 0
                                                 ? Math.round(
                                                     (selectedPassenger.completedRides / selectedPassenger.totalRides) * 100
@@ -593,8 +593,8 @@ const PassengerManagementPage = ({ passengers }: PassengerManagementPageProps) =
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Avg. Fare</p>
-                                        <p className="text-lg font-bold text-white">
+                                        <p className="text-[10px] uppercase font-bold text-slate-400 mb-0.5">Avg. Fare</p>
+                                        <p className="text-base font-black text-slate-900 dark:text-white">
                                             KES{' '}
                                             {selectedPassenger.completedRides > 0
                                                 ? Math.round(

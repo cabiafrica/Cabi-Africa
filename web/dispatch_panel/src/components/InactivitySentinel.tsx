@@ -18,20 +18,26 @@ interface InactivitySentinelProps {
     warningThresholdMs?: number; // Default 8 minutes (480,000 ms)
     lockThresholdMs?: number;    // Default 10 minutes (600,000 ms)
     evictionThresholdMs?: number; // Default 30 minutes (1,800,000 ms)
+    timeoutMs?: number;
+    warningMs?: number;
 }
 
 export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
-    warningThresholdMs = 8 * 60 * 1000,
-    lockThresholdMs = 10 * 60 * 1000,
+    warningThresholdMs: propWarningThresholdMs = 8 * 60 * 1000,
+    lockThresholdMs: propLockThresholdMs = 10 * 60 * 1000,
     evictionThresholdMs = 30 * 60 * 1000,
+    timeoutMs,
+    warningMs,
 }) => {
+    const lockThresholdMs = timeoutMs || propLockThresholdMs;
+    const warningThresholdMs = warningMs || propWarningThresholdMs;
     const { logout, isAuthenticated, user } = useAuth();
     const [state, setState] = useState<'ACTIVE' | 'WARNING' | 'LOCKED'>('ACTIVE');
     const [warningSeconds, setWarningSeconds] = useState(120);
     const [unlockPin, setUnlockPin] = useState('');
     const [unlockError, setUnlockError] = useState<string | null>(null);
     const [isUnlocking, setIsUnlocking] = useState(false);
-    const [passkeyAvailable, setPasskeyAvailable] = useState(false);
+    const [_passkeyAvailable, setPasskeyAvailable] = useState(false);
 
     const lastActivityRef = useRef<number>(Date.now());
     const channelRef = useRef<BroadcastChannel | null>(null);
@@ -238,8 +244,8 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
 
         return (
             <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-fade-in">
-                <div className="relative w-full max-w-md bg-zinc-950 border border-amber-500/40 rounded-2xl p-6 shadow-2xl text-center text-white">
-                    <div className="mx-auto w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 shadow-lg shadow-amber-500/10">
+                <div className="relative w-full max-w-md bg-zinc-950 border border-amber-500/40 rounded-[3px] p-6 shadow-2xl text-center text-white">
+                    <div className="mx-auto w-14 h-14 rounded-[3px] bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 mb-4 shadow-lg shadow-amber-500/10">
                         <ShieldAlert className="w-8 h-8 animate-pulse" />
                     </div>
 
@@ -251,7 +257,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                         Your active dispatch session will automatically blur and lock in:
                     </p>
 
-                    <div className="bg-black/70 border border-amber-500/30 rounded-xl py-3 px-6 mb-6 inline-flex items-center space-x-3 shadow-inner">
+                    <div className="bg-black/70 border border-amber-500/30 rounded-[3px] py-3 px-6 mb-6 inline-flex items-center space-x-3 shadow-inner">
                         <Clock className="w-5 h-5 text-amber-400" />
                         <span className="font-mono text-3xl font-extrabold tracking-widest text-amber-400">
                             {formattedTime}
@@ -262,7 +268,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                         <button
                             type="button"
                             onClick={resetActivity}
-                            className="w-full py-3 px-4 bg-brand-yellow hover:bg-brand-yellowHover text-black font-bold rounded-xl shadow-lg shadow-brand-yellow/20 transition-all flex items-center justify-center space-x-2 cursor-pointer"
+                            className="w-full py-3 px-4 bg-brand-yellow hover:bg-brand-yellowHover text-black font-bold rounded-[3px] shadow-lg shadow-brand-yellow/20 transition-all flex items-center justify-center space-x-2 cursor-pointer"
                         >
                             <CheckCircle2 className="w-5 h-5" />
                             <span>Stay Signed In</span>
@@ -271,7 +277,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                         <button
                             type="button"
                             onClick={handleHardEviction}
-                            className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-xs font-semibold rounded-xl border border-white/10 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
+                            className="w-full py-2.5 px-4 bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white text-xs font-semibold rounded-[3px] border border-white/10 transition-colors flex items-center justify-center space-x-2 cursor-pointer"
                         >
                             <LogOut className="w-4 h-4" />
                             <span>Sign Out Now</span>
@@ -288,8 +294,8 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
     if (state === 'LOCKED') {
         return (
             <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/90 backdrop-blur-2xl p-4 animate-fade-in">
-                <div className="w-full max-w-md bg-zinc-950 border border-brand-yellow/40 rounded-3xl p-8 shadow-2xl text-center text-white relative">
-                    <div className="mx-auto w-16 h-16 rounded-2xl bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow mb-5 shadow-lg shadow-brand-yellow/20">
+                <div className="w-full max-w-md bg-zinc-950 border border-brand-yellow/40 rounded-[3px] p-8 shadow-2xl text-center text-white relative">
+                    <div className="mx-auto w-16 h-16 rounded-[3px] bg-brand-yellow/15 border border-brand-yellow/30 flex items-center justify-center text-brand-yellow mb-5 shadow-lg shadow-brand-yellow/20">
                         <Lock className="w-8 h-8" />
                     </div>
 
@@ -301,11 +307,11 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                     </p>
 
                     {/* Operator Badge */}
-                    <div className="bg-black/60 border border-white/10 rounded-2xl p-4 mb-6 flex items-center space-x-3 text-left">
+                    <div className="bg-black/60 border border-white/10 rounded-[3px] p-4 mb-6 flex items-center space-x-3 text-left">
                         <img
                             src={user?.profilePictureUrl || `https://ui-avatars.com/api/?name=${encodeURIComponent(user?.firstName || 'Operator')}&background=FFD700&color=000`}
                             alt="Operator"
-                            className="w-12 h-12 rounded-xl object-cover ring-2 ring-brand-yellow/30"
+                            className="w-12 h-12 rounded-[3px] object-cover ring-2 ring-brand-yellow/30"
                         />
                         <div className="truncate flex-1">
                             <h4 className="text-sm font-bold text-white truncate">{user?.firstName} {user?.lastName}</h4>
@@ -315,7 +321,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                     </div>
 
                     {unlockError && (
-                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-xl text-red-400 text-xs flex items-center space-x-2 text-left">
+                        <div className="mb-4 p-3 bg-red-500/10 border border-red-500/30 rounded-[3px] text-red-400 text-xs flex items-center space-x-2 text-left">
                             <AlertCircle className="w-4 h-4 flex-shrink-0" />
                             <span>{unlockError}</span>
                         </div>
@@ -327,7 +333,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                             type="button"
                             onClick={handleBiometricUnlock}
                             disabled={isUnlocking}
-                            className="w-full py-3.5 px-4 bg-brand-yellow hover:bg-brand-yellowHover text-black font-extrabold rounded-2xl shadow-xl shadow-brand-yellow/25 transition-all flex items-center justify-center space-x-2.5 cursor-pointer disabled:opacity-50"
+                            className="w-full py-3.5 px-4 bg-brand-yellow hover:bg-brand-yellowHover text-black font-extrabold rounded-[3px] shadow-xl shadow-brand-yellow/25 transition-all flex items-center justify-center space-x-2.5 cursor-pointer disabled:opacity-50"
                         >
                             {isUnlocking ? (
                                 <RefreshCw className="w-5 h-5 animate-spin" />
@@ -351,7 +357,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                                     value={unlockPin}
                                     onChange={(e) => setUnlockPin(e.target.value)}
                                     placeholder="Enter 6-digit PIN or password"
-                                    className="w-full text-center tracking-widest font-mono text-base py-3 px-4 bg-black/70 border border-white/15 rounded-2xl focus:border-brand-yellow text-white outline-none transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-xs placeholder:text-gray-500"
+                                    className="w-full text-center tracking-widest font-mono text-base py-3 px-4 bg-black/70 border border-white/15 rounded-[3px] focus:border-brand-yellow text-white outline-none transition-all placeholder:tracking-normal placeholder:font-sans placeholder:text-xs placeholder:text-gray-500"
                                     autoFocus
                                 />
                             </div>
@@ -359,7 +365,7 @@ export const InactivitySentinel: React.FC<InactivitySentinelProps> = ({
                             <button
                                 type="submit"
                                 disabled={isUnlocking || !unlockPin.trim()}
-                                className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-white font-semibold rounded-2xl border border-white/10 transition-colors flex items-center justify-center space-x-2 text-xs cursor-pointer disabled:opacity-40"
+                                className="w-full py-3 px-4 bg-white/10 hover:bg-white/15 text-white font-semibold rounded-[3px] border border-white/10 transition-colors flex items-center justify-center space-x-2 text-xs cursor-pointer disabled:opacity-40"
                             >
                                 <KeyRound className="w-4 h-4 text-brand-yellow" />
                                 <span>Unlock with PIN</span>

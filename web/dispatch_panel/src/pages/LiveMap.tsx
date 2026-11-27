@@ -179,19 +179,19 @@ export default function LiveMapPage() {
 
                 {/* Stats */}
                 <div className="grid grid-cols-4 gap-4 mt-4">
-                    <div className="bg-amber-50 rounded-lg p-3">
+                    <div className="bg-amber-50 rounded-[3px] p-3">
                         <div className="text-2xl font-bold text-amber-600">{stats.total}</div>
                         <div className="text-xs text-amber-700">Total Drivers</div>
                     </div>
-                    <div className="bg-green-50 rounded-lg p-3">
+                    <div className="bg-green-50 rounded-[3px] p-3">
                         <div className="text-2xl font-bold text-green-600">{stats.online}</div>
                         <div className="text-xs text-green-700">Online</div>
                     </div>
-                    <div className="bg-cyan-50 rounded-lg p-3">
+                    <div className="bg-cyan-50 rounded-[3px] p-3">
                         <div className="text-2xl font-bold text-cyan-600">{stats.onTrip}</div>
                         <div className="text-xs text-cyan-700">On Trip</div>
                     </div>
-                    <div className="bg-orange-50 rounded-lg p-3">
+                    <div className="bg-orange-50 rounded-[3px] p-3">
                         <div className="text-2xl font-bold text-orange-600">{stats.available}</div>
                         <div className="text-xs text-orange-700">Available</div>
                     </div>
@@ -223,7 +223,7 @@ export default function LiveMapPage() {
                                 <div
                                     key={driver.id}
                                     onClick={() => setSelectedDriver(driver)}
-                                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${selectedDriver?.id === driver.id
+                                    className={`p-3 rounded-[3px] border cursor-pointer transition-colors ${selectedDriver?.id === driver.id
                                             ? 'border-amber-500 bg-amber-50'
                                             : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
                                         }`}
@@ -243,7 +243,7 @@ export default function LiveMapPage() {
                                                 ID: {driver.id}
                                             </div>
                                             {driver.currentTrip && (
-                                                <div className="mt-2 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded">
+                                                <div className="mt-2 text-xs bg-cyan-100 text-cyan-700 px-2 py-1 rounded-[3px]">
                                                     On trip with {driver.currentTrip.passengerName}
                                                 </div>
                                             )}

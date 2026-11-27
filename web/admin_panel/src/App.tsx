@@ -324,50 +324,56 @@ function App() {
       {/* Zero-Trust 10-Minute Inactivity Sentinel */}
       <InactivitySentinel timeoutMs={10 * 60 * 1000} warningMs={2 * 60 * 1000} />
       <CommandPalette items={commandItems} isOpen={isCommandOpen} onClose={() => setIsCommandOpen(false)} />
-      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-surface-dark border-r border-white/10 shadow-2xl transition-colors duration-200">
-        <div className="p-8 border-b border-white/5 flex flex-col items-center text-center">
-          <img src={cabiLogo} alt="Cabi Africa" className="h-10 w-auto object-contain mb-3" />
-          <h1 className="text-xl font-black tracking-[0.3em] text-primary">CABI ADMIN</h1>
-          <div className="mt-1 text-[10px] text-slate-500 uppercase tracking-[0.2em] mb-6">Security Terminal</div>
+      <aside className="sidebar w-64 flex-shrink-0 flex flex-col bg-white dark:bg-surface-dark border-r border-slate-200 dark:border-white/10 shadow-sm transition-colors duration-200">
+        <div className="p-6 border-b border-slate-200 dark:border-white/5 flex flex-col items-center text-center bg-slate-50/60 dark:bg-white/[0.01]">
+          {/* Executive Governance Badge */}
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-[3px] bg-slate-100 dark:bg-white/5 border border-slate-300 dark:border-white/10 text-[9px] font-black uppercase tracking-widest text-slate-700 dark:text-slate-300 mb-3 shadow-xs">
+            <ShieldCheck className="w-3.5 h-3.5 text-amber-500" />
+            <span>EXECUTIVE GOVERNANCE</span>
+          </div>
+
+          <img src={cabiLogo} alt="Cabi Africa" className="h-9 w-auto object-contain mb-2 dark:brightness-100 filter brightness-0 dark:filter-none" />
+          <h1 className="text-lg font-black tracking-[0.25em] text-slate-900 dark:text-primary">CABI ADMIN</h1>
+          <div className="mt-0.5 text-[9px] text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-4 font-semibold">Central Administrative Suite</div>
 
           <img
             src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=FFD700&color=000"}
             alt="Profile"
-            className="w-16 h-16 rounded-full object-cover ring-1 ring-primary/30 mb-3 grayscale hover:grayscale-0 transition-all duration-500"
+            className="w-14 h-14 rounded-[3px] object-cover ring-1 ring-amber-500/30 mb-2.5 shadow-sm"
           />
-          <div className="font-semibold text-slate-200">{user?.fullName || 'Admin User'}</div>
-          <div className="text-[10px] text-slate-500 uppercase tracking-wider mb-4">{user?.role || 'Senior Administrator'}</div>
+          <div className="font-bold text-sm text-slate-900 dark:text-slate-200">{user?.fullName || 'Admin User'}</div>
+          <div className="text-[10px] font-mono text-amber-600 dark:text-amber-500 uppercase tracking-wider mb-4 font-semibold">{user?.role || 'Senior Administrator'}</div>
 
           <div className="flex gap-2 w-full justify-center">
             <button
               onClick={toggleTheme}
-              className="p-2 text-xs font-medium bg-card-dark hover:bg-white/10 border border-white/10 rounded-full transition-all duration-200 text-gray-400 hover:text-brand-yellow"
+              className="p-2 text-xs font-medium bg-slate-100 dark:bg-card-dark hover:bg-slate-200 dark:hover:bg-white/10 border border-slate-300 dark:border-white/10 rounded-[3px] transition-all duration-200 text-slate-700 dark:text-gray-400 hover:text-amber-600 dark:hover:text-brand-yellow shadow-sm cursor-pointer"
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
-              {darkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              {darkMode ? <Sun className="w-3.5 h-3.5 text-amber-400" /> : <Moon className="w-3.5 h-3.5 text-amber-600" />}
             </button>
             <button
               onClick={logout}
-              className="flex items-center gap-2 px-4 py-2 text-[10px] font-bold uppercase tracking-widest bg-card-dark hover:bg-brand-yellow hover:text-black border border-white/10 rounded-full transition-all duration-300 group text-gray-400"
+              className="flex items-center gap-2 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest bg-slate-100 dark:bg-card-dark hover:bg-amber-500 hover:text-black dark:hover:bg-amber-500 dark:hover:text-black border border-slate-300 dark:border-white/10 rounded-[3px] transition-all duration-300 group text-slate-700 dark:text-gray-400 shadow-sm cursor-pointer"
             >
               <span>Log Out</span>
-              <LogOut className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+              <LogOut className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
             </button>
           </div>
 
           <button
             onClick={() => setIsCommandOpen(true)}
-            className="mt-4 w-full flex items-center justify-between px-3 py-2 text-xs text-gray-400 bg-brand-black/60 hover:bg-brand-black border border-white/10 hover:border-brand-yellow/40 rounded-xl transition-all"
+            className="mt-3.5 w-full flex items-center justify-between px-3 py-2 text-xs text-slate-600 dark:text-gray-400 bg-white dark:bg-brand-black/60 hover:bg-slate-100 dark:hover:bg-brand-black border border-slate-300 dark:border-white/10 hover:border-amber-500/40 rounded-[3px] transition-all shadow-sm cursor-pointer"
           >
             <span className="flex items-center gap-2">
-              <Search className="w-3.5 h-3.5 text-brand-yellow" />
+              <Search className="w-3.5 h-3.5 text-amber-500" />
               <span>Quick Jump...</span>
             </span>
-            <kbd className="text-[10px] px-1.5 py-0.5 rounded bg-white/5 border border-white/10 text-gray-500">⌘K</kbd>
+            <kbd className="text-[10px] px-1.5 py-0.5 rounded-[3px] bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-slate-500">⌘K</kbd>
           </button>
         </div>
 
-        <nav className="flex-1 overflow-y-auto py-4">
+        <nav className="flex-1 overflow-y-auto py-4 bg-white dark:bg-surface-dark">
           {SIDEBAR_MENU.map((group) => {
             const visibleItems = group.items.filter(item => !item.permission || hasPermission(item.permission));
             if (visibleItems.length === 0) return null;
@@ -378,7 +384,7 @@ function App() {
               <div key={group.label} className="mb-2">
                 <button
                   onClick={() => toggleMenu(group.label)}
-                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-gray-400 uppercase tracking-wider hover:bg-white/5 transition-colors"
+                  className="w-full flex items-center justify-between px-4 py-2 text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
                 >
                   <span>{group.label}</span>
                   {isExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -395,7 +401,11 @@ function App() {
                           navigate(item.view);
                         }
                       }}
-                      className={`w-full text-left px-5 py-2.5 hover:bg-white/5 flex items-center gap-3 transition-colors border-l-2 ${isActive(item.view) ? 'bg-brand-yellow/10 border-brand-yellow text-brand-yellow font-semibold' : 'border-transparent text-gray-400 hover:text-white'}`}
+                      className={`w-full text-left px-5 py-2.5 flex items-center gap-3 transition-colors border-l-2 rounded-[3px] text-xs font-medium cursor-pointer ${
+                        isActive(item.view)
+                          ? 'bg-amber-500/10 border-amber-500 text-amber-700 dark:text-amber-400 font-bold'
+                          : 'border-transparent text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
+                      }`}
                     >
                       <span className="flex-shrink-0">{item.icon}</span>
                       <span className="text-sm truncate">{item.label}</span>
@@ -408,46 +418,43 @@ function App() {
           })}
         </nav>
 
-        {/* Global Access Buttons - Persistent Footer */}
-        {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('DISPATCH_DASHBOARD_VIEW') || hasPermission('USER_PORTAL_DASHBOARD_VIEW')) && (
+        {/* Global Access Buttons - Strictly Restricted to Super Admin */}
+        {(user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' && (
           <div className="p-4 border-t border-slate-200 dark:border-white/10 space-y-2 bg-slate-50/50 dark:bg-card-dark/20">
-            <div className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-widest px-2 mb-2">
-              System Access
+            <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1 mb-2 flex items-center justify-between">
+              <span>Super Admin Portals</span>
+              <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[3px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-bold">RESTRICTED</span>
             </div>
-            {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('DISPATCH_DASHBOARD_VIEW')) && (
-              <button
-                onClick={() => {
-                  const url = import.meta.env.VITE_DISPATCH_PANEL_URL || 
-                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
-                      ? 'https://dispatch.cabi.africa' 
-                      : 'http://localhost:3002');
-                  window.location.href = url;
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-primary hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
-                title="Launch Dispatch Management Panel"
-              >
-                <Monitor className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>Dispatch Panel</span>
-                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">LAUNCH <ArrowUpRight className="w-3 h-3" /></span>
-              </button>
-            )}
-            {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('USER_PORTAL_DASHBOARD_VIEW')) && (
-              <button
-                onClick={() => {
-                  const url = import.meta.env.VITE_USER_PORTAL_URL || 
-                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
-                      ? 'https://app.cabi.africa' 
-                      : 'http://localhost:3000');
-                  window.location.href = url;
-                }}
-                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-gray-400 hover:bg-brand-yellow hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
-                title="View User Portal Dashboard"
-              >
-                <UserIcon className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                <span>User Portal</span>
-                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">VIEW <ArrowUpRight className="w-3 h-3" /></span>
-              </button>
-            )}
+            <button
+              onClick={() => {
+                const url = import.meta.env.VITE_DISPATCH_PANEL_URL || 
+                  (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                    ? 'https://dispatch.cabi.africa' 
+                    : 'http://localhost:3002');
+                window.location.href = url;
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:bg-amber-500 hover:text-black dark:hover:bg-amber-500 dark:hover:text-black rounded-[3px] transition-all duration-200 group border border-slate-200 dark:border-white/5 cursor-pointer shadow-xs"
+              title="Launch Dispatch Management Panel (Super Admin Only)"
+            >
+              <Monitor className="w-4 h-4 text-amber-500 group-hover:text-black transition-colors" />
+              <span>Dispatch Panel</span>
+              <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">LAUNCH <ArrowUpRight className="w-3 h-3" /></span>
+            </button>
+            <button
+              onClick={() => {
+                const url = import.meta.env.VITE_USER_PORTAL_URL || 
+                  (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                    ? 'https://app.cabi.africa' 
+                    : 'http://localhost:3000');
+                window.location.href = url;
+              }}
+              className="w-full flex items-center gap-3 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:bg-amber-500 hover:text-black dark:hover:bg-amber-500 dark:hover:text-black rounded-[3px] transition-all duration-200 group border border-slate-200 dark:border-white/5 cursor-pointer shadow-xs"
+              title="View User Portal Dashboard (Super Admin Only)"
+            >
+              <UserIcon className="w-4 h-4 text-amber-500 group-hover:text-black transition-colors" />
+              <span>User Portal</span>
+              <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5">VIEW <ArrowUpRight className="w-3 h-3" /></span>
+            </button>
           </div>
         )}
       </aside>

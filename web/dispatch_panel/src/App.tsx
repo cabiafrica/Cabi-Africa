@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { io } from 'socket.io-client';
+import { Sun, Moon } from 'lucide-react';
 import { RideRequest, Driver, DispatchMetrics, TripHistory, DriverHistory, Passenger } from './types';
 import MetricsOverview from './components/MetricsOverview';
 import RideRequestsList from './components/RideRequestsList';
@@ -53,6 +54,26 @@ import apiClient from './lib/apiClient';
 
 function App() {
     const { isAuthenticated, logout, user, hasPermission } = useAuth();
+    const [darkMode, setDarkMode] = useState(() => {
+        const saved = localStorage.getItem('dispatch_theme') || localStorage.getItem('theme');
+        if (saved) return saved === 'dark';
+        return window.matchMedia('(prefers-color-scheme: dark)').matches;
+    });
+
+    useEffect(() => {
+        if (darkMode) {
+            document.documentElement.classList.add('dark');
+            document.body.classList.add('dark');
+            localStorage.setItem('dispatch_theme', 'dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.body.classList.remove('dark');
+            localStorage.setItem('dispatch_theme', 'light');
+        }
+    }, [darkMode]);
+
+    const toggleTheme = () => setDarkMode(prev => !prev);
+
     const [activeView, setActiveView] = useState<'overview' | 'rides' | 'drivers' | 'map' | 'surge' | 'analytics' | 'trips' | 'driver-history' | 'passengers'>('overview');
     const [isTripAnalyticsUndocked, setIsTripAnalyticsUndocked] = useState<boolean>(false);
     const [rideRequests, setRideRequests] = useState<RideRequest[]>([]);
@@ -369,149 +390,157 @@ function App() {
     }
 
     return (
-        <div className="flex h-screen bg-gradient-to-br from-brand-black via-surface-dark to-brand-black text-white selection:bg-brand-yellow selection:text-black">
+        <div className={`flex h-screen transition-colors duration-200 ${darkMode ? 'bg-[#0a0a0a] text-slate-100' : 'bg-[#F8FAFC] text-slate-900'} selection:bg-amber-500 selection:text-black`}>
             {/* Zero-Trust 10-Minute Inactivity Sentinel */}
             <InactivitySentinel timeoutMs={10 * 60 * 1000} warningMs={2 * 60 * 1000} />
 
             {/* Sidebar */}
-            <aside className="w-72 bg-surface-dark/90 backdrop-blur-xl border-r border-white/10 flex-shrink-0 flex flex-col">
-                <div className="p-6 border-b border-white/10">
+            <aside className="w-72 bg-white dark:bg-[#080B10] border-r border-slate-200 dark:border-slate-800/80 border-l-4 border-l-amber-500 flex-shrink-0 flex flex-col shadow-lg shadow-amber-500/5 transition-colors duration-200">
+                <div className="p-5 border-b border-slate-200 dark:border-white/10">
+                    <div className="flex items-center justify-between mb-3">
+                        <div className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-[3px] bg-amber-500/15 border border-amber-500/30 text-[9px] font-black uppercase tracking-wider text-amber-600 dark:text-amber-400 shadow-xs">
+                            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-ping"></span>
+                            <span>MISSION CONTROL</span>
+                        </div>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 rounded-[3px] bg-slate-100 dark:bg-white/5 text-slate-500 border border-slate-200 dark:border-white/10">DISPATCH OPS</span>
+                    </div>
                     <div className="flex items-center gap-3">
                         <img
                             src="/cabi-logo-dark.png"
                             alt="Cabi Africa"
-                            className="h-9 w-auto object-contain"
+                            className="h-8 w-auto object-contain filter dark:brightness-100 brightness-90"
                         />
                         <div>
-                            <p className="text-xs font-semibold text-amber-400 tracking-wide uppercase">Dispatch Control</p>
+                            <p className="text-xs font-black text-amber-600 dark:text-amber-500 tracking-wider uppercase">FLEET DISPATCH</p>
+                            <span className="text-[10px] text-slate-500 font-mono">Real-time Radar v2.0</span>
                         </div>
                     </div>
                 </div>
 
-                {/* Live Status */}
-                <div className="px-6 py-4 border-b border-slate-800/50">
-                    <div className="flex items-center gap-2">
-                        <div className="relative">
-                            <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                            <div className="absolute inset-0 w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
+                {/* Live Radar Telemetry */}
+                <div className="px-5 py-3 border-b border-slate-200 dark:border-white/10 bg-amber-500/[0.04] dark:bg-amber-500/[0.02]">
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                            <span className="relative flex h-2 w-2">
+                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                            </span>
+                            <span className="text-[11px] font-black text-emerald-600 dark:text-emerald-400 tracking-wider uppercase">RADAR LIVE</span>
                         </div>
-                        <span className="text-sm font-medium text-green-400">System Online</span>
+                        <span className="text-[9px] font-mono font-bold px-1.5 py-0.5 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 rounded-[3px]">ACTIVE 0ms</span>
                     </div>
-                    <p className="text-xs text-slate-500 mt-1">All services operational</p>
+                    <p className="text-[10px] text-slate-500 dark:text-slate-400 mt-1 font-mono uppercase tracking-tight">Fleet Telemetry Gateway: Connected</p>
                 </div>
 
                 {/* Navigation */}
-                <nav className="flex-1 overflow-y-auto py-4">
-                    <div className="px-4 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                        Main Views
+                <nav className="flex-1 overflow-y-auto py-3 space-y-1">
+                    <div className="px-5 mb-2 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
+                        Operational Views
                     </div>
                     {MENU_ITEMS.filter(i => !i.group && hasPermission(i.permission)).map(item => (
                         <button
                             key={item.view}
                             onClick={() => setActiveView(item.view)}
-                            className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
-                                ? 'bg-gradient-to-r from-brand-yellow/20 to-executive-gold/10 border-l-4 border-brand-yellow text-brand-yellow'
-                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            className={`w-full text-left px-5 py-2.5 transition-all duration-150 flex items-center gap-3 rounded-[3px] mx-1 max-w-[calc(100%-8px)] text-xs font-semibold ${activeView === item.view
+                                ? 'bg-amber-500 text-black font-extrabold shadow-sm shadow-amber-500/20 border-l-[3px] border-l-black dark:border-l-black'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                                 }`}
                         >
-                            {item.icon}
-                            <span className="font-medium">{item.label}</span>
+                            <span className={activeView === item.view ? 'text-black' : 'text-slate-400'}>{item.icon}</span>
+                            <span className="truncate">{item.label}</span>
                             {/* Badges */}
                             {item.view === 'rides' && metrics.pendingRequests > 0 && (
-                                <span className="ml-auto bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-[3px] ${activeView === item.view ? 'bg-black text-amber-400' : 'bg-red-500 text-white'}`}>
                                     {metrics.pendingRequests}
                                 </span>
                             )}
                             {item.view === 'drivers' && (
-                                <span className="ml-auto text-xs text-green-400 font-semibold">
-                                    {drivers.filter(d => d.status === 'online').length} online
+                                <span className={`ml-auto text-[10px] font-semibold ${activeView === item.view ? 'text-black font-bold' : 'text-emerald-500 dark:text-emerald-400'}`}>
+                                    {drivers.filter(d => d.status === 'online').length} live
                                 </span>
                             )}
                             {item.view === 'surge' && metrics.surgeAreas > 0 && (
-                                <span className="ml-auto bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+                                <span className={`ml-auto text-[10px] font-bold px-2 py-0.5 rounded-[3px] ${activeView === item.view ? 'bg-black text-amber-400' : 'bg-amber-500 text-black'}`}>
                                     {metrics.surgeAreas}
                                 </span>
                             )}
                         </button>
                     ))}
 
-                    <div className="px-4 mb-2 mt-4 text-xs font-semibold text-slate-500 uppercase tracking-wider">
+                    <div className="px-5 mb-2 mt-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">
                         Management
                     </div>
                     {MENU_ITEMS.filter(i => i.group === 'management' && hasPermission(i.permission)).map(item => (
                         <button
                             key={item.view}
                             onClick={() => setActiveView(item.view)}
-                            className={`w-full text-left px-6 py-3 transition-all duration-200 flex items-center gap-3 group ${activeView === item.view
-                                ? 'bg-gradient-to-r from-brand-yellow/20 to-executive-gold/10 border-l-4 border-brand-yellow text-brand-yellow'
-                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            className={`w-full text-left px-5 py-2.5 transition-all duration-150 flex items-center gap-3 rounded-[3px] mx-1 max-w-[calc(100%-8px)] text-xs font-semibold ${activeView === item.view
+                                ? 'bg-amber-500 text-black font-extrabold shadow-sm shadow-amber-500/20 border-l-[3px] border-l-black dark:border-l-black'
+                                : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-white/5 hover:text-slate-900 dark:hover:text-white'
                                 }`}
                         >
-                            {item.icon}
-                            <span className="font-medium">{item.label}</span>
+                            <span className={activeView === item.view ? 'text-black' : 'text-slate-400'}>{item.icon}</span>
+                            <span className="truncate">{item.label}</span>
                         </button>
                     ))}
                 </nav>
                 
-                {/* System Access Buttons - Persistent Footer */}
-                {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW') || hasPermission('view_dashboard')) && (
-                    <div className="p-4 border-t border-slate-800/50 space-y-2 bg-slate-800/10">
-                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2 mb-2">
-                            System Access
+                {/* System Access Buttons - Strictly Restricted to Super Admin */}
+                {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN') && (
+                    <div className="p-4 border-t border-slate-200 dark:border-slate-800/50 space-y-2 bg-slate-100/50 dark:bg-slate-800/10">
+                        <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest px-1 mb-2 flex items-center justify-between">
+                            <span>Super Admin Portals</span>
+                            <span className="text-[9px] font-mono px-1.5 py-0.5 rounded-[3px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 font-bold">RESTRICTED</span>
                         </div>
-                        {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('ADMIN_PANEL_VIEW')) && (
-                            <button
-                                onClick={() => {
-                                    const url = import.meta.env.VITE_ADMIN_PANEL_URL || 
-                                        (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
-                                            ? 'https://admin.cabi.africa' 
-                                            : 'http://localhost:3001');
-                                    window.location.href = url;
-                                }}
-                                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
-                                title="Launch Admin Management Panel"
-                            >
-                                <span className="text-base group-hover:scale-110 transition-transform">🛡️</span>
-                                <span>Admin Panel</span>
-                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">MANAGE ↗️</span>
-                            </button>
-                        )}
-                        {((user?.role as string)?.toUpperCase() === 'SUPER_ADMIN' || (user?.role as string)?.toUpperCase() === 'ADMIN' || hasPermission('view_dashboard')) && (
-                            <button
-                                onClick={() => {
-                                     const url = import.meta.env.VITE_USER_PORTAL_URL || 
-                                        (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
-                                            ? 'https://app.cabi.africa' 
-                                            : 'http://localhost:3000');
-                                    window.location.href = url;
-                                }}
-                                className="w-full flex items-center gap-3 px-4 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-400 hover:bg-white hover:text-black rounded-lg transition-all duration-300 group border border-white/5"
-                                title="View User Portal"
-                            >
-                                <span className="text-base group-hover:scale-110 transition-transform">👤</span>
-                                <span>User Portal</span>
-                                <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">VIEW ↗️</span>
-                            </button>
-                        )}
+                        <button
+                            onClick={() => {
+                                const url = import.meta.env.VITE_ADMIN_PANEL_URL || 
+                                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                                        ? 'https://admin.cabi.africa' 
+                                        : 'http://localhost:3001');
+                                window.location.href = url;
+                            }}
+                            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:bg-amber-500 hover:text-black dark:hover:bg-amber-500 dark:hover:text-black rounded-[3px] transition-all duration-200 group border border-slate-200 dark:border-white/5 cursor-pointer shadow-xs"
+                            title="Launch Admin Management Panel (Super Admin Only)"
+                        >
+                            <span className="text-base group-hover:scale-110 transition-transform">🛡️</span>
+                            <span>Admin Panel</span>
+                            <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">MANAGE ↗️</span>
+                        </button>
+                        <button
+                            onClick={() => {
+                                 const url = import.meta.env.VITE_USER_PORTAL_URL || 
+                                    (window.location.hostname.includes('cabi.africa') || window.location.hostname.includes('vercel.app') 
+                                        ? 'https://app.cabi.africa' 
+                                        : 'http://localhost:3000');
+                                window.location.href = url;
+                            }}
+                            className="w-full flex items-center gap-3 px-3.5 py-2.5 text-[11px] font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 hover:bg-amber-500 hover:text-black dark:hover:bg-amber-500 dark:hover:text-black rounded-[3px] transition-all duration-200 group border border-slate-200 dark:border-white/5 cursor-pointer shadow-xs"
+                            title="View User Portal (Super Admin Only)"
+                        >
+                            <span className="text-base group-hover:scale-110 transition-transform">👤</span>
+                            <span>User Portal</span>
+                            <span className="ml-auto text-[10px] opacity-0 group-hover:opacity-100 transition-opacity">VIEW ↗️</span>
+                        </button>
                     </div>
                 )}
 
-                {/* Footer */}
-                <div className="p-4 border-t border-white/10">
-                    <div className="flex items-center gap-3 px-2">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-yellow to-executive-gold flex items-center justify-center text-black text-sm font-bold">
+                {/* Footer / Operator Callsign */}
+                <div className="p-3.5 border-t border-slate-200 dark:border-white/10 bg-slate-50/50 dark:bg-white/[0.01]">
+                    <div className="flex items-center gap-3 px-1">
+                        <div className="w-8 h-8 rounded-[3px] bg-amber-500/20 border border-amber-500/30 flex items-center justify-center text-amber-500 text-xs font-black">
                             OP
                         </div>
                         <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-white truncate">{user?.firstName} {user?.lastName}</p>
-                            <p className="text-xs text-slate-500">{user?.role || 'Dispatch Team'}</p>
+                            <p className="text-xs font-bold text-slate-900 dark:text-white truncate">{user?.firstName || 'Operator'} {user?.lastName || ''}</p>
+                            <p className="text-[10px] font-mono text-amber-600 dark:text-amber-400 uppercase tracking-tight font-semibold">TACTICAL CONTROLLER</p>
                         </div>
                         <button
                             onClick={logout}
-                            className="p-2 rounded-lg hover:bg-slate-800 text-slate-400 hover:text-white transition-colors"
-                            title="Log Out"
+                            className="p-1.5 rounded-[3px] hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-400 hover:text-red-500 transition-colors cursor-pointer"
+                            title="End Dispatch Session"
                         >
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                             </svg>
                         </button>
@@ -522,10 +551,13 @@ function App() {
             {/* Main Content */}
             <main className="flex-1 overflow-hidden flex flex-col">
                 {/* Header */}
-                <header className="bg-surface-dark/80 backdrop-blur-xl border-b border-white/10 px-8 py-4">
+                <header className="bg-white/80 dark:bg-[#0f172a]/80 backdrop-blur-xl border-b border-slate-200 dark:border-white/10 px-8 py-4">
                     <div className="flex items-center justify-between">
                         <div>
-                            <h2 className="text-2xl font-bold text-white capitalize">
+                            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-0.5 block">
+                                Dispatch Operations
+                            </span>
+                            <h2 className="text-2xl font-bold text-slate-900 dark:text-white capitalize">
                                 {activeView === 'overview' && 'Dispatch Overview'}
                                 {activeView === 'rides' && 'Ride Requests'}
                                 {activeView === 'drivers' && 'Driver Management'}
@@ -536,7 +568,7 @@ function App() {
                                 {activeView === 'driver-history' && 'Driver Management'}
                                 {activeView === 'passengers' && 'Passenger Management'}
                             </h2>
-                            <p className="text-sm text-slate-400 mt-1">
+                            <p className="text-sm text-slate-600 dark:text-slate-400 mt-0.5">
                                 {activeView === 'analytics' && 'Comprehensive trip performance and cancellation analysis'}
                                 {activeView === 'trips' && 'View and manage all trip history with advanced filtering'}
                                 {activeView === 'driver-history' && 'Manage drivers, view performance metrics and earnings'}
@@ -544,25 +576,35 @@ function App() {
                                 {!['analytics', 'trips', 'driver-history', 'passengers'].includes(activeView) && 'Real-time dispatch operations and monitoring'}
                             </p>
                         </div>
-                        <div className="flex items-center gap-4">
+                        <div className="flex items-center gap-3">
+                            {/* Theme Toggle Button */}
+                            <button
+                                onClick={toggleTheme}
+                                className="p-2 rounded-[3px] border border-slate-300 dark:border-slate-800 bg-white dark:bg-slate-900/60 text-amber-600 dark:text-amber-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors shadow-sm"
+                                title={darkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+                            >
+                                {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-amber-600" />}
+                            </button>
+
                             {isTripAnalyticsUndocked && (
                                 <button
                                     onClick={() => setActiveView('analytics')}
-                                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-xl bg-brand-yellow/10 border border-brand-yellow/30 text-brand-yellow hover:bg-brand-yellow/20 text-xs font-semibold transition-all cursor-pointer shadow-sm"
+                                    className="flex items-center gap-2 px-3.5 py-1.5 rounded-[3px] bg-amber-500/10 border border-amber-500/30 text-amber-600 dark:text-amber-400 hover:bg-amber-500/20 text-xs font-semibold transition-all cursor-pointer shadow-sm"
                                     title="Trip Monitoring is currently undocked on Screen 2. Click to view controls."
                                 >
-                                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                                    <span>Screen 2: Trip Monitoring Active</span>
+                                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                    <span>Screen 2: Multi-Screen Active</span>
                                 </button>
                             )}
-                            <div className="text-right">
-                                <p className="text-xs text-slate-500">Last Updated</p>
-                                <p className="text-sm font-medium text-white">
+                            <div className="text-right pl-2 border-l border-slate-200 dark:border-slate-800">
+                                <p className="text-[10px] uppercase font-bold text-slate-400 dark:text-slate-500">Last Synced</p>
+                                <p className="text-xs font-mono font-bold text-slate-900 dark:text-white">
                                     {new Date().toLocaleTimeString()}
                                 </p>
                             </div>
                         </div>
                     </div>
+                    <div className="h-0.5 w-full bg-gradient-to-r from-amber-500/80 via-amber-500/20 to-transparent mt-3 -mb-1" />
                 </header>
 
                 {/* Content Area */}
@@ -585,12 +627,12 @@ function App() {
                         return (
                             <>
                                 {emergencyAlerts.length > 0 && (
-                                    <div className="mb-6 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 rounded-2xl flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-red-950/30 border border-red-400/40 animate-pulse">
+                                    <div className="mb-6 bg-gradient-to-r from-red-600 via-rose-600 to-red-700 text-white p-4 rounded-[3px] flex flex-wrap items-center justify-between gap-4 shadow-xl shadow-red-950/30 border border-red-400/40 animate-pulse">
                                         <div className="flex items-center gap-3">
                                             <span className="text-2xl animate-bounce">🚨</span>
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="bg-black/30 px-2 py-0.5 rounded text-[11px] font-black uppercase tracking-wider text-red-200">
+                                                    <span className="bg-black/30 px-2 py-0.5 rounded-[3px] text-[11px] font-black uppercase tracking-wider text-red-200">
                                                         CRITICAL DISTRESS BEACON
                                                     </span>
                                                     <span className="font-mono text-xs font-bold text-white">
@@ -605,7 +647,7 @@ function App() {
                                         <div className="flex items-center gap-2">
                                             <button
                                                 onClick={() => setActiveView('map')}
-                                                className="bg-white hover:bg-red-50 text-red-700 px-4 py-2 rounded-xl font-bold text-xs shadow-md transition"
+                                                className="bg-white hover:bg-red-50 text-red-700 px-4 py-2 rounded-[3px] font-bold text-xs shadow-md transition"
                                             >
                                                 View on Live Map
                                             </button>
@@ -619,7 +661,7 @@ function App() {
                                                         setEmergencyAlerts((prev) => prev.slice(1));
                                                     }
                                                 }}
-                                                className="bg-black/30 hover:bg-black/50 text-white px-3 py-2 rounded-xl text-xs font-semibold transition"
+                                                className="bg-black/30 hover:bg-black/50 text-white px-3 py-2 rounded-[3px] text-xs font-semibold transition"
                                             >
                                                 Acknowledge
                                             </button>

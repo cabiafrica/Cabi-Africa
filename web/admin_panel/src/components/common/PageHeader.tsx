@@ -28,16 +28,16 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           {category && (
-            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-500 mb-1 block">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-amber-600 dark:text-amber-500 mb-1 block">
               {category}
             </span>
           )}
           <div className="flex items-center gap-2.5 flex-wrap">
-            {icon && <span className="text-amber-500 flex-shrink-0">{icon}</span>}
-            <h1 className="text-2xl font-bold text-white tracking-tight">{title}</h1>
+            {icon && <span className="text-amber-600 dark:text-amber-500 flex-shrink-0">{icon}</span>}
+            <h1 className="text-2xl font-bold text-slate-900 dark:text-white tracking-tight">{title}</h1>
             {badge && <div className="inline-flex items-center">{badge}</div>}
           </div>
-          {subtitle && <p className="text-sm text-slate-400 mt-1">{subtitle}</p>}
+          {subtitle && <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{subtitle}</p>}
         </div>
         {actions && <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap shrink-0">{actions}</div>}
       </div>

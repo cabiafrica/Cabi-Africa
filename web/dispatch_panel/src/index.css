@@ -7,15 +7,33 @@
     line-height: 1.5;
     font-weight: 400;
 
-    color-scheme: dark;
-    --background: #0a0a0a;
-    --surface: #121212;
-    --text-main: #f1f5f9;
+    --primary: #D97706; /* High-contrast rich amber for light mode */
+    --primary-dark: #B45309;
+    --secondary: #059669;
+    --background: #F8FAFC; /* Clean executive porcelain light background */
+    --surface: #FFFFFF; /* High-contrast white cards */
+    --surface-elevated: #F1F5F9;
+    --text-main: #0F172A; /* Deep slate primary text (14.2:1 contrast ratio) */
+    --text-muted: #334155; /* Slate-700 secondary text (7.8:1 contrast ratio) */
+    --border-color: #E2E8F0;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+}
+
+html.dark {
+    color-scheme: dark;
+    --primary: #F59E0B; /* Vibrant brand amber */
+    --primary-dark: #D97706;
+    --secondary: #10B981;
+    --background: #0a0a0a; /* Signature Brand Black */
+    --surface: #131722; /* Elevated Dark Surface */
+    --surface-elevated: #1E2230;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border-color: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -24,8 +42,8 @@ body {
     min-height: 100vh;
     background-color: var(--background);
     color: var(--text-main);
+    transition: background-color 0.2s ease, color 0.2s ease;
 }
-
 
 * {
     box-sizing: border-box;
@@ -33,53 +51,101 @@ body {
 
 /* Base styles for inputs matching user login forms - clean, well padded, high contrast */
 @layer base {
-
-  input[type="text"],
-  input[type="email"],
-  input[type="password"],
-  input[type="number"],
-  input[type="search"],
-  input[type="tel"],
-  input[type="url"],
-  input[type="date"],
-  input[type="time"],
-  input[type="datetime-local"],
-  textarea,
-  select {
-    @apply px-4 py-3 sm:py-3.5 rounded-xl border border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-brand-black/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500/50 transition-all duration-300 shadow-sm;
+  :where(
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="search"],
+    input[type="tel"],
+    input[type="url"],
+    input[type="date"],
+    input[type="time"],
+    input[type="datetime-local"],
+    textarea,
+    select
+  ) {
+    @apply px-4 py-2.5 rounded-[3px] border border-slate-300 dark:border-white/10 bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200 shadow-sm text-sm;
   }
+}
+
+/* Card component */
+.card {
+  @apply bg-white dark:bg-[#131722] rounded-[3px] shadow-sm p-6 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100;
+}
+
+/* Standardized Compact Buttons (Reduced size, exact same font and styling) */
+.btn {
+  @apply inline-flex items-center justify-center gap-1.5 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0;
+  font-family: inherit;
+}
+
+.btn-primary {
+  @apply btn bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black shadow-sm shadow-amber-500/20 font-bold;
+}
+
+.btn-secondary {
+  @apply btn bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-300 dark:border-white/10 font-medium;
+}
+
+.btn-outline {
+  @apply btn border border-amber-600 text-amber-700 hover:bg-amber-50 dark:border-amber-500/40 dark:text-amber-400 dark:hover:bg-amber-500/10 dark:hover:border-amber-500;
+}
+
+/* Gamification Gold Pill Tabs */
+.tab-gold-active {
+  @apply bg-gradient-to-r from-amber-500 to-amber-600 text-black shadow-sm shadow-amber-500/20 font-bold border-amber-500 rounded-[3px] px-3.5 py-1.5 text-xs border;
+}
+
+.tab-gold-inactive {
+  @apply text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/5 border border-slate-200 dark:border-white/10 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold;
+}
+
+/* Form input focus state: 50% reduced thickness & softened executive gold halo */
+input:focus,
+textarea:focus,
+select:focus,
+:where(input, textarea, select):focus {
+  outline: none !important;
+  border-color: rgba(217, 119, 6, 0.75) !important;
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.25), 0 0 4px rgba(217, 119, 6, 0.1) !important;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus,
+html.dark :where(input, textarea, select):focus {
+  border-color: rgba(245, 158, 11, 0.65) !important;
+  box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 6px rgba(245, 158, 11, 0.12) !important;
 }
 
 /* Custom scrollbar */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 6px;
+    height: 6px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #121212;
+    background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #2E2E32;
-    border-radius: 4px;
+    background: #CBD5E1;
+    border-radius: 3px;
 }
 
-::-webkit-scrollbar-thumb:hover {
+html.dark ::-webkit-scrollbar-thumb {
+    background: #2E2E32;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
     background: #D4AF37;
 }
 
 /* Animations */
 @keyframes pulse-slow {
-
-    0%,
-    100% {
-        opacity: 1;
-    }
-
-    50% {
-        opacity: 0.5;
-    }
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
 }
 
 .animate-pulse-slow {
@@ -87,17 +153,10 @@ body {
 }
 
 @keyframes slide-in {
-    from {
-        transform: translateX(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateX(0);
-        opacity: 1;
-    }
+    from { transform: translateX(100%); opacity: 0; }
+    to { transform: translateX(0); opacity: 1; }
 }
 
 .animate-slide-in {
-    animation: slide-in 0.3s ease-out;
+    animation: slide-in 0.3s ease-out forwards;
 }

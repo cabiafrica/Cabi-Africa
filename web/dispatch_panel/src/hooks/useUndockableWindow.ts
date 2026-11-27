@@ -123,7 +123,7 @@ export function useUndockableWindow({
         leftGroup.className = 'flex items-center gap-3';
 
         const logoBadge = childDoc.createElement('div');
-        logoBadge.className = 'w-8 h-8 rounded-lg bg-amber-500 flex items-center justify-center font-bold text-black shadow-md shadow-amber-500/20';
+        logoBadge.className = 'w-8 h-8 rounded-[3px] bg-amber-500 flex items-center justify-center font-bold text-black shadow-md shadow-amber-500/20';
         logoBadge.textContent = 'C';
 
         const titleGroup = childDoc.createElement('div');
@@ -158,13 +158,13 @@ export function useUndockableWindow({
 
         const fsBtnElem = childDoc.createElement('button');
         fsBtnElem.id = 'cabi-fullscreen-btn';
-        fsBtnElem.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/60 rounded-lg transition-colors cursor-pointer';
+        fsBtnElem.className = 'flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-300 hover:text-white bg-slate-800 hover:bg-slate-700 border border-slate-700/60 rounded-[3px] transition-colors cursor-pointer';
         fsBtnElem.title = 'Toggle Fullscreen';
         fsBtnElem.textContent = 'Fullscreen';
 
         const dockBtnElem = childDoc.createElement('button');
         dockBtnElem.id = 'cabi-dock-btn';
-        dockBtnElem.className = 'flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-black bg-amber-500 hover:bg-amber-400 border border-amber-400/30 rounded-lg transition-all shadow-md shadow-amber-600/30 cursor-pointer';
+        dockBtnElem.className = 'flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-black bg-amber-500 hover:bg-amber-400 border border-amber-400/30 rounded-[3px] transition-all shadow-md shadow-amber-600/30 cursor-pointer';
         dockBtnElem.title = 'Restore back to main workstation (Esc)';
         dockBtnElem.textContent = 'Dock to Main Display';
 

@@ -5,16 +5,27 @@
 @tailwind utilities;
 
 :root {
-  --primary: #F59E0B;
-  /* Cabi Brand Yellow */
+  --primary: #D97706; /* High-contrast rich amber for light mode */
+  --primary-dark: #B45309;
+  --secondary: #059669;
+  --background: #F8FAFC; /* Executive porcelain light background */
+  --surface: #FFFFFF; /* Clean white card surface */
+  --surface-elevated: #F1F5F9;
+  --text-main: #0F172A; /* Deep slate primary text (14.2:1 contrast ratio) */
+  --text-muted: #334155; /* Slate-700 secondary text (7.8:1 contrast ratio) */
+  --border-color: #E2E8F0;
+}
+
+html.dark {
+  --primary: #F59E0B; /* Vibrant Brand Amber */
   --primary-dark: #D97706;
   --secondary: #10B981;
-  --background: #0a0a0a;
-  /* Cabi Brand Black */
-  --surface: #121212;
-  /* Elevated Dark Surface */
-  --text-main: #f1f5f9;
+  --background: #0a0a0a; /* Signature Brand Black */
+  --surface: #131722; /* Elevated Dark Surface */
+  --surface-elevated: #1E2230;
+  --text-main: #f8fafc;
   --text-muted: #94a3b8;
+  --border-color: rgba(255, 255, 255, 0.1);
 }
 
 body {
@@ -23,7 +34,7 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
 /* Custom Scrollbar for Webkit */
@@ -72,25 +83,25 @@ body {
 
 /* Card component */
 .card {
-  @apply bg-[#131722] rounded shadow-lg p-6 border border-white/10 text-slate-100;
+  @apply bg-white dark:bg-[#131722] rounded-[3px] shadow-sm p-6 border border-slate-200 dark:border-white/10 text-slate-900 dark:text-slate-100;
 }
 
 /* Button component */
 .btn {
-  @apply inline-flex items-center justify-center gap-1.5 rounded px-3.5 py-1.5 text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0;
+  @apply inline-flex items-center justify-center gap-1.5 rounded-[3px] px-3.5 py-1.5 text-xs font-semibold tracking-wide transition-all duration-150 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap shrink-0;
   font-family: inherit;
 }
 
 .btn-primary {
-  @apply btn bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black shadow-sm shadow-amber-500/20;
+  @apply btn bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black shadow-sm shadow-amber-500/20 font-bold;
 }
 
 .btn-secondary {
-  @apply btn bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10;
+  @apply btn bg-slate-100 hover:bg-slate-200 text-slate-800 border border-slate-300 dark:bg-white/5 dark:hover:bg-white/10 dark:text-slate-300 dark:border-white/10 font-medium;
 }
 
 .btn-outline {
-  @apply btn border border-amber-500/40 text-amber-400 hover:bg-amber-500/10 hover:border-amber-500;
+  @apply btn border border-amber-600 text-amber-700 hover:bg-amber-50 dark:border-amber-500/40 dark:text-amber-400 dark:hover:bg-amber-500/10 dark:hover:border-amber-500;
 }
 
 /* Ensure inputs with leading icons have proper breathing room */
@@ -121,7 +132,7 @@ body {
     textarea,
     select
   ) {
-    @apply px-4 py-2.5 rounded border border-white/10 bg-[#0a0a0a] text-white placeholder-slate-500 focus:outline-none transition-all duration-200 shadow-sm;
+    @apply px-4 py-2.5 rounded-[3px] border border-slate-300 dark:border-white/10 bg-white dark:bg-[#0a0a0a] text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-slate-500 focus:outline-none transition-all duration-200 shadow-sm;
   }
 }
 
@@ -131,6 +142,14 @@ textarea:focus,
 select:focus,
 :where(input, textarea, select):focus {
   outline: none !important;
+  border-color: rgba(217, 119, 6, 0.75) !important;
+  box-shadow: 0 0 0 1px rgba(217, 119, 6, 0.25), 0 0 4px rgba(217, 119, 6, 0.1) !important;
+}
+
+html.dark input:focus,
+html.dark textarea:focus,
+html.dark select:focus,
+html.dark :where(input, textarea, select):focus {
   border-color: rgba(245, 158, 11, 0.65) !important;
   box-shadow: 0 0 0 1px rgba(245, 158, 11, 0.25), 0 0 6px rgba(245, 158, 11, 0.12) !important;
 }

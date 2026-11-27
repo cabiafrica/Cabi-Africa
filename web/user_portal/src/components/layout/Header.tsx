@@ -204,7 +204,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
 
                                 {/* Profile Dropdown Menu */}
                                 {isProfileOpen && (
-                                    <div className="absolute right-0 mt-2.5 w-64 rounded-2xl bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/15 shadow-2xl py-2 z-[120] backdrop-blur-xl">
+                                    <div className="absolute right-0 mt-2.5 w-64 rounded-[3px] bg-white dark:bg-slate-950 border border-slate-200 dark:border-white/15 shadow-2xl py-2 z-[120] backdrop-blur-xl">
                                         {mounted && isAuthenticated ? (
                                             <>
                                                 {/* Signed-in User Header */}
@@ -221,7 +221,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/dashboard"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-[3px] text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Layers className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Dashboard
@@ -229,7 +229,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/drivers/dashboard"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-[3px] text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Car className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Driver Portal
@@ -237,7 +237,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/settings/profile"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2.5 rounded-[3px] text-xs font-bold text-slate-700 dark:text-white/85 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Settings className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Profile Settings
@@ -251,7 +251,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                             setIsProfileOpen(false);
                                                             logout();
                                                         }}
-                                                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
+                                                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-[3px] text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-500/10 transition-colors"
                                                     >
                                                         <LogOut className="h-4 w-4" />
                                                         Logout
@@ -275,18 +275,18 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/login"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-xl bg-brand-yellow text-black text-xs font-black uppercase tracking-wider shadow-sm hover:bg-primary-highlight transition-colors"
+                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-[3px] bg-brand-yellow text-black text-xs font-black uppercase tracking-wider shadow-sm hover:bg-primary-highlight transition-colors"
                                                     >
                                                         <span className="flex items-center gap-3">
                                                             <LogIn className="h-4 w-4" />
                                                             Authenticate
                                                         </span>
-                                                        <span className="px-1.5 py-0.5 rounded bg-black/15 text-[10px] font-mono">VIP</span>
+                                                        <span className="px-1.5 py-0.5 rounded-[3px] bg-black/15 text-[10px] font-mono">VIP</span>
                                                     </Link>
                                                     <Link
                                                         href="/register"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-white/15 text-slate-800 dark:text-white text-xs font-black uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center justify-between px-3.5 py-2.5 rounded-[3px] border border-slate-200 dark:border-white/15 text-slate-800 dark:text-white text-xs font-black uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <span className="flex items-center gap-3">
                                                             <UserPlus className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
@@ -301,7 +301,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/drivers/register"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2 rounded-[3px] text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Car className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Driver Registration
@@ -309,7 +309,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/drivers/group-register"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2 rounded-[3px] text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Users className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Group Registration
@@ -317,7 +317,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                                     <Link
                                                         href="/corporate/login"
                                                         onClick={() => setIsProfileOpen(false)}
-                                                        className="flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
+                                                        className="flex items-center gap-3 px-3 py-2 rounded-[3px] text-xs font-semibold text-slate-700 dark:text-white/80 hover:bg-slate-100 dark:hover:bg-white/10 transition-colors"
                                                     >
                                                         <Building2 className="h-4 w-4 text-amber-500 dark:text-brand-yellow" />
                                                         Corporate Login
@@ -336,7 +336,7 @@ export default function Header({ isGlobalRoot = false }: HeaderProps) {
                                     if (!isMenuOpen) setIsProfileOpen(false);
                                 }}
                                 type="button"
-                                className={`md:hidden inline-flex items-center justify-center h-10 w-10 rounded-xl border transition-all duration-200 ${
+                                className={`md:hidden inline-flex items-center justify-center h-10 w-10 rounded-[3px] border transition-all duration-200 ${
                                     isMenuOpen
                                         ? 'bg-brand-yellow text-black border-brand-yellow shadow-md'
                                         : 'bg-slate-100 text-slate-900 border-slate-200 hover:bg-slate-200 dark:bg-white/10 dark:text-white dark:border-white/15 dark:hover:bg-white/20'

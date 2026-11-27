@@ -163,25 +163,25 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
 
             {/* Summary Stats */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="bg-gradient-to-br from-amber-600/10 to-amber-600/5 border border-amber-500/20 rounded-xl p-4">
-                    <p className="text-sm text-amber-400 mb-1">Total Trips</p>
-                    <p className="text-3xl font-bold text-white">{filteredTrips.length}</p>
+                <div className="bg-amber-500/10 border border-amber-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-amber-600 dark:text-amber-400 mb-1">Total Trips</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">{filteredTrips.length}</p>
                 </div>
-                <div className="bg-gradient-to-br from-green-600/10 to-green-600/5 border border-green-500/20 rounded-xl p-4">
-                    <p className="text-sm text-green-400 mb-1">Completed</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-emerald-500/10 border border-emerald-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-emerald-600 dark:text-emerald-400 mb-1">Completed</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         {filteredTrips.filter((t) => t.status === 'completed').length}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-cyan-600/10 to-cyan-600/5 border border-cyan-500/20 rounded-xl p-4">
-                    <p className="text-sm text-cyan-400 mb-1">Total Revenue</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-cyan-500/10 border border-cyan-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-cyan-600 dark:text-cyan-400 mb-1">Total Revenue</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         KES {filteredTrips.reduce((sum, t) => sum + (t.actualFare || 0), 0).toLocaleString()}
                     </p>
                 </div>
-                <div className="bg-gradient-to-br from-orange-600/10 to-orange-600/5 border border-orange-500/20 rounded-xl p-4">
-                    <p className="text-sm text-orange-400 mb-1">Avg. Fare</p>
-                    <p className="text-3xl font-bold text-white">
+                <div className="bg-orange-500/10 border border-orange-500/20 rounded-[3px] p-4">
+                    <p className="text-xs uppercase font-bold text-orange-600 dark:text-orange-400 mb-1">Avg. Fare</p>
+                    <p className="text-3xl font-black text-slate-900 dark:text-white">
                         KES{' '}
                         {filteredTrips.length > 0
                             ? Math.round(
@@ -193,52 +193,52 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
             </div>
 
             {/* Trips Table */}
-            <div className="bg-slate-900/50 backdrop-blur-xl border border-slate-800/50 rounded-2xl overflow-hidden">
+            <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] overflow-hidden shadow-sm">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="bg-slate-800/50">
+                        <thead className="bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-800">
                             <tr>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Trip ID</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Passenger</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Route</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Date & Time</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Status</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Priority</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Fare</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Payment</th>
-                                <th className="text-left py-4 px-6 text-sm font-semibold text-slate-400">Actions</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Trip ID</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Passenger</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Route</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Date & Time</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Status</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Priority</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Fare</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Payment</th>
+                                <th className="text-left py-3.5 px-6 text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {filteredTrips.map((trip) => (
                                 <tr
                                     key={trip.id}
-                                    className="border-t border-slate-800/50 hover:bg-slate-800/30 transition-colors cursor-pointer"
+                                    className="border-t border-slate-100 dark:border-slate-800/50 hover:bg-slate-50/70 dark:hover:bg-slate-800/30 transition-colors cursor-pointer"
                                     onClick={() => setSelectedTrip(trip)}
                                 >
                                     <td className="py-4 px-6">
                                         <div className="flex flex-col">
-                                            <span className="text-xs font-bold text-gray-500 uppercase">Trip Code</span>
-                                            <span className="text-sm font-mono font-bold text-amber-400">{trip.id}</span>
+                                            <span className="text-[10px] font-bold text-slate-400 uppercase">Trip Code</span>
+                                            <span className="text-xs font-mono font-bold text-amber-600 dark:text-amber-400">{trip.id}</span>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
                                         <div>
-                                            <p className="text-sm font-medium text-white">{trip.passengerName}</p>
-                                            <p className="text-xs text-slate-500">{trip.passengerPhone}</p>
+                                            <p className="text-sm font-bold text-slate-900 dark:text-white">{trip.passengerName}</p>
+                                            <p className="text-xs text-slate-500 dark:text-slate-400">{trip.passengerPhone}</p>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
                                         <div className="space-y-1">
                                             <div className="flex items-start gap-2">
-                                                <MapPin className="w-3 h-3 text-green-400 mt-0.5 flex-shrink-0" />
-                                                <p className="text-xs text-slate-300 line-clamp-1">
+                                                <MapPin className="w-3 h-3 text-emerald-500 mt-0.5 flex-shrink-0" />
+                                                <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
                                                     {trip.pickupLocation.address}
                                                 </p>
                                             </div>
                                             <div className="flex items-start gap-2">
-                                                <MapPin className="w-3 h-3 text-red-400 mt-0.5 flex-shrink-0" />
-                                                <p className="text-xs text-slate-300 line-clamp-1">
+                                                <MapPin className="w-3 h-3 text-red-500 mt-0.5 flex-shrink-0" />
+                                                <p className="text-xs text-slate-700 dark:text-slate-300 line-clamp-1">
                                                     {trip.dropoffLocation.address}
                                                 </p>
                                             </div>
@@ -246,15 +246,15 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                     </td>
                                     <td className="py-4 px-6">
                                         <div className="flex items-center gap-2">
-                                            <Calendar className="w-4 h-4 text-slate-500" />
-                                            <span className="text-sm text-slate-300">
+                                            <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                                            <span className="text-xs text-slate-600 dark:text-slate-300">
                                                 {new Date(trip.requestedAt).toLocaleString()}
                                             </span>
                                         </div>
                                     </td>
                                     <td className="py-4 px-6">
                                         <span
-                                            className={`text-xs font-medium px-3 py-1 rounded-full border ${getStatusColor(
+                                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-[3px] border ${getStatusColor(
                                                 trip.status
                                             )}`}
                                         >
@@ -263,7 +263,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                     </td>
                                     <td className="py-4 px-6">
                                         <span
-                                            className={`text-xs font-medium px-3 py-1 rounded-full border ${getPriorityColor(
+                                            className={`text-[10px] font-bold px-2.5 py-0.5 rounded-[3px] border ${getPriorityColor(
                                                 trip.priority
                                             )}`}
                                         >
@@ -271,19 +271,19 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                         </span>
                                     </td>
                                     <td className="py-4 px-6">
-                                        <span className="text-sm font-semibold text-white">
+                                        <span className="text-sm font-bold text-slate-900 dark:text-white">
                                             KES {trip.actualFare?.toLocaleString() || trip.estimatedFare.toLocaleString()}
                                         </span>
                                     </td>
                                     <td className="py-4 px-6">
                                         <div>
-                                            <p className="text-sm text-slate-300 capitalize">{trip.paymentMethod}</p>
+                                            <p className="text-xs font-semibold text-slate-800 dark:text-slate-300 capitalize">{trip.paymentMethod}</p>
                                             <p
-                                                className={`text-xs ${trip.paymentStatus === 'completed'
-                                                    ? 'text-green-400'
+                                                className={`text-[11px] font-bold ${trip.paymentStatus === 'completed'
+                                                    ? 'text-emerald-600 dark:text-emerald-400'
                                                     : trip.paymentStatus === 'pending'
-                                                        ? 'text-yellow-400'
-                                                        : 'text-red-400'
+                                                        ? 'text-amber-600 dark:text-amber-400'
+                                                        : 'text-red-600 dark:text-red-400'
                                                     }`}
                                             >
                                                 {trip.paymentStatus}
@@ -296,7 +296,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                                                 e.stopPropagation();
                                                 setSelectedTrip(trip);
                                             }}
-                                            className="text-sm text-amber-400 hover:text-amber-300 transition-colors"
+                                            className="text-xs font-bold text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors"
                                         >
                                             View Details
                                         </button>
@@ -308,7 +308,7 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
 
                     {filteredTrips.length === 0 && (
                         <div className="py-12 text-center">
-                            <p className="text-slate-500">No trips found matching your criteria</p>
+                            <p className="text-slate-500 text-xs">No trips found matching your criteria</p>
                         </div>
                     )}
                 </div>
@@ -321,20 +321,20 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                     onClick={() => setSelectedTrip(null)}
                 >
                     <div
-                        className="bg-slate-900 border border-slate-800 rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3px] max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Modal Header */}
-                        <div className="sticky top-0 bg-slate-900 border-b border-slate-800 p-6 flex items-center justify-between">
+                        <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 flex items-center justify-between">
                             <div>
-                                <h3 className="text-xl font-bold text-white">Trip Details</h3>
-                                <p className="text-sm text-slate-400 font-mono mt-1">{selectedTrip.id}</p>
+                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Trip Details</h3>
+                                <p className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold mt-0.5">{selectedTrip.id}</p>
                             </div>
                             <button
                                 onClick={() => setSelectedTrip(null)}
-                                className="p-2 hover:bg-slate-800 rounded-lg transition-colors"
+                                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[3px] transition-colors"
                             >
-                                <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
@@ -345,14 +345,14 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                             {/* Status and Priority */}
                             <div className="flex items-center gap-3">
                                 <span
-                                    className={`text-xs font-medium px-3 py-1 rounded-full border ${getStatusColor(
+                                    className={`text-xs font-bold px-3 py-1 rounded-[3px] border ${getStatusColor(
                                         selectedTrip.status
                                     )}`}
                                 >
                                     {selectedTrip.status}
                                 </span>
                                 <span
-                                    className={`text-xs font-medium px-3 py-1 rounded-full border ${getPriorityColor(
+                                    className={`text-xs font-bold px-3 py-1 rounded-[3px] border ${getPriorityColor(
                                         selectedTrip.priority
                                     )}`}
                                 >
@@ -361,127 +361,106 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                             </div>
 
                             {/* Passenger Info */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Passenger Information</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Passenger Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="flex items-center gap-2">
-                                        <User className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-slate-300">{selectedTrip.passengerName}</span>
+                                        <User className="w-4 h-4 text-slate-400" />
+                                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-200">{selectedTrip.passengerName}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <Phone className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-slate-300">{selectedTrip.passengerPhone}</span>
+                                        <Phone className="w-4 h-4 text-slate-400" />
+                                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-200">{selectedTrip.passengerPhone}</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Route Info */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Route Information</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Route Information</h4>
                                 <div className="space-y-3">
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-5 h-5 text-green-400 mt-0.5 flex-shrink-0" />
+                                        <MapPin className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
                                         <div>
-                                            <p className="text-xs text-slate-500">Pickup Location</p>
-                                            <p className="text-sm text-white">{selectedTrip.pickupLocation.address}</p>
+                                            <p className="text-[10px] uppercase font-bold text-slate-400">Pickup Location</p>
+                                            <p className="text-sm font-medium text-slate-900 dark:text-white">{selectedTrip.pickupLocation.address}</p>
                                         </div>
                                     </div>
                                     <div className="flex items-start gap-3">
-                                        <MapPin className="w-5 h-5 text-red-400 mt-0.5 flex-shrink-0" />
+                                        <MapPin className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
                                         <div>
-                                            <p className="text-xs text-slate-500">Dropoff Location</p>
-                                            <p className="text-sm text-white">{selectedTrip.dropoffLocation.address}</p>
+                                            <p className="text-[10px] uppercase font-bold text-slate-400">Dropoff Location</p>
+                                            <p className="text-sm font-medium text-slate-900 dark:text-white">{selectedTrip.dropoffLocation.address}</p>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <TrendingUp className="w-4 h-4 text-slate-500" />
-                                        <span className="text-sm text-slate-300">{selectedTrip.distance} km</span>
+                                    <div className="flex items-center gap-2 pt-1 border-t border-slate-200 dark:border-slate-700/50">
+                                        <TrendingUp className="w-4 h-4 text-amber-500" />
+                                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{selectedTrip.distance} km</span>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Payment Info */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                <h4 className="text-sm font-semibold text-white">Payment Information</h4>
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Payment Information</h4>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <p className="text-xs text-slate-500">Fare Amount</p>
-                                        <p className="text-lg font-bold text-white">
+                                        <p className="text-[10px] uppercase font-bold text-slate-400">Fare Amount</p>
+                                        <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">
                                             KES {selectedTrip.actualFare?.toLocaleString() || selectedTrip.estimatedFare.toLocaleString()}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Payment Method</p>
-                                        <p className="text-sm text-white capitalize">{selectedTrip.paymentMethod}</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400">Payment Method</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white capitalize">{selectedTrip.paymentMethod}</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Payment Status</p>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400">Payment Status</p>
                                         <p
-                                            className={`text-sm font-medium ${selectedTrip.paymentStatus === 'completed'
-                                                ? 'text-green-400'
+                                            className={`text-sm font-bold ${selectedTrip.paymentStatus === 'completed'
+                                                ? 'text-emerald-600 dark:text-emerald-400'
                                                 : selectedTrip.paymentStatus === 'pending'
-                                                    ? 'text-yellow-400'
-                                                    : 'text-red-400'
+                                                    ? 'text-amber-600 dark:text-amber-400'
+                                                    : 'text-red-600 dark:text-red-400'
                                                 }`}
                                         >
                                             {selectedTrip.paymentStatus}
                                         </p>
                                     </div>
                                     <div>
-                                        <p className="text-xs text-slate-500">Duration</p>
-                                        <p className="text-sm text-white">{selectedTrip.duration} minutes</p>
-                                    </div>
-                                    <div className="col-span-2 pt-2 border-t border-slate-700/50 mt-2">
-                                        <p className="text-xs font-bold text-slate-500 uppercase mb-2">Fare Breakdown</p>
-                                        <div className="space-y-1">
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-slate-400">Base Fare</span>
-                                                <span className="text-white">KES {(selectedTrip.actualFare || selectedTrip.estimatedFare) * 0.7}</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-slate-400">Wait Time Charge</span>
-                                                <span className="text-white">KES {(selectedTrip.actualFare || selectedTrip.estimatedFare) * 0.1}</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs">
-                                                <span className="text-slate-400">Surge Multiplier</span>
-                                                <span className="text-brand-yellow">x1.2</span>
-                                            </div>
-                                            <div className="flex justify-between text-xs font-bold pt-1">
-                                                <span className="text-slate-400">Total</span>
-                                                <span className="text-white">KES {selectedTrip.actualFare || selectedTrip.estimatedFare}</span>
-                                            </div>
-                                        </div>
+                                        <p className="text-[10px] uppercase font-bold text-slate-400">Duration</p>
+                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{selectedTrip.duration} minutes</p>
                                     </div>
                                 </div>
                             </div>
 
                             {/* Rating & Feedback */}
                             {selectedTrip.rating && (
-                                <div className="bg-slate-800/50 rounded-xl p-4 space-y-3">
-                                    <h4 className="text-sm font-semibold text-white">Rating & Feedback</h4>
+                                <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
+                                    <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Rating & Feedback</h4>
                                     <div className="flex items-center gap-2">
-                                        <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
-                                        <span className="text-lg font-bold text-white">{selectedTrip.rating}</span>
-                                        <span className="text-sm text-slate-400">/ 5.0</span>
+                                        <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
+                                        <span className="text-base font-bold text-slate-900 dark:text-white">{selectedTrip.rating}</span>
+                                        <span className="text-xs text-slate-400">/ 5.0</span>
                                     </div>
                                     {selectedTrip.feedback && (
-                                        <p className="text-sm text-slate-300 italic">"{selectedTrip.feedback}"</p>
+                                        <p className="text-xs text-slate-600 dark:text-slate-300 italic">"{selectedTrip.feedback}"</p>
                                     )}
                                 </div>
                             )}
 
                             {/* Timestamps */}
-                            <div className="bg-slate-800/50 rounded-xl p-4 space-y-2">
-                                <h4 className="text-sm font-semibold text-white">Timeline</h4>
-                                <div className="space-y-2 text-sm">
+                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-2">
+                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Timeline</h4>
+                                <div className="space-y-1.5 text-xs">
                                     <div className="flex items-center justify-between">
-                                        <span className="text-slate-400">Requested</span>
-                                        <span className="text-white">{new Date(selectedTrip.requestedAt).toLocaleString()}</span>
+                                        <span className="text-slate-500">Requested</span>
+                                        <span className="font-semibold text-slate-900 dark:text-white">{new Date(selectedTrip.requestedAt).toLocaleString()}</span>
                                     </div>
                                     {selectedTrip.completedAt && (
                                         <div className="flex items-center justify-between">
-                                            <span className="text-slate-400">Completed</span>
-                                            <span className="text-white">
+                                            <span className="text-slate-500">Completed</span>
+                                            <span className="font-semibold text-slate-900 dark:text-white">
                                                 {new Date(selectedTrip.completedAt).toLocaleString()}
                                             </span>
                                         </div>

@@ -122,7 +122,7 @@ export default function Dashboard() {
                     </Link>
 
                     <nav className="space-y-1 mb-10">
-                        <Link href="/" className="group flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
+                        <Link href="/" className="group flex items-center gap-3 p-3 rounded-[3px] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
                             <Home className="w-4 h-4 group-hover:scale-110 transition-transform" /> Home
                         </Link>
 
@@ -135,9 +135,9 @@ export default function Dashboard() {
                                     <button
                                         key={item.id}
                                         onClick={() => setActiveTab(item.id)}
-                                        className={`w-full flex items-center gap-3 p-3 rounded-lg transition-all font-bold text-sm mb-1 ${
+                                        className={`w-full flex items-center gap-3 p-3 rounded-[3px] transition-all font-bold text-sm mb-1 ${
                                             active
-                                                ? 'bg-brand-yellow text-black shadow-lg shadow-brand-yellow/20'
+                                                ? 'bg-brand-yellow text-black shadow-sm font-black'
                                                 : 'text-slate-600 dark:text-gray-400 hover:bg-slate-100 dark:hover:bg-white/5'
                                         }`}
                                     >
@@ -149,7 +149,7 @@ export default function Dashboard() {
 
                         <div className="pt-4 border-t border-slate-200 dark:border-white/5">
                             <div className="text-[10px] font-black text-slate-400 dark:text-gray-500 uppercase tracking-widest px-3 mb-2">Account</div>
-                            <Link href="/settings/profile" className="flex items-center gap-3 p-3 rounded-lg hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
+                            <Link href="/settings/profile" className="flex items-center gap-3 p-3 rounded-[3px] hover:bg-slate-100 dark:hover:bg-white/5 text-slate-600 dark:text-gray-400 transition-all font-bold text-sm">
                                 <Settings className="w-4 h-4" /> Profile Settings
                             </Link>
                         </div>
@@ -189,105 +189,110 @@ export default function Dashboard() {
                 <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-brand-yellow/5 rounded-full blur-[120px] -z-10 pointer-events-none"></div>
                 <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#D4AF37]/5 rounded-full blur-[100px] -z-10 pointer-events-none"></div>
 
-                <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-12 gap-6">
-                    <div>
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="w-8 h-[2px] bg-brand-yellow rounded-full"></span>
-                            <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-yellow">Dashboard</span>
-                        </div>
-                        <h1 className="text-4xl font-black text-slate-900 dark:text-white tracking-tight">
-                            Welcome back, <span className="text-brand-yellow">{mounted ? (user?.firstName || user?.fullName || 'User') : 'User'}</span>
-                        </h1>
-                        <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
-                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-                            Active as <span className="capitalize font-bold text-slate-700 dark:text-slate-200">{userRole === 'driver' ? 'Captain (Driver)' : 'Rider (Passenger)'}</span>
-                            {userRole === 'driver' && <span className="opacity-50 text-sm">({hasOrganization ? 'Organization Member' : 'Independent'})</span>}
-                        </p>
-                    </div>
-                    <div className="flex items-center gap-4 flex-wrap">
-                        {/* Contextual Role Switcher Pill */}
-                        <div className="inline-flex p-1 rounded-xl bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm">
-                            <button
-                                onClick={() => {
-                                    setUserRole('passenger');
-                                    if (activeTab === 'vehicles' || activeTab === 'analytics') setActiveTab('overview');
-                                }}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
-                                    userRole === 'passenger'
-                                        ? 'bg-brand-yellow text-black shadow-sm'
-                                        : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
-                                }`}
-                            >
-                                <User className="w-3.5 h-3.5" />
-                                <span>Rider View</span>
-                            </button>
-                            <button
-                                onClick={() => setUserRole('driver')}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-black transition-all flex items-center gap-1.5 ${
-                                    userRole === 'driver'
-                                        ? 'bg-brand-yellow text-black shadow-sm'
-                                        : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
-                                }`}
-                            >
-                                <Car className="w-3.5 h-3.5" />
-                                <span>Captain View</span>
-                            </button>
-                        </div>
-
-                        <div className="relative">
-                        <button
-                            onClick={() => setShowProfileMenu(!showProfileMenu)}
-                            className="flex items-center gap-4 group focus:outline-none"
-                        >
-                            <div className="text-right hidden sm:block">
-                                <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors tracking-tight">
-                                    {mounted ? (user?.fullName || (user?.firstName ? `${user.firstName} ${user.lastName}` : 'Cabi User')) : 'Cabi User'}
-                                </div>
-                                <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
+                {/* Header with Golden Separator */}
+                <header className="mb-8">
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-6">
+                        <div>
+                            <div className="flex items-center gap-2 mb-2">
+                                <span className="w-8 h-[2px] bg-brand-yellow rounded-[3px]"></span>
+                                <span className="text-xs font-black uppercase tracking-[0.2em] text-brand-yellow">User Operations Portal</span>
                             </div>
-                            <div className={`w-14 h-14 rounded-lg bg-gradient-to-tr from-[#FACC15] to-[#D4AF37] p-[2px] shadow-lg shadow-[#D4AF37]/15 group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105 rotate-3' : ''}`}>
-                                <div className="w-full h-full rounded-lg bg-white dark:bg-brand-black flex items-center justify-center text-2xl border-2 border-white dark:border-brand-black overflow-hidden relative">
-                                    {mounted && user?.profilePictureUrl ? (
-                                        <img src={user.profilePictureUrl} alt={`${user?.fullName || 'CABI User'} verified account profile photo`} width={56} height={56} loading="lazy" decoding="async" className="w-full h-full object-cover" />
-                                    ) : (
-                                        <User className="w-6 h-6 text-slate-400" />
-                                    )}
-                                    {showProfileMenu && <div className="absolute inset-0 bg-brand-yellow/20 backdrop-blur-[2px]"></div>}
-                                </div>
+                            <h1 className="text-3xl sm:text-4xl font-black text-slate-900 dark:text-white tracking-tight">
+                                Welcome back, <span className="text-brand-yellow">{mounted ? (user?.firstName || user?.fullName || 'User') : 'User'}</span>
+                            </h1>
+                            <p className="text-slate-500 dark:text-gray-400 mt-2 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                                Active as <span className="capitalize font-bold text-slate-700 dark:text-slate-200">{userRole === 'driver' ? 'Captain (Driver)' : 'Rider (Passenger)'}</span>
+                                {userRole === 'driver' && <span className="opacity-50 text-sm">({hasOrganization ? 'Organization Member' : 'Independent'})</span>}
+                            </p>
+                        </div>
+                        <div className="flex items-center gap-4 flex-wrap">
+                            {/* Contextual Role Switcher Pill */}
+                            <div className="inline-flex p-1 rounded-[3px] bg-slate-200/80 dark:bg-white/10 border border-slate-300/80 dark:border-white/15 shadow-sm">
+                                <button
+                                    onClick={() => {
+                                        setUserRole('passenger');
+                                        if (activeTab === 'vehicles' || activeTab === 'analytics') setActiveTab('overview');
+                                    }}
+                                    className={`px-3 py-1.5 rounded-[3px] text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                        userRole === 'passenger'
+                                            ? 'bg-brand-yellow text-black shadow-sm'
+                                            : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
+                                    }`}
+                                >
+                                    <User className="w-3.5 h-3.5" />
+                                    <span>Rider View</span>
+                                </button>
+                                <button
+                                    onClick={() => setUserRole('driver')}
+                                    className={`px-3 py-1.5 rounded-[3px] text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer ${
+                                        userRole === 'driver'
+                                            ? 'bg-brand-yellow text-black shadow-sm'
+                                            : 'text-slate-600 dark:text-gray-300 hover:text-black dark:hover:text-white'
+                                    }`}
+                                >
+                                    <Car className="w-3.5 h-3.5" />
+                                    <span>Captain View</span>
+                                </button>
                             </div>
-                        </button>
 
-                        {/* Dropdown Menu */}
-                        {showProfileMenu && (
-                            <>
-                                <div
-                                    className="fixed inset-0 z-40"
-                                    onClick={() => setShowProfileMenu(false)}
-                                ></div>
-                                <div className="absolute right-0 mt-4 w-64 bg-white dark:bg-brand-dark rounded-xl border border-slate-200 dark:border-white/10 shadow-2xl z-50 overflow-hidden animate-fade-in origin-top-right">
-                                    <div className="p-6 border-b border-slate-100 dark:border-white/10">
-                                        <div className="font-black text-slate-900 dark:text-white">Account Info</div>
-                                        <div className="text-xs text-slate-500">ID: {user?.id || 'CABI-4920-X'}</div>
+                            <div className="relative">
+                            <button
+                                onClick={() => setShowProfileMenu(!showProfileMenu)}
+                                className="flex items-center gap-4 group focus:outline-none cursor-pointer"
+                            >
+                                <div className="text-right hidden sm:block">
+                                    <div className="text-sm font-black text-slate-900 dark:text-white group-hover:text-brand-yellow transition-colors tracking-tight">
+                                        {mounted ? (user?.fullName || (user?.firstName ? `${user.firstName} ${user.lastName}` : 'Cabi User')) : 'Cabi User'}
                                     </div>
-                                    <div className="p-2">
-                                        <Link href="/settings/profile" className="flex items-center gap-3 p-4 rounded-lg hover:bg-slate-50 dark:hover:bg-white/5 transition-colors font-bold text-sm">
-                                            <User className="w-4 h-4" /> View Profile
-                                        </Link>
-                                        <button
-                                            onClick={logout}
-                                            className="w-full flex items-center gap-3 p-4 rounded-lg text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-bold text-sm"
-                                        >
-                                            <LogOut className="w-4 h-4" /> Log Out
-                                        </button>
-                                    </div>
-                                    <div className="p-4 bg-slate-50 dark:bg-black/20 text-center">
-                                        <div className="text-[10px] font-black uppercase text-slate-400">Security Level: High</div>
+                                    <div className="text-[10px] font-bold text-slate-500 uppercase tracking-widest leading-none mt-1">Diamond Member</div>
+                                </div>
+                                <div className={`w-12 h-12 rounded-[3px] bg-gradient-to-tr from-[#FACC15] to-[#D4AF37] p-[2px] shadow-sm group-hover:scale-105 transition-all ${showProfileMenu ? 'scale-105' : ''}`}>
+                                    <div className="w-full h-full rounded-[3px] bg-white dark:bg-brand-black flex items-center justify-center text-xl border border-white dark:border-brand-black overflow-hidden relative">
+                                        {mounted && user?.profilePictureUrl ? (
+                                            <img src={user.profilePictureUrl} alt={`${user?.fullName || 'CABI User'} verified account profile photo`} width={48} height={48} loading="lazy" decoding="async" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <User className="w-5 h-5 text-slate-400" />
+                                        )}
+                                        {showProfileMenu && <div className="absolute inset-0 bg-brand-yellow/20 backdrop-blur-[2px]"></div>}
                                     </div>
                                 </div>
-                            </>
-                        )}
+                            </button>
+
+                            {/* Dropdown Menu */}
+                            {showProfileMenu && (
+                                <>
+                                    <div
+                                        className="fixed inset-0 z-40"
+                                        onClick={() => setShowProfileMenu(false)}
+                                    ></div>
+                                    <div className="absolute right-0 mt-3 w-64 bg-white dark:bg-brand-dark rounded-[3px] border border-slate-200 dark:border-white/10 shadow-2xl z-50 overflow-hidden animate-fade-in origin-top-right">
+                                        <div className="p-4 border-b border-slate-100 dark:border-white/10">
+                                            <div className="font-black text-slate-900 dark:text-white">Account Info</div>
+                                            <div className="text-xs text-slate-500 font-mono">ID: {user?.id || 'CABI-4920-X'}</div>
+                                        </div>
+                                        <div className="p-2 space-y-1">
+                                            <Link href="/settings/profile" className="flex items-center gap-3 p-3 rounded-[3px] hover:bg-slate-50 dark:hover:bg-white/5 transition-colors font-bold text-xs">
+                                                <User className="w-4 h-4 text-amber-500" /> View Profile
+                                            </Link>
+                                            <button
+                                                onClick={logout}
+                                                className="w-full flex items-center gap-3 p-3 rounded-[3px] text-red-500 hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-bold text-xs cursor-pointer"
+                                            >
+                                                <LogOut className="w-4 h-4" /> Log Out
+                                            </button>
+                                        </div>
+                                        <div className="p-3 bg-slate-50 dark:bg-black/20 text-center border-t border-slate-100 dark:border-white/5">
+                                            <div className="text-[10px] font-black uppercase text-slate-400 tracking-wider">Security Level: High</div>
+                                        </div>
+                                    </div>
+                                </>
+                            )}
+                            </div>
                         </div>
                     </div>
+                    {/* Golden Separator */}
+                    <div className="golden-separator my-4"></div>
                 </header>
 
                 {/* Dynamic Content Based on Tab */}
