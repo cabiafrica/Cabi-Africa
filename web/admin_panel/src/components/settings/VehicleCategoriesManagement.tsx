@@ -16,7 +16,20 @@ import {
     Stars,
     InfoOutlined,
     Close,
+    Add,
+    DeleteOutline,
+    Palette,
 } from '@mui/icons-material';
+
+const MODERATE_COLOR_PALETTE = [
+    { name: 'Terracotta Amber', hex: '#D97706' },
+    { name: 'Petrol Teal', hex: '#0D9488' },
+    { name: 'Champagne Gold', hex: '#D4AF37' },
+    { name: 'Steel Navy', hex: '#2563EB' },
+    { name: 'Emerald Forest', hex: '#059669' },
+    { name: 'Executive Slate', hex: '#475569' },
+    { name: 'Bronze Clay', hex: '#B45309' },
+];
 
 const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
     {
@@ -29,6 +42,10 @@ const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
         roundingStep: 10,
         description: 'Two-wheel motorcycle deliveries & fast commuter trips. Rounded to nearest KES 10.',
         isActive: true,
+        colorCode: '#D97706',
+        capacity: '1 Passenger',
+        tag: 'FASTEST',
+        iconType: 'boda',
     },
     {
         category: 'BASIC',
@@ -40,6 +57,10 @@ const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
         roundingStep: 25,
         description: 'Compact eco-hatchbacks for budget city travel. Rounded to nearest KES 25.',
         isActive: true,
+        colorCode: '#0D9488',
+        capacity: '4 Passengers',
+        tag: 'ECONOMY',
+        iconType: 'sedan',
     },
     {
         category: 'STANDARD',
@@ -51,6 +72,10 @@ const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
         roundingStep: 50,
         description: 'Comfortable sedans for everyday city and airport trips. Rounded to nearest KES 50.',
         isActive: true,
+        colorCode: '#0D9488',
+        capacity: '4 Passengers',
+        tag: 'POPULAR',
+        iconType: 'sedan',
     },
     {
         category: 'XL',
@@ -62,6 +87,10 @@ const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
         roundingStep: 50,
         description: 'High capacity 6-7 seaters for families & airport luggage. Rounded to nearest KES 50.',
         isActive: true,
+        colorCode: '#2563EB',
+        capacity: '6 Passengers',
+        tag: 'DELEGATION',
+        iconType: 'suv',
     },
     {
         category: 'PREMIUM',
@@ -73,6 +102,10 @@ const DEFAULT_CATEGORIES: CategoryPricingConfig[] = [
         roundingStep: 50,
         description: 'Luxury executive sedans with top-rated veteran drivers. Rounded to nearest KES 50.',
         isActive: true,
+        colorCode: '#D4AF37',
+        capacity: '3 Passengers',
+        tag: 'LUXURY',
+        iconType: 'luxury',
     },
 ];
 
@@ -89,6 +122,72 @@ export const VehicleCategoriesManagement: React.FC = () => {
 
     // Modal Edit State
     const [editingCategory, setEditingCategory] = useState<CategoryPricingConfig | null>(null);
+    const [isCreatingCategory, setIsCreatingCategory] = useState(false);
+    const [newCategory, setNewCategory] = useState<CategoryPricingConfig>({
+        category: '',
+        displayName: '',
+        baseFare: 150,
+        perKmRate: 45,
+        perMinuteRate: 5,
+        minimumFare: 150,
+        roundingStep: 50,
+        description: 'Executive on-demand transit tier.',
+        isActive: true,
+        colorCode: '#0D9488',
+        capacity: '4 Passengers',
+        tag: 'SPECIAL',
+        iconType: 'sedan',
+    });
+
+    const handleCreateNewCategory = () => {
+        if (!newCategory.category.trim() || !newCategory.displayName.trim()) {
+            alert('Please provide a category code and display name.');
+            return;
+        }
+        const key = newCategory.category.trim().toUpperCase().replace(/\s+/g, '_');
+        if (categories.some((c) => c.category === key)) {
+            alert(`Category code "${key}" already exists.`);
+            return;
+        }
+        const created: CategoryPricingConfig = {
+            ...newCategory,
+            category: key,
+            baseFare: Number(newCategory.baseFare) || 100,
+            perKmRate: Number(newCategory.perKmRate) || 40,
+            perMinuteRate: Number(newCategory.perMinuteRate) || 4,
+            minimumFare: Number(newCategory.minimumFare) || 100,
+            roundingStep: Number(newCategory.roundingStep) || 25,
+        };
+        const updated = [...categories, created];
+        setCategories(updated);
+        setIsCreatingCategory(false);
+        setNewCategory({
+            category: '',
+            displayName: '',
+            baseFare: 150,
+            perKmRate: 45,
+            perMinuteRate: 5,
+            minimumFare: 150,
+            roundingStep: 50,
+            description: 'Executive on-demand transit tier.',
+            isActive: true,
+            colorCode: '#0D9488',
+            capacity: '4 Passengers',
+            tag: 'SPECIAL',
+            iconType: 'sedan',
+        });
+        adminService.updatePricingCategories(updated);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 3000);
+    };
+
+    const handleDeleteCategory = (catKey: string) => {
+        if (window.confirm(`Are you sure you want to remove category "${catKey}"?`)) {
+            const updated = categories.filter((c) => c.category !== catKey);
+            setCategories(updated);
+            adminService.updatePricingCategories(updated);
+        }
+    };
 
     const loadData = async () => {
         setLoading(true);
@@ -181,6 +280,13 @@ export const VehicleCategoriesManagement: React.FC = () => {
                 action={
                     <div className="flex items-center gap-2">
                         <button
+                            onClick={() => setIsCreatingCategory(true)}
+                            className="bg-amber-500 hover:bg-amber-400 text-black font-bold px-3 py-1.5 rounded-[3px] text-xs flex items-center gap-1.5 transition-all shadow-sm cursor-pointer"
+                        >
+                            <Add fontSize="small" />
+                            <span>Create Service Tier</span>
+                        </button>
+                        <button
                             onClick={handleResetDefaults}
                             className="btn-secondary flex items-center gap-1.5"
                             title="Restore African standard market defaults"
@@ -234,21 +340,46 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                         {getCategoryIcon(c.category)}
                                     </div>
                                     <div>
-                                        <h3 className="font-bold text-white text-sm">
-                                            {c.displayName}
-                                        </h3>
-                                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded bg-white/5 text-amber-400 border border-white/10 font-mono">
-                                            {c.category}
-                                        </span>
+                                        <div className="flex items-center gap-1.5">
+                                            <span
+                                                className="w-2 h-2 rounded-full inline-block"
+                                                style={{ backgroundColor: c.colorCode || '#0D9488' }}
+                                                title={`Category Color: ${c.colorCode || '#0D9488'}`}
+                                            />
+                                            <h3 className="font-bold text-white text-sm">
+                                                {c.displayName}
+                                            </h3>
+                                        </div>
+                                        <div className="flex items-center gap-1.5 mt-0.5">
+                                            <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded bg-white/5 text-amber-400 border border-white/10 font-mono">
+                                                {c.category}
+                                            </span>
+                                            {c.capacity && (
+                                                <span className="text-[10px] text-slate-400 font-sans">
+                                                    {c.capacity}
+                                                </span>
+                                            )}
+                                        </div>
                                     </div>
                                 </div>
-                                <button
-                                    onClick={() => setEditingCategory({ ...c })}
-                                    className="p-1.5 rounded text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
-                                    title="Edit Category Rates"
-                                >
-                                    <Edit fontSize="small" />
-                                </button>
+                                <div className="flex items-center gap-1">
+                                    <button
+                                        onClick={() => setEditingCategory({ ...c })}
+                                        className="p-1.5 rounded text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
+                                        title="Edit Category Rates"
+                                    >
+                                        <Edit fontSize="small" />
+                                    </button>
+                                    {!['BODA', 'BASIC', 'STANDARD', 'XL', 'PREMIUM'].includes(c.category) && (
+                                        <button
+                                            onClick={() => handleDeleteCategory(c.category)}
+                                            className="p-1.5 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                            title="Delete Custom Category"
+                                        >
+                                            <DeleteOutline fontSize="small" />
+                                        </button>
+                                    )}
+                                </div>
                             </div>
 
                             <p className="text-xs text-slate-400 line-clamp-2">
@@ -616,6 +747,68 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                     ))}
                                 </div>
                             </div>
+
+                            {/* Moderate Color Scheme & Vehicle 3D Model */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Capacity
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={editingCategory.capacity || '4 Passengers'}
+                                        onChange={(e) =>
+                                            setEditingCategory({ ...editingCategory, capacity: e.target.value })
+                                        }
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white focus:border-amber-500 outline-none text-xs"
+                                        placeholder="e.g. 4 Passengers"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        3D Model Profile
+                                    </label>
+                                    <select
+                                        value={editingCategory.iconType || 'sedan'}
+                                        onChange={(e) =>
+                                            setEditingCategory({ ...editingCategory, iconType: e.target.value as any })
+                                        }
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white focus:border-amber-500 outline-none text-xs"
+                                    >
+                                        <option value="sedan">3D Executive Sedan</option>
+                                        <option value="boda">3D Boda Motorcycle</option>
+                                        <option value="suv">3D SUV / Van</option>
+                                        <option value="luxury">3D Luxury Limousine</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Moderate Color Accent Picker */}
+                            <div>
+                                <label className="block text-slate-300 font-semibold mb-1.5">
+                                    Moderate Accent Color
+                                </label>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    {MODERATE_COLOR_PALETTE.map((pal) => (
+                                        <button
+                                            key={pal.hex}
+                                            type="button"
+                                            onClick={() => setEditingCategory({ ...editingCategory, colorCode: pal.hex })}
+                                            className={`w-7 h-7 rounded-[3px] border-2 transition-all cursor-pointer flex items-center justify-center ${
+                                                editingCategory.colorCode === pal.hex
+                                                    ? 'border-white scale-110 shadow-md'
+                                                    : 'border-transparent opacity-75 hover:opacity-100'
+                                            }`}
+                                            style={{ backgroundColor: pal.hex }}
+                                            title={pal.name}
+                                        >
+                                            {editingCategory.colorCode === pal.hex && (
+                                                <CheckCircle style={{ fontSize: 14, color: '#FFFFFF' }} />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
                         </div>
 
                         <div className="flex justify-end gap-2.5 pt-4 border-t border-white/10">
@@ -632,6 +825,206 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                 className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-3.5 py-1.5 rounded text-xs font-bold shadow-sm shadow-amber-500/20 active:scale-95 transition-all"
                             >
                                 Apply Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* Create Brand-New Service Category Modal */}
+            {isCreatingCategory && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+                    <div className="bg-[#131722] rounded max-w-lg w-full p-6 border border-amber-500/30 shadow-2xl space-y-5 text-white animate-fade-in">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-3">
+                            <div className="flex items-center gap-3">
+                                <div className="p-2 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20">
+                                    <Add />
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white text-base">
+                                        Create New Service Category
+                                    </h3>
+                                    <span className="text-xs text-slate-400">
+                                        Define new on-demand transport tier with customized pay rules
+                                    </span>
+                                </div>
+                            </div>
+                            <button
+                                onClick={() => setIsCreatingCategory(false)}
+                                className="text-slate-400 hover:text-white transition-colors cursor-pointer"
+                            >
+                                <Close fontSize="small" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-3.5 text-xs">
+                            <div className="grid grid-cols-2 gap-3.5">
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Category Code (Unique)
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. ECO_EV"
+                                        value={newCategory.category}
+                                        onChange={(e) => setNewCategory({ ...newCategory, category: e.target.value.toUpperCase() })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white font-mono focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Display Name
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. Cabi Eco EV"
+                                        value={newCategory.displayName}
+                                        onChange={(e) => setNewCategory({ ...newCategory, displayName: e.target.value })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3.5">
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Base Fare (KES)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={newCategory.baseFare}
+                                        onChange={(e) => setNewCategory({ ...newCategory, baseFare: Number(e.target.value) })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white font-mono focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Minimum Fare (KES)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={newCategory.minimumFare}
+                                        onChange={(e) => setNewCategory({ ...newCategory, minimumFare: Number(e.target.value) })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white font-mono focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3.5">
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Per KM Rate (KES)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={newCategory.perKmRate}
+                                        onChange={(e) => setNewCategory({ ...newCategory, perKmRate: Number(e.target.value) })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white font-mono focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Per Minute Rate (KES)
+                                    </label>
+                                    <input
+                                        type="number"
+                                        min="0"
+                                        value={newCategory.perMinuteRate}
+                                        onChange={(e) => setNewCategory({ ...newCategory, perMinuteRate: Number(e.target.value) })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white font-mono focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3.5">
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        Capacity & Specs
+                                    </label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. 4 Passengers"
+                                        value={newCategory.capacity || ''}
+                                        onChange={(e) => setNewCategory({ ...newCategory, capacity: e.target.value })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white focus:border-amber-500 outline-none text-xs"
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-slate-300 font-semibold mb-1">
+                                        3D Moving Vehicle Shape
+                                    </label>
+                                    <select
+                                        value={newCategory.iconType || 'sedan'}
+                                        onChange={(e) => setNewCategory({ ...newCategory, iconType: e.target.value as any })}
+                                        className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-2 text-white focus:border-amber-500 outline-none text-xs"
+                                    >
+                                        <option value="sedan">3D Executive Sedan</option>
+                                        <option value="boda">3D Boda Motorcycle</option>
+                                        <option value="suv">3D SUV / Van</option>
+                                        <option value="luxury">3D Luxury Limousine</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            {/* Moderate Color Selection */}
+                            <div>
+                                <label className="block text-slate-300 font-semibold mb-1.5">
+                                    Moderate Accent Color
+                                </label>
+                                <div className="flex items-center gap-2 flex-wrap">
+                                    {MODERATE_COLOR_PALETTE.map((pal) => (
+                                        <button
+                                            key={pal.hex}
+                                            type="button"
+                                            onClick={() => setNewCategory({ ...newCategory, colorCode: pal.hex })}
+                                            className={`w-7 h-7 rounded-[3px] border-2 transition-all cursor-pointer flex items-center justify-center ${
+                                                newCategory.colorCode === pal.hex
+                                                    ? 'border-white scale-110 shadow-md'
+                                                    : 'border-transparent opacity-75 hover:opacity-100'
+                                            }`}
+                                            style={{ backgroundColor: pal.hex }}
+                                            title={pal.name}
+                                        >
+                                            {newCategory.colorCode === pal.hex && (
+                                                <CheckCircle style={{ fontSize: 14, color: '#FFFFFF' }} />
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-slate-300 font-semibold mb-1">
+                                    Category Description
+                                </label>
+                                <textarea
+                                    rows={2}
+                                    placeholder="Short description of this transit tier..."
+                                    value={newCategory.description || ''}
+                                    onChange={(e) => setNewCategory({ ...newCategory, description: e.target.value })}
+                                    className="w-full bg-[#0a0a0a] border border-white/10 rounded px-3 py-1.5 text-white focus:border-amber-500 outline-none text-xs"
+                                />
+                            </div>
+                        </div>
+
+                        <div className="flex justify-end gap-2.5 pt-4 border-t border-white/10">
+                            <button
+                                type="button"
+                                onClick={() => setIsCreatingCategory(false)}
+                                className="bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 px-3.5 py-1.5 rounded text-xs font-medium transition-colors cursor-pointer"
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                type="button"
+                                onClick={handleCreateNewCategory}
+                                className="bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 text-black px-4 py-1.5 rounded text-xs font-bold shadow-sm shadow-amber-500/20 active:scale-95 transition-all cursor-pointer flex items-center gap-1.5"
+                            >
+                                <Add fontSize="small" />
+                                <span>Create Tier</span>
                             </button>
                         </div>
                     </div>

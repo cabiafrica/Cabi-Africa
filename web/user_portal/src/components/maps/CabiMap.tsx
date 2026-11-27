@@ -16,6 +16,10 @@ export interface MapMarker {
     id: string;
     position: [number, number];
     type: 'driver' | 'passenger' | 'pickup' | 'dropoff' | 'custom' | 'hazard';
+    bearing?: number;
+    isMoving?: boolean;
+    category?: string;
+    categoryColor?: string;
     icon?: L.Icon | L.DivIcon;
     popup?: string;
     onClick?: () => void;
@@ -68,30 +72,117 @@ export interface CabiMapProps {
     directions?: DirectionStep[];
 }
 
-// Custom marker icons (ported from admin_panel and refined)
-const createDriverIcon = () => {
+// Moderate, non-aggressive vehicle category colors (strictly no purple)
+export const resolveModerateCategoryColor = (category?: string, customColor?: string): string => {
+    if (customColor) return customColor;
+    const cat = (category || 'STANDARD').toUpperCase();
+    if (cat === 'BODA' || cat === 'MOTO') return '#D97706'; // Warm Terracotta Amber
+    if (cat === 'CABIGO' || cat === 'BASIC' || cat === 'STANDARD') return '#0D9488'; // Petrol Teal / Sage
+    if (cat === 'EXECUTIVE' || cat === 'PREMIUM') return '#D4AF37'; // Presidential Champagne Gold
+    if (cat === 'XL' || cat === 'SUV' || cat === 'VAN') return '#2563EB'; // Executive Steel Navy
+    return '#0D9488';
+};
+
+// 3D Isometric Vehicle Marker for moving drivers
+export const create3DVehicleIcon = (category?: string, bearing = 0, isMoving = true, customColor?: string) => {
+    const accentColor = resolveModerateCategoryColor(category, customColor);
+    const cat = (category || 'STANDARD').toUpperCase();
+    const isBoda = cat === 'BODA' || cat === 'MOTO';
+    const isXl = cat === 'XL' || cat === 'SUV' || cat === 'VAN';
+
+    const headlightBeam = isMoving
+        ? `<polygon points="18,0 34,0 30,16 22,16" fill="url(#beamGrad)" opacity="0.6"/>`
+        : '';
+
+    let chassisSvg = '';
+    if (isBoda) {
+        chassisSvg = `
+          <!-- Boda Motorcycle -->
+          <rect x="24" y="8" width="4" height="8" rx="2" fill="#000" stroke="#94A3B8" stroke-width="0.8"/>
+          <line x1="18" y1="14" x2="34" y2="14" stroke="#CBD5E1" stroke-width="2.2" stroke-linecap="round"/>
+          <circle cx="26" cy="20" r="5" fill="${accentColor}" stroke="#000" stroke-width="1.2"/>
+          <circle cx="26" cy="19" r="2" fill="#F8FAFC" opacity="0.6"/>
+          <rect x="23" y="24" width="6" height="13" rx="2.5" fill="#1E293B" stroke="${accentColor}" stroke-width="1.2"/>
+          <rect x="24" y="36" width="4" height="7" rx="2" fill="#000"/>
+        `;
+    } else if (isXl) {
+        chassisSvg = `
+          <!-- SUV / Van -->
+          <rect x="15" y="10" width="24" height="38" rx="5" fill="rgba(0,0,0,0.4)" filter="blur(2px)"/>
+          <rect x="14" y="8" width="24" height="38" rx="4.5" fill="#0F172A" stroke="${accentColor}" stroke-width="1.8"/>
+          <rect x="15.5" y="9" width="4" height="2" rx="1" fill="#FEF08A"/>
+          <rect x="32.5" y="9" width="4" height="2" rx="1" fill="#FEF08A"/>
+          <rect x="16.5" y="13" width="19" height="7.5" rx="1.5" fill="url(#glassGrad)"/>
+          <rect x="16" y="22" width="20" height="17" rx="2" fill="${accentColor}" opacity="0.95"/>
+          <line x1="18" y1="23" x2="18" y2="38" stroke="rgba(0,0,0,0.35)" stroke-width="1.6"/>
+          <line x1="34" y1="23" x2="34" y2="38" stroke="rgba(0,0,0,0.35)" stroke-width="1.6"/>
+          <rect x="17.5" y="40" width="17" height="4" rx="1" fill="#0369A1"/>
+          <rect x="15" y="44.5" width="4" height="1.5" rx="0.5" fill="#EF4444"/>
+          <rect x="33" y="44.5" width="4" height="1.5" rx="0.5" fill="#EF4444"/>
+        `;
+    } else {
+        chassisSvg = `
+          <!-- Executive Sedan -->
+          <rect x="16" y="10" width="22" height="35" rx="4.5" fill="rgba(0,0,0,0.45)" filter="blur(2px)"/>
+          <rect x="15" y="9" width="22" height="35" rx="4" fill="#0F172A" stroke="${accentColor}" stroke-width="1.6"/>
+          <rect x="16.5" y="10" width="3.5" height="2" rx="1" fill="#FEF08A"/>
+          <rect x="32" y="10" width="3.5" height="2" rx="1" fill="#FEF08A"/>
+          <rect x="17" y="14" width="18" height="6.5" rx="1.5" fill="url(#glassGrad)"/>
+          <rect x="17" y="22" width="18" height="12" rx="2" fill="${accentColor}" opacity="0.95"/>
+          <circle cx="26" cy="28" r="2.5" fill="#FFFFFF" opacity="0.7"/>
+          <rect x="18" y="35.5" width="16" height="4.5" rx="1" fill="#0369A1"/>
+          <rect x="16" y="42.5" width="3.5" height="1.5" rx="0.5" fill="#EF4444"/>
+          <rect x="32.5" y="42.5" width="3.5" height="1.5" rx="0.5" fill="#EF4444"/>
+        `;
+    }
+
     return L.divIcon({
-        className: 'custom-div-icon',
+        className: 'cabi-marker-3d-vehicle',
         html: `
       <div style="
-        background-color: #fbbf24;
-        width: 36px;
-        height: 36px;
-        border-radius: 50%;
-        border: 2.5px solid white;
+        position: relative;
+        width: 52px;
+        height: 52px;
+        transform: translate(-50%, -50%) rotate(${bearing}deg);
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
-        transform: rotate(45deg);
+        pointer-events: auto;
       ">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="black">
-          <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+        <svg width="52" height="52" viewBox="0 0 52 52" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="beamGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="${accentColor}" stop-opacity="0.5"/>
+              <stop offset="100%" stop-color="${accentColor}" stop-opacity="0"/>
+            </linearGradient>
+            <linearGradient id="glassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+              <stop offset="0%" stop-color="#38BDF8"/>
+              <stop offset="100%" stop-color="#0284C7"/>
+            </linearGradient>
+          </defs>
+          ${headlightBeam}
+          ${chassisSvg}
         </svg>
       </div>
     `,
-        iconSize: [36, 36],
-        iconAnchor: [18, 18],
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+    });
+};
+
+export const createPassengerIcon = () => {
+    return L.divIcon({
+        className: 'cabi-marker-passenger',
+        html: `
+      <div style="position: relative; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; transform: translate(-50%, -50%);">
+        <div style="position: absolute; inset: -4px; border-radius: 50%; background: rgba(37, 99, 235, 0.2); animation: ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;"></div>
+        <div style="width: 28px; height: 28px; border-radius: 50%; background: #0F172A; border: 2px solid #2563EB; box-shadow: 0 4px 12px rgba(0,0,0,0.45); display: flex; align-items: center; justify-content: center;">
+          <div style="width: 12px; height: 12px; border-radius: 50%; background: #38BDF8; box-shadow: 0 0 6px #38BDF8;"></div>
+        </div>
+      </div>
+    `,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
     });
 };
 
@@ -374,7 +465,15 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             } else {
                 switch (marker.type) {
                     case 'driver':
-                        icon = createDriverIcon();
+                        icon = create3DVehicleIcon(
+                            marker.category,
+                            marker.bearing ?? 0,
+                            marker.isMoving ?? true,
+                            marker.categoryColor
+                        );
+                        break;
+                    case 'passenger':
+                        icon = createPassengerIcon();
                         break;
                     case 'pickup':
                         icon = createPickupIcon();

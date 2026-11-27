@@ -50,6 +50,7 @@ interface VehicleOption {
     bgImage: string;
     tag?: string;
     capacity?: string;
+    colorCode?: string;
     description?: string;
 }
 
@@ -204,6 +205,28 @@ export default function BookingSection() {
 
     useEffect(() => {
         setMounted(true);
+        // Hydrate active vehicle categories dynamically from backend
+        fetch('/api/pricing/categories?activeOnly=true')
+            .then((r) => (r.ok ? r.json() : null))
+            .then((data) => {
+                if (Array.isArray(data) && data.length > 0) {
+                    const mapped: VehicleOption[] = data.map((c: any) => ({
+                        id: c.category.toLowerCase(),
+                        name: c.displayName,
+                        price: c.minimumFare,
+                        eta: 4,
+                        icon: c.icon || '🚗',
+                        bgImage: c.bgImage || '/images/vehicles/cabigo.png',
+                        tag: c.tag,
+                        capacity: c.capacity,
+                        colorCode: c.colorCode,
+                        description: c.description,
+                    }));
+                    setVehicleOptions(mapped);
+                }
+            })
+            .catch(() => undefined);
+
         if (typeof window !== 'undefined' && navigator.geolocation && navigator.permissions?.query) {
             navigator.permissions
                 .query({ name: 'geolocation' })
@@ -628,15 +651,67 @@ export default function BookingSection() {
         setPinpointerTarget(null);
     };
 
-    const mapMarkers: MapMarker[] = useMemo(
-        () => buildPinMarkers(pickup, pickupCoords, destination, dropoffCoords),
-        [pickupCoords, dropoffCoords, pickup, destination]
-    );
-
     const activeVehicleObj = useMemo(
         () => vehicleOptions.find((v) => v.id === selectedVehicle) || vehicleOptions[1] || vehicleOptions[0],
         [vehicleOptions, selectedVehicle]
     );
+
+    const mapMarkers: MapMarker[] = useMemo(() => {
+        const base = buildPinMarkers(pickup, pickupCoords, destination, dropoffCoords);
+        
+        // Show counterpart 3D moving vehicle icon along the route preview or active ride!
+        if (trajectory && trajectory.polyline && trajectory.polyline.length > 0) {
+            const isTripActive =
+                tripStatus === 'CONFIRMED' ||
+                tripStatus === 'DRIVER_ASSIGNED' ||
+                tripStatus === 'ARRIVED' ||
+                tripStatus === 'IN_PROGRESS';
+
+            // Point along route trajectory for visual simulation and counterpart live tracking
+            const midIndex = Math.min(Math.floor(trajectory.polyline.length * 0.42), trajectory.polyline.length - 1);
+            const midPoint = trajectory.polyline[midIndex] || [
+                (trajectory.pickupCoords.lat + trajectory.dropoffCoords.lat) / 2,
+                (trajectory.pickupCoords.lng + trajectory.dropoffCoords.lng) / 2,
+            ];
+
+            // Compute route tangent bearing if subsequent point exists
+            let calculatedBearing = 48;
+            if (trajectory.polyline[midIndex + 1]) {
+                const [lat1, lng1] = trajectory.polyline[midIndex];
+                const [lat2, lng2] = trajectory.polyline[midIndex + 1];
+                const dLng = (lng2 - lng1) * (Math.PI / 180);
+                const y = Math.sin(dLng) * Math.cos(lat2 * (Math.PI / 180));
+                const x =
+                    Math.cos(lat1 * (Math.PI / 180)) * Math.sin(lat2 * (Math.PI / 180)) -
+                    Math.sin(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) * Math.cos(dLng);
+                calculatedBearing = Math.round((Math.atan2(y, x) * (180 / Math.PI) + 360) % 360);
+            }
+
+            base.push({
+                id: 'active_counterpart_driver',
+                position: midPoint as [number, number],
+                type: 'driver',
+                bearing: calculatedBearing,
+                isMoving: true,
+                category: selectedVehicle,
+                categoryColor: activeVehicleObj?.colorCode,
+                popup: isTripActive
+                    ? `Assigned Captain: ${driverInfo?.name || 'James Mwangi'} (${activeVehicleObj?.name || 'Cabi'}) · On the move`
+                    : `Active ${activeVehicleObj?.name || 'Cabi'} nearby · Ready for dispatch`,
+            });
+        }
+        return base;
+    }, [
+        pickupCoords,
+        dropoffCoords,
+        pickup,
+        destination,
+        tripStatus,
+        trajectory,
+        selectedVehicle,
+        activeVehicleObj,
+        driverInfo,
+    ]);
 
     const renderProgressBar = () => {
         const steps = ['Confirmed', 'Driver Assigned', 'Arrived', 'In Progress'];

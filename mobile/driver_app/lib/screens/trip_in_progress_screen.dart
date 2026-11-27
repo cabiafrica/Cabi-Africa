@@ -600,8 +600,8 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
       builder: (ctx) => AlertDialog(
         backgroundColor: AppTheme.surfaceContainer,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Row(
-          children: const [
+        title: const Row(
+          children: [
             Icon(Icons.person_remove_rounded, color: Color(0xFFEF4444), size: 20),
             SizedBox(width: 8),
             Text(
@@ -665,8 +665,8 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
         builder: (ctx) => AlertDialog(
           backgroundColor: AppTheme.surfaceContainer,
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: Row(
-            children: const [
+          title: const Row(
+            children: [
               Icon(Icons.info_outline_rounded, color: Color(0xFFD4AF37), size: 22),
               SizedBox(width: 8),
               Text('Rider Cancelled', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.bold)),
@@ -946,9 +946,19 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       : CabiMapSource.cabiAfrica,
                   markers: [
                     CabiMapMarker.driver(
-                        position: _driverLocation, driverId: 'me', isOnline: true),
+                      position: _driverLocation,
+                      driverId: 'me',
+                      isOnline: true,
+                      bearing: 42.0,
+                      isMoving: true,
+                      category: widget.serviceCategory ?? 'STANDARD',
+                    ),
                     if (_tripPhase == TripPhase.headingToPickup || _tripPhase == TripPhase.arrivedAtPickup)
-                      CabiMapMarker.pickup(position: _passengerLocation)
+                      CabiMapMarker.passenger(
+                        position: _passengerLocation,
+                        showRadar: true,
+                        radarLabel: 'PASSENGER LIVE',
+                      )
                     else
                       CabiMapMarker.dropoff(position: _passengerLocation),
                     CabiMapMarker.hazard(
@@ -1725,6 +1735,14 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                             );
                           },
                         ),
+                        if (_tripPhase != TripPhase.completed) ...[
+                          const SizedBox(width: 8),
+                          _buildQuickActionBtn(
+                            icon: Icons.person_off_outlined,
+                            label: 'Sim Cancel',
+                            onTap: _simulatePassengerCancellation,
+                          ),
+                        ],
                       ],
                     ),
 

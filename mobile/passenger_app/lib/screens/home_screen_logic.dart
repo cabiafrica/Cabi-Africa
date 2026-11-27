@@ -471,19 +471,27 @@ extension _HomeScreenLogic on _HomeScreenState {
     ));
 
     for (var driver in _nearbyDrivers) {
+      final bearing = (driver['bearing'] as num?)?.toDouble() ?? 45.0;
+      final category = (driver['category'] as String?) ?? 'STANDARD';
       markers.add(CabiMapMarker.driver(
         position: driver['location'] as LatLng,
-        driverId: driver['id'],
+        driverId: driver['id']?.toString() ?? 'driver',
         isOnline: true,
+        bearing: bearing,
+        isMoving: true,
+        category: category,
       ));
     }
 
-    // Add specific assigned driver marker if driver found
-    if (_tripStatus == TripStatus.driverFound) {
+    // Add specific assigned counterpart driver marker if driver found or on trip
+    if (_tripStatus == TripStatus.driverFound || _tripStatus == TripStatus.onTrip) {
       markers.add(CabiMapMarker.driver(
-        position: const LatLng(-1.287000, 36.816000), // Mock live driver pos
+        position: const LatLng(-1.287000, 36.816000), // Live counterpart driver pos
         driverId: 'assigned-driver',
         isOnline: true,
+        bearing: 38.0,
+        isMoving: true,
+        category: _selectedVehicleType ?? 'STANDARD',
       ));
     }
 

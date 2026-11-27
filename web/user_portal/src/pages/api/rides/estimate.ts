@@ -1,4 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getStoredCategories } from '../pricing/categories';
 
 interface Coords {
     lat: number;
@@ -289,12 +290,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             hazards = computeRouteHazards(polyline);
         }
 
-        const estimates = [
-            { id: 'boda', name: 'Cabi Boda', price: Math.round(distanceKm * 35 + 80), eta: 3, icon: '🏍️' },
-            { id: 'cabigo', name: 'CabiGo', price: Math.round(distanceKm * 55 + 150), eta: 4, icon: '🚗' },
-            { id: 'executive', name: 'Executive Suite', price: Math.round(distanceKm * 95 + 300), eta: 6, icon: '✨' },
-            { id: 'xl', name: 'Diplomatic XL', price: Math.round(distanceKm * 130 + 450), eta: 8, icon: '🚙' },
-        ];
+        const categories = getStoredCategories().filter((c) => c.isActive);
+        const estimates = categories.map((cat, idx) => {
+            const rawPrice = Math.max(
+                cat.minimumFare,
+                cat.baseFare + distanceKm * cat.perKmRate + durationMin * cat.perMinuteRate
+            );
+            const step = cat.roundingStep > 0 ? cat.roundingStep : 1;
+            const roundedPrice = Math.round(rawPrice / step) * step;
+
+            return {
+                id: cat.category.toLowerCase(),
+                categoryKey: cat.category,
+                name: cat.displayName,
+                price: roundedPrice,
+                eta: Math.max(3, 3 + idx * 2),
+                icon: cat.icon || '🚗',
+                colorCode: cat.colorCode,
+                capacity: cat.capacity,
+                tag: cat.tag,
+                bgImage: cat.bgImage,
+                description: cat.description,
+            };
+        });
 
         if (includeTrajectory) {
             return res.status(200).json({

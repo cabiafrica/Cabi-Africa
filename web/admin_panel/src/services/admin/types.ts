@@ -391,5 +391,10 @@ export interface CategoryPricingConfig {
     roundingStep: number;
     description?: string;
     isActive: boolean;
+    colorCode?: string;
+    capacity?: string;
+    iconType?: 'boda' | 'sedan' | 'suv' | 'van' | 'luxury';
+    tag?: string;
+    bgImage?: string;
 }
 

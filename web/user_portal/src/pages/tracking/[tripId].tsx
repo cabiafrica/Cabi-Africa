@@ -54,12 +54,15 @@ export default function TrackingPage() {
                       id: 'driver',
                       position: [trackingData.currentLocation.lat, trackingData.currentLocation.lng],
                       type: 'driver',
-                      popup: `${trackingData.driver.name} (Driver)`,
+                      bearing: trackingData.currentLocation.bearing ?? 45,
+                      isMoving: true,
+                      category: trackingData.vehicleCategory || 'STANDARD',
+                      popup: `${trackingData.driver.name} • ${trackingData.vehicleCategory || 'Driver'}`,
                   },
               ]
             : []),
-        { id: 'pickup', position: trackingData.pickup.position, type: 'pickup', popup: 'Pickup Point' },
-        { id: 'dropoff', position: trackingData.dropoff.position, type: 'dropoff', popup: 'Drop-off Point' },
+        { id: 'passenger', position: trackingData.pickup.position, type: 'passenger', popup: 'Passenger Live Beacon' },
+        { id: 'dropoff', position: trackingData.dropoff.position, type: 'dropoff', popup: 'Drop-off Destination' },
     ];
 
     const liveRoute: [number, number][] = [
