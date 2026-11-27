@@ -167,19 +167,142 @@ export const PERMISSIONS_LIST = [
 ];
 
 export const PERMISSION_CATEGORIES = {
-    'Site Management': ['SITE_', 'FEATURES_', 'ORG_STRUCTURE'],
-    'User Management': ['GROUPS_', 'LOCATIONS_', 'PEOPLE_', 'INVITATIONS_'],
-    'Content Management': ['SKILLS_', 'METRICS_', 'PATHWAYS_', 'LEARNING_', 'LIBRARY_'],
-    'Assessment & Training': ['ASSESSMENT_', 'THIRD_PARTY_', 'GROUP_TRAINING_', 'PUBLISHED_CONTENT_', 'AUTOMATION_'],
-    'Dashboard & Reports': ['NOTIFICATIONS_', 'DASHBOARD_', 'TASK_', 'REPORT_'],
     'Dispatch Operations': ['DISPATCH_'],
-    'Trip Management': ['TRIPS_'],
     'Ride & Fleet Operations': ['DRIVER_', 'PASSENGER_', 'VEHICLES_', 'VEHICLE_CATEGORIES_'],
-    'Security': ['SECURITY_'],
-    'Compliance': ['COMPLIANCE_'],
     'Financial & SACCO': ['PAYMENTS_', 'FARE_', 'COMMISSION_', 'FINANCIAL_', 'SACCO_'],
-    'Verification': ['VERIFICATION_'],
+    'Security & Safety': ['SECURITY_'],
+    'Verification & KYC': ['VERIFICATION_'],
+    'User Management': ['GROUPS_', 'LOCATIONS_', 'PEOPLE_', 'INVITATIONS_'],
     'Organization & Referral': ['ORGANIZATION_', 'REFERRAL_'],
-    'Marketing': ['MARKETING_', 'USER_PORTAL_', 'BLOG_'],
-    'System': ['SYSTEM_', 'USER_ROLES_', 'AUDIT_']
+    'Marketing & Content': ['MARKETING_', 'USER_PORTAL_', 'BLOG_', 'SKILLS_', 'METRICS_', 'PATHWAYS_', 'LEARNING_', 'LIBRARY_'],
+    'Compliance & Governance': ['COMPLIANCE_'],
+    'Site & Platform Settings': ['SITE_', 'FEATURES_', 'ORG_STRUCTURE', 'SYSTEM_', 'USER_ROLES_', 'AUDIT_'],
+    'Assessment & Training': ['ASSESSMENT_', 'THIRD_PARTY_', 'GROUP_TRAINING_', 'PUBLISHED_CONTENT_', 'AUTOMATION_'],
+    'Dashboard & Reports': ['NOTIFICATIONS_', 'DASHBOARD_', 'TASK_', 'REPORT_', 'TRIPS_']
+};
+
+export const getPermissionCategory = (perm: string): string => {
+    for (const [catName, prefixes] of Object.entries(PERMISSION_CATEGORIES)) {
+        if (prefixes.some(prefix => perm.startsWith(prefix))) {
+            return catName;
+        }
+    }
+    return 'Other';
+};
+
+export const getPermissionLabel = (perm: string): string => {
+    const labelMap: Record<string, string> = {
+        DISPATCH_DASHBOARD_VIEW: 'View Dispatch Dashboard',
+        DISPATCH_RIDE_ASSIGN: 'Assign Rides to Drivers',
+        DISPATCH_RIDE_MONITOR: 'Monitor Active Trips',
+        DISPATCH_TRIP_DETAILS_VIEW: 'View Trip Telemetry & Details',
+        DISPATCH_RIDE_CANCEL: 'Cancel Rides',
+        DISPATCH_RIDE_REASSIGN: 'Reassign Trip Drivers',
+        DISPATCH_RIDE_FORCE_COMPLETE: 'Force Complete Trips',
+        DISPATCH_DRIVER_MANAGE: 'Manage Drivers in Dispatch',
+        DISPATCH_REAL_TIME_MAP: 'Access Live Dispatch Map',
+        DISPATCH_ANALYTICS_VIEW: 'View Dispatch Analytics',
+        DISPATCH_COMMUNICATE_DRIVER: 'Message & Call Drivers',
+        DISPATCH_COMMUNICATE_PASSENGER: 'Message & Call Passengers',
+        DISPATCH_SURGE_OVERRIDE: 'Manual Surge Overrides',
+        DISPATCH_INCIDENT_ESCALATE: 'Escalate Incidents & Detours',
+        TRIPS_VIEW_ALL: 'View All Rides & Historical Logs',
+        TRIPS_VIEW_DETAILS: 'Inspect Route Coordinates & Audio Telemetry',
+        TRIPS_EXPORT_DATA: 'Export Trip Records to CSV/Excel',
+        TRIPS_AUDIT_LOG_VIEW: 'View Route Audit Logs & State Transitions',
+        DRIVER_APPLICATIONS_VIEW: 'View Driver Applications',
+        DRIVER_APPLICATIONS_APPROVE: 'Approve Driver Applications',
+        DRIVER_APPLICATIONS_REJECT: 'Reject Driver Applications',
+        DRIVER_DOCUMENTS_VIEW: 'View Driver Documents (DL, PSV, Good Conduct)',
+        DRIVER_DOCUMENTS_VERIFY: 'Verify Compliance Documents',
+        DRIVER_PROFILE_EDIT: 'Edit Driver Profiles',
+        DRIVER_SUSPEND: 'Suspend Driver Accounts',
+        DRIVER_ACTIVATE: 'Reactivate Driver Accounts',
+        DRIVER_PAYOUT_VIEW: 'View Driver Earnings & Payout Requests',
+        DRIVER_PAYOUT_PROCESS: 'Process Driver Disbursements (M-Pesa B2C)',
+        DRIVER_SACCO_VIEW: 'View SACCO Affiliations & Groups',
+        DRIVER_SACCO_MANAGE: 'Manage SACCO Fleets & Marshall Rosters',
+        PASSENGER_PROFILES_VIEW: 'View Passenger Profiles',
+        PASSENGER_PROFILES_EDIT: 'Edit Passenger Accounts',
+        PASSENGER_SUSPEND: 'Suspend Passenger Accounts',
+        PASSENGER_ACTIVATE: 'Reactivate Passenger Accounts',
+        PASSENGER_WALLET_VIEW: 'View Passenger Balances',
+        PASSENGER_WALLET_ADJUST: 'Adjust Passenger Wallet Credit',
+        VEHICLES_VIEW: 'View Fleet Vehicles',
+        VEHICLES_EDIT: 'Edit Vehicle Details',
+        VEHICLES_APPROVE: 'Approve Vehicles for Road Service',
+        VEHICLES_SUSPEND: 'Suspend Ground Vehicles',
+        VEHICLE_CATEGORIES_VIEW: 'View Service Classes (Comfort, XL, Boda, Exec)',
+        VEHICLE_CATEGORIES_MANAGE: 'Manage Service Classes & Base Fares',
+        PAYMENTS_VIEW: 'View Financial Transactions & M-Pesa Stk Logs',
+        PAYMENTS_PROCESS: 'Process Payouts & Bulk Disbursements',
+        FARE_MANAGEMENT_VIEW: 'View Pricing & Tariff Formulas',
+        FARE_MANAGEMENT_EDIT: 'Edit Base Rates, Per-Km & Per-Minute Rates',
+        COMMISSION_VIEW: 'View Commission Splits & Reusable Pots',
+        COMMISSION_EDIT: 'Modify Commission Rates & SACCO Splits',
+        FINANCIAL_REPORTS_VIEW: 'View Revenue & Financial Statements',
+        SECURITY_DASHBOARD_VIEW: 'Access Security Dashboard',
+        SECURITY_INCIDENT_REPORT: 'Report SOS & Safety Occurrences',
+        SECURITY_INCIDENT_MANAGE: 'Manage Emergency SOS Incidents',
+        SECURITY_EMERGENCY_RESPONSE: 'Dispatch Armed Response & Patrol',
+        VERIFICATION_DOCUMENTS_VIEW: 'View Identity & Police Clearance',
+        VERIFICATION_DOCUMENTS_APPROVE: 'Approve KYC Documents',
+        VERIFICATION_BIOMETRIC_VIEW: 'View Facial & Biometric Checks',
+        VERIFICATION_BIOMETRIC_APPROVE: 'Approve Biometric Identity',
+        ORGANIZATION_VIEW: 'View Corporate Clients & SACCOs',
+        ORGANIZATION_EDIT: 'Edit Organization Accounts',
+        ORGANIZATION_APPROVE: 'Approve Business Accounts',
+        REFERRAL_FORMULA_VIEW: 'View Multi-Tier Referral Rules',
+        REFERRAL_FORMULA_EDIT: 'Configure Referral Yields & Bonuses',
+        REFERRAL_TRACKING_VIEW: 'Track Referral Downlines & Trees',
+        MARKETING_CONTENT_VIEW: 'View Promotional Assets',
+        MARKETING_CONTENT_EDIT: 'Create Promo Codes & Banners',
+        MARKETING_ANALYTICS_VIEW: 'View Acquisition & Retention Stats',
+        USER_PORTAL_DASHBOARD_VIEW: 'Access User Web Portal Analytics',
+        BLOG_POSTS_VIEW: 'View CMS Blog Articles',
+        BLOG_POSTS_EDIT: 'Publish & Edit CMS Articles',
+        COMPLIANCE_VIEW: 'View NTSA & Regulatory Records',
+        COMPLIANCE_MANAGE: 'Manage Compliance Audits',
+        COMPLIANCE_AUDIT: 'Export Official Compliance Reports',
+        COMPLIANCE_POLICY_EDIT: 'Update Data Protection & Privacy Terms',
+        SYSTEM_SETTINGS_VIEW: 'View Platform Configuration',
+        SYSTEM_SETTINGS_EDIT: 'Modify Core System Settings',
+        USER_ROLES_ASSIGN: 'Provision Roles & Granular Permissions',
+        AUDIT_LOGS_VIEW: 'Inspect Administrative Audit Trail',
+        SYSTEM_HEALTH_MONITOR: 'Monitor Server Health & WebSockets',
+        PEOPLE_VIEW: 'View Administrative Staff',
+        PEOPLE_EDIT: 'Edit Administrator Profiles',
+        PEOPLE_CREATE: 'Provision New Administrator Accounts',
+        PEOPLE_DELETE: 'Decommission Administrator Accounts',
+        GROUPS_ROLES_VIEW: 'View Access Roles & Permissions',
+        GROUPS_ROLES_EDIT: 'Create and Modify Access Roles',
+        INVITATIONS_VIEW: 'View Pending Staff Invitations',
+        INVITATIONS_SEND: 'Send Administrator Invitations',
+    };
+
+    if (labelMap[perm]) return labelMap[perm];
+
+    return perm
+        .split('_')
+        .map(w => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+        .join(' ');
+};
+
+export const getPermissionDescription = (perm: string): string => {
+    const descMap: Record<string, string> = {
+        DISPATCH_DASHBOARD_VIEW: 'Real-time monitoring of active and queued trips across dispatch corridors.',
+        DISPATCH_RIDE_ASSIGN: 'Allows manual and automated dispatch assignment of rides to online drivers.',
+        DISPATCH_RIDE_CANCEL: 'Allows administrative trip cancellations with optional fee adjustments.',
+        DRIVER_DOCUMENTS_VERIFY: 'Review and validate driver national IDs, driving licenses, and PSV badges.',
+        COMMISSION_EDIT: 'Permits configuring platform commissions, welfare deductions, and Cabi Legacy equity.',
+        USER_ROLES_ASSIGN: 'Provision administrator roles, custom permissions, and access revocation.',
+        SECURITY_INCIDENT_MANAGE: 'Triage panic button activations, audio recordings, and route detours.',
+        PAYMENTS_PROCESS: 'Authorize bank and M-Pesa disbursements, driver wallet payouts, and fee reversals.',
+        FINANCIAL_REPORTS_VIEW: 'Inspect and download official revenue ledgers, tax reports, and audit trails.',
+        PEOPLE_CREATE: 'Create and invite new administrative personnel to the CABI Admin Suite.',
+        PEOPLE_EDIT: 'Update operational roles and direct permissions for existing administrative staff.',
+    };
+
+    if (descMap[perm]) return descMap[perm];
+    return `Authorizes operational access for: ${getPermissionLabel(perm)}`;
 };
