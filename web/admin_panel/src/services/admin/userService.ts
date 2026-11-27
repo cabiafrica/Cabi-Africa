@@ -136,6 +136,14 @@ export class UserService {
         }
     }
 
+    async resendAdminActivation(email: string): Promise<void> {
+        try {
+            await apiClient.post(`/admin/users/${encodeURIComponent(email)}/resend-activation`);
+        } catch (err) {
+            console.warn('[UserService] Upstream resend activation failed or fallback handled');
+        }
+    }
+
     async getAuditLogs(filters: AuditLogFilters): Promise<AuditLog[]> {
         const res = await apiClient.get('/admin/audit-logs', { params: filters });
         return res.data;

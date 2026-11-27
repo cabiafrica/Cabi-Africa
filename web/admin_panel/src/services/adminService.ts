@@ -69,6 +69,7 @@ class AdminService {
   createAdminUser = this.userService.createAdminUser.bind(this.userService);
   updateUserRoles = this.userService.updateUserRoles.bind(this.userService);
   updateUserDirectPermissions = this.userService.updateUserDirectPermissions.bind(this.userService);
+  resendAdminActivation = this.userService.resendAdminActivation.bind(this.userService);
   getAuditLogs = this.userService.getAuditLogs.bind(this.userService);
   getSuspendedAdmins = this.userService.getSuspendedAdmins.bind(this.userService);
   reactivateAdmin = this.userService.reactivateAdmin.bind(this.userService);

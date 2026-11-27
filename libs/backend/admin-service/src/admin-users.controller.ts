@@ -21,6 +21,12 @@ export class AdminUsersController {
         return this.usersService.create(body.email, body.roles, body.phone);
     }
 
+    @Post(':email/resend-activation')
+    @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
+    resendActivation(@Param('email') email: string) {
+        return this.usersService.resendActivation(email);
+    }
+
     @Put(':id/roles')
     @RequirePermissions(Permission.GROUPS_ROLES_EDIT)
     updateUserRoles(@Param('id') id: string, @Body() body: { roles: string[] }, @Req() req: any) {

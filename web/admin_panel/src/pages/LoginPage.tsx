@@ -177,8 +177,9 @@ export const LoginPage = () => {
   const handlePasswordNext = (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    if (newPassword.length < 8) {
-      setError('Password must be at least 8 characters long.');
+    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+={}[\]:;"'<>,.?/~`|\\])[A-Za-z\d@$!%*?&#^()_\-+={}[\]:;"'<>,.?/~`|\\]{8,}$/;
+    if (!passwordPolicy.test(newPassword)) {
+      setError('Password must be at least 8 characters and contain at least one uppercase letter, one lowercase letter, one number, and one special symbol.');
       return;
     }
     if (newPassword !== confirmPassword) {

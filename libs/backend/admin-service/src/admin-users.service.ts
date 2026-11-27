@@ -4,6 +4,7 @@ import { NotificationService } from '@cabi/backend/notification-service';
 import { DualApprovalService } from './dual-approval.service';
 import { globalAuditTelemetry } from '@cabi/backend/common';
 import * as bcrypt from 'bcryptjs';
+import * as crypto from 'crypto';
 import { AdminUser, Permission } from './admin.types'; // We'll define these types
 import { Permission as PrismaPermission } from '@prisma/client';
 
@@ -67,8 +68,10 @@ export class AdminUsersService {
 
     // Create Admin User with Dual-Channel (Email + SMS) Dispatch & Temporary Credentials
     async create(email: string, roleNames: string[], phone?: string): Promise<AdminUser & { tempPassword?: string; verificationPin?: string }> {
-        const tempPassword = `Cabi#${Math.random().toString(36).substring(2, 7).toUpperCase()}!${Math.floor(10 + Math.random() * 90)}`;
-        const verificationPin = `${Math.floor(100000 + Math.random() * 900000)}`;
+        const randomHex = crypto.randomBytes(3).toString('hex').toUpperCase();
+        const randomDigits = crypto.randomInt(10, 99);
+        const tempPassword = `Cabi#${randomHex}!${randomDigits}`;
+        const verificationPin = `${crypto.randomInt(100000, 999999)}`;
         const hashedPassword = await bcrypt.hash(tempPassword, 10);
         // High-security 2-hour activation window for temporary administrative credentials
         const expiresAt = new Date(Date.now() + 2 * 60 * 60 * 1000);
@@ -186,7 +189,7 @@ export class AdminUsersService {
             await this.notificationService.sendSms(user.phone, smsText);
         }
 
-        console.log(`[AdminUsersService] 🔐 Dual-channel credentials dispatched to ${email} (SMS to ${user.phone}): TempPass="${tempPassword}", VerificationPIN="${verificationPin}"`);
+        console.log(`[AdminUsersService] 🔐 Dual-channel credentials dispatched to ${email} (SMS to ${user.phone ? '[MASKED]' : 'N/A'}): TempPass="[REDACTED]", VerificationPIN="[REDACTED]"`);
 
         const createdUser = await this.findOne(user.id);
         return {
@@ -194,6 +197,18 @@ export class AdminUsersService {
             tempPassword,
             verificationPin,
         };
+    }
+
+    // Re-issue activation credentials for an unactivated or expired administrator
+    async resendActivation(email: string): Promise<{ success: boolean; message: string }> {
+        const user = await this.prisma.user.findUnique({
+            where: { email },
+            include: { userRoles: { include: { role: true } } }
+        });
+        if (!user) throw new NotFoundException(`Admin user with email ${email} not found`);
+        const roles = user.userRoles.map(ur => ur.role.name);
+        await this.create(email, roles, user.phone || undefined);
+        return { success: true, message: `Activation credentials re-dispatched to ${email}` };
     }
 
     async updateRoles(userId: string, roleNames: string[], callerUser?: any) {

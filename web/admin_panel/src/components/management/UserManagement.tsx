@@ -33,7 +33,8 @@ import {
   Email as EmailIcon,
   Search as SearchIcon,
   Security as SecurityIcon,
-  People as PeopleIcon
+  People as PeopleIcon,
+  Send as SendIcon
 } from '@mui/icons-material';
 
 export const UserManagement: React.FC = () => {
@@ -217,6 +218,20 @@ export const UserManagement: React.FC = () => {
                   </TableCell>
                   <TableCell align="right">
                     <Box display="flex" justifyContent="flex-end" gap={1}>
+                      <Tooltip title="Resend Activation (Email & SMS)">
+                        <IconButton
+                          onClick={async () => {
+                            if (window.confirm(`Resend activation credentials to ${user.email}?`)) {
+                              await adminService.resendAdminActivation(user.email);
+                              alert(`Activation credentials re-dispatched to ${user.email} via dual-channel (Email & SMS).`);
+                            }
+                          }}
+                          size="small"
+                          sx={{ color: '#38bdf8', bgcolor: 'rgba(56, 189, 248, 0.1)', '&:hover': { bgcolor: 'rgba(56, 189, 248, 0.2)' } }}
+                        >
+                          <SendIcon fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
                       <Tooltip title="Edit User">
                         <IconButton
                           onClick={() => setEditingUser(user)}

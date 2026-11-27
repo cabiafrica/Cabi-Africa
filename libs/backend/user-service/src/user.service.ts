@@ -779,9 +779,10 @@ export class UserService {
     });
     if (!user) throw new UnauthorizedException('User not found.');
 
-    // 1. Validate permanent password
-    if (!body.newPassword || body.newPassword.length < 8) {
-      throw new BadRequestException('New password must be at least 8 characters with numbers and symbols.');
+    // 1. Validate permanent password complexity
+    const passwordPolicy = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_\-+={}[\]:;"'<>,.?/~`|\\])[A-Za-z\d@$!%*?&#^()_\-+={}[\]:;"'<>,.?/~`|\\]{8,}$/;
+    if (!body.newPassword || body.newPassword.length < 8 || !passwordPolicy.test(body.newPassword)) {
+      throw new BadRequestException('Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one number, and one special symbol.');
     }
 
     // 2. Validate TOTP Code
