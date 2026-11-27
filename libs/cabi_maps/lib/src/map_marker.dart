@@ -99,9 +99,10 @@ class CabiMapMarker {
   }) {
     const pinWidget = _MapPinWidget(
       primaryColor: Color(0xFF10B981),
-      darkColor: Color(0xFF047857),
+      darkColor: Color(0xFF065F46),
       icon: Icons.my_location_rounded,
       label: 'PICKUP',
+      ringColor: Color(0xFFD4AF37),
     );
 
     if (showRadar) {
@@ -131,8 +132,8 @@ class CabiMapMarker {
     return CabiMapMarker(
       position: position,
       onTap: onTap,
-      width: 46,
-      height: 56,
+      width: 80,
+      height: 72,
       child: pinWidget,
     );
   }
@@ -145,13 +146,35 @@ class CabiMapMarker {
     return CabiMapMarker(
       position: position,
       onTap: onTap,
-      width: 46,
-      height: 56,
+      width: 90,
+      height: 72,
       child: const _MapPinWidget(
-        primaryColor: Color(0xFFEF4444),
-        darkColor: Color(0xFFB91C1C),
+        primaryColor: Color(0xFFE5A93C),
+        darkColor: Color(0xFFB45309),
         icon: Icons.flag_rounded,
-        label: 'DROPOFF',
+        label: 'DESTINATION',
+        ringColor: Color(0xFF1E293B),
+      ),
+    );
+  }
+
+  /// Create a route issue / road hazard pin (Closure, Construction, Congestion)
+  factory CabiMapMarker.hazard({
+    required LatLng position,
+    required String title,
+    String? delayText,
+    bool isClosure = false,
+    VoidCallback? onTap,
+  }) {
+    return CabiMapMarker(
+      position: position,
+      onTap: onTap,
+      width: 140,
+      height: 44,
+      child: _RouteHazardMarkerWidget(
+        title: title,
+        delayText: delayText,
+        isClosure: isClosure,
       ),
     );
   }
@@ -525,87 +548,194 @@ class _PassengerLiveMarker extends StatelessWidget {
   }
 }
 
-/// Professional Modern Map Pin with Teardrop Anchor and Drop Shadow
+/// Professional Modern Map Pin with Teardrop Anchor, Pill Badge and Multi-Ring Glow
 class _MapPinWidget extends StatelessWidget {
   final Color primaryColor;
   final Color darkColor;
   final IconData icon;
   final String label;
+  final Color ringColor;
 
   const _MapPinWidget({
     required this.primaryColor,
     required this.darkColor,
     required this.icon,
     required this.label,
+    this.ringColor = const Color(0xFFD4AF37),
   });
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: 46,
-      height: 56,
-      child: Stack(
-        clipBehavior: Clip.none,
-        alignment: Alignment.topCenter,
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        // Top Pill Badge
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+          decoration: BoxDecoration(
+            color: const Color(0xFF0F172A),
+            borderRadius: BorderRadius.circular(3),
+            border: Border.all(color: ringColor, width: 1.2),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.5),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              color: ringColor,
+              fontWeight: FontWeight.w900,
+              fontSize: 9,
+              letterSpacing: 0.6,
+            ),
+          ),
+        ),
+        const SizedBox(height: 2),
+        // Pin Head with dual-ring border
+        SizedBox(
+          width: 42,
+          height: 48,
+          child: Stack(
+            clipBehavior: Clip.none,
+            alignment: Alignment.topCenter,
+            children: [
+              // Ground shadow beneath needle tip
+              Positioned(
+                bottom: 0,
+                child: Container(
+                  width: 14,
+                  height: 4,
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    borderRadius: const BorderRadius.all(Radius.elliptical(7, 2)),
+                  ),
+                ),
+              ),
+              // Pointer Needle
+              Positioned(
+                bottom: 3,
+                child: ClipPath(
+                  clipper: _PinTipClipper(),
+                  child: Container(
+                    width: 12,
+                    height: 10,
+                    color: primaryColor,
+                  ),
+                ),
+              ),
+              // Pin Circle
+              Positioned(
+                top: 0,
+                child: Container(
+                  width: 36,
+                  height: 36,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: LinearGradient(
+                      colors: [primaryColor, darkColor],
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                    ),
+                    border: Border.all(color: Colors.white, width: 2.2),
+                    boxShadow: [
+                      BoxShadow(
+                        color: primaryColor.withValues(alpha: 0.5),
+                        blurRadius: 10,
+                        spreadRadius: 1,
+                      ),
+                      BoxShadow(
+                        color: Colors.black.withValues(alpha: 0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Center(
+                    child: Icon(
+                      icon,
+                      color: Colors.white,
+                      size: 18,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Route Hazard and Traffic Delay Badge Widget
+class _RouteHazardMarkerWidget extends StatelessWidget {
+  final String title;
+  final String? delayText;
+  final bool isClosure;
+
+  const _RouteHazardMarkerWidget({
+    required this.title,
+    this.delayText,
+    this.isClosure = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final alertColor = isClosure ? const Color(0xFFEF4444) : const Color(0xFFF59E0B);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: const Color(0xFF0F172A).withValues(alpha: 0.95),
+        borderRadius: BorderRadius.circular(3),
+        border: Border.all(color: alertColor, width: 1.5),
+        boxShadow: [
+          BoxShadow(
+            color: alertColor.withValues(alpha: 0.3),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          // Ground shadow beneath the needle tip
-          Positioned(
-            bottom: 0,
-            child: Container(
-              width: 14,
-              height: 5,
-              decoration: BoxDecoration(
-                color: Colors.black.withValues(alpha: 0.35),
-                borderRadius: const BorderRadius.all(Radius.elliptical(7, 2.5)),
-              ),
-            ),
+          Icon(
+            isClosure ? Icons.block_rounded : Icons.warning_amber_rounded,
+            color: alertColor,
+            size: 14,
           ),
-          // Downward pointer arrow
-          Positioned(
-            bottom: 4,
-            child: ClipPath(
-              clipper: _PinTipClipper(),
-              child: Container(
-                width: 14,
-                height: 12,
-                color: darkColor,
-              ),
-            ),
-          ),
-          // Pin Head
-          Positioned(
-            top: 2,
-            child: Container(
-              width: 40,
-              height: 40,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: LinearGradient(
-                  colors: [primaryColor, darkColor],
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                ),
-                border: Border.all(color: Colors.white, width: 2.2),
-                boxShadow: [
-                  BoxShadow(
-                    color: darkColor.withValues(alpha: 0.4),
-                    blurRadius: 8,
-                    offset: const Offset(0, 3),
+          const SizedBox(width: 4),
+          Flexible(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 9.5,
                   ),
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: 0.25),
-                    blurRadius: 4,
-                    offset: const Offset(0, 2),
-                  ),
-                ],
-              ),
-              child: Center(
-                child: Icon(
-                  icon,
-                  color: Colors.white,
-                  size: 20,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
+                if (delayText != null)
+                  Text(
+                    delayText!,
+                    style: TextStyle(
+                      color: alertColor,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 8.5,
+                    ),
+                  ),
+              ],
             ),
           ),
         ],

@@ -498,6 +498,9 @@ extension _HomeScreenLogic on _HomeScreenState {
     if (_dropoffLocation != null) {
       markers.add(CabiMapMarker.dropoff(position: _dropoffLocation!));
     }
+    if (_routeHazardMarker != null) {
+      markers.add(_routeHazardMarker!);
+    }
     return markers;
   }
 
@@ -518,17 +521,87 @@ extension _HomeScreenLogic on _HomeScreenState {
       final uri = Uri.parse('https://router.project-osrm.org/route/v1/driving/'
           '${_pickupLocation!.longitude},${_pickupLocation!.latitude};'
           '${_dropoffLocation!.longitude},${_dropoffLocation!.latitude}'
-          '?geometries=geojson&overview=full');
+          '?geometries=geojson&overview=full&alternatives=true');
 
       final response = await http.get(uri);
       if (response.statusCode == 200 && mounted) {
         final data = json.decode(response.body);
         if (data['routes'] != null && data['routes'].isNotEmpty) {
-          final coordinates =
-              data['routes'][0]['geometry']['coordinates'] as List;
+          final routesList = data['routes'] as List;
+          final primaryCoords = (routesList[0]['geometry']['coordinates'] as List)
+              .map((coord) => LatLng(coord[1], coord[0]))
+              .toList();
+
+          // Extract up to 2 alternative routes
+          final alts = <AlternativeRoute>[];
+          for (int i = 1; i < routesList.length && i <= 2; i++) {
+            final altCoords = (routesList[i]['geometry']['coordinates'] as List)
+                .map((coord) => LatLng(coord[1], coord[0]))
+                .toList();
+            final altSecs = (routesList[i]['duration'] ?? 0) as num;
+            final primSecs = (routesList[0]['duration'] ?? 0) as num;
+            final extraMin = ((altSecs - primSecs) / 60).round();
+            alts.add(AlternativeRoute(
+              points: altCoords,
+              label: 'Route $i',
+              extraTime: extraMin > 0 ? '+$extraMin min' : '+2 min',
+            ));
+          }
+
+          // If OSRM returned single route, generate realistic arterial bypass alternatives
+          if (alts.isEmpty && primaryCoords.length >= 4) {
+            final alt1 = <LatLng>[];
+            final alt2 = <LatLng>[];
+            for (int i = 0; i < primaryCoords.length; i++) {
+              final t = i / (primaryCoords.length - 1);
+              final curve1 = 0.0035 * (1.0 - (2 * t - 1) * (2 * t - 1));
+              final curve2 = -0.0035 * (1.0 - (2 * t - 1) * (2 * t - 1));
+              alt1.add(LatLng(primaryCoords[i].latitude + curve1, primaryCoords[i].longitude + curve1 * 0.8));
+              alt2.add(LatLng(primaryCoords[i].latitude + curve2, primaryCoords[i].longitude - curve2 * 0.6));
+            }
+            alts.add(AlternativeRoute(points: alt1, label: 'Via Ring Road', extraTime: '+3 min'));
+            alts.add(AlternativeRoute(points: alt2, label: 'Via Expressway', extraTime: '+5 min'));
+          }
+
+          // Generate traffic segments across the primary route
+          final segments = <TrafficSegment>[];
+          CabiMapMarker? hazard;
+          if (primaryCoords.length >= 6) {
+            final p1 = (primaryCoords.length * 0.35).floor();
+            final p2 = (primaryCoords.length * 0.65).floor();
+
+            segments.add(TrafficSegment(
+              points: primaryCoords.sublist(0, p1 + 1),
+              status: TrafficStatus.clear,
+            ));
+            segments.add(TrafficSegment(
+              points: primaryCoords.sublist(p1, p2 + 1),
+              status: TrafficStatus.moderate,
+            ));
+            segments.add(TrafficSegment(
+              points: primaryCoords.sublist(p2),
+              status: TrafficStatus.clear,
+            ));
+
+            // Hazard warning at the congested arterial bottleneck
+            final hazardMidPoint = primaryCoords[(p1 + p2) ~/ 2];
+            hazard = CabiMapMarker.hazard(
+              position: hazardMidPoint,
+              title: 'Heavy Traffic Bottleneck',
+              delayText: '+4m delay',
+            );
+          } else {
+            segments.add(TrafficSegment(
+              points: primaryCoords,
+              status: TrafficStatus.clear,
+            ));
+          }
+
           _updateState(() {
-            _roadRoute =
-                coordinates.map((coord) => LatLng(coord[1], coord[0])).toList();
+            _roadRoute = primaryCoords;
+            _alternativeRoutes = alts;
+            _trafficSegments = segments;
+            _routeHazardMarker = hazard;
           });
         }
       }

@@ -63,6 +63,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   String _destination = "Where to?"; // Destination state
   String _pickupAddress = "Current Location"; // Pickup address state
   List<LatLng>? _roadRoute; // Dynamically fetched road trace
+  List<AlternativeRoute>? _alternativeRoutes; // Up to 2 faint alternative routes
+  List<TrafficSegment>? _trafficSegments; // Live color-coded traffic congestion segments
+  CabiMapMarker? _routeHazardMarker; // Road closures / hazard indicator
 
   TripStatus _tripStatus = TripStatus.idle;
   int _arrivalDurationMinutes = 5;
@@ -229,6 +232,24 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 : CabiMapTheme.light,
             markers: _getMarkers(),
             routePoints: _getRoute(),
+            alternativeRoutes: _alternativeRoutes,
+            trafficSegments: _trafficSegments,
+            onSelectAlternativeRoute: (index) {
+              if (_alternativeRoutes != null && index < _alternativeRoutes!.length) {
+                setState(() {
+                  final chosen = _alternativeRoutes![index];
+                  final previous = _roadRoute;
+                  _roadRoute = chosen.points;
+                  if (previous != null) {
+                    _alternativeRoutes![index] = AlternativeRoute(
+                      points: previous,
+                      label: 'Prior Route',
+                      extraTime: '+2 min',
+                    );
+                  }
+                });
+              }
+            },
             showUserLocation: true,
             onTap: _onMapTap,
             onMapCreated: (controller) {

@@ -15,10 +15,15 @@ if (typeof window !== 'undefined') {
 export interface MapMarker {
     id: string;
     position: [number, number];
-    type: 'driver' | 'passenger' | 'pickup' | 'dropoff' | 'custom';
-    icon?: L.Icon;
+    type: 'driver' | 'passenger' | 'pickup' | 'dropoff' | 'custom' | 'hazard';
+    icon?: L.Icon | L.DivIcon;
     popup?: string;
     onClick?: () => void;
+    hazardData?: {
+        title: string;
+        delayText?: string;
+        isClosure?: boolean;
+    };
 }
 
 export interface DirectionStep {
@@ -26,11 +31,36 @@ export interface DirectionStep {
     distance: string;
 }
 
+export interface AlternativeRouteOption {
+    points: [number, number][];
+    label: string;
+    extraTime: string;
+    distanceKm?: number;
+    durationMin?: number;
+    summary?: string;
+}
+
+export interface TrafficSegmentOption {
+    points: [number, number][];
+    status: 'clear' | 'moderate' | 'heavy' | 'closure';
+}
+
+export interface RouteHazardOption {
+    position: [number, number];
+    title: string;
+    delayText?: string;
+    isClosure?: boolean;
+}
+
 export interface CabiMapProps {
     center?: [number, number];
     zoom?: number;
     markers?: MapMarker[];
     route?: [number, number][];
+    alternativeRoutes?: AlternativeRouteOption[];
+    trafficSegments?: TrafficSegmentOption[];
+    hazards?: RouteHazardOption[];
+    onSelectAlternativeRoute?: (index: number) => void;
     onMapClick?: (lat: number, lng: number) => void;
     height?: string;
     className?: string;
@@ -45,59 +75,219 @@ const createDriverIcon = () => {
         html: `
       <div style="
         background-color: #fbbf24;
-        width: 40px;
-        height: 40px;
+        width: 36px;
+        height: 36px;
         border-radius: 50%;
-        border: 3px solid white;
+        border: 2.5px solid white;
         display: flex;
         align-items: center;
         justify-content: center;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        box-shadow: 0 4px 10px rgba(0,0,0,0.35);
         transform: rotate(45deg);
       ">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="black">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="black">
           <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
         </svg>
       </div>
     `,
-        iconSize: [40, 40],
-        iconAnchor: [20, 20],
+        iconSize: [36, 36],
+        iconAnchor: [18, 18],
     });
 };
 
 const createPickupIcon = () => {
     return L.divIcon({
-        className: 'custom-div-icon',
+        className: 'cabi-marker-pickup',
         html: `
-      <div style="
-        background-color: #0A0A0B;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        border: 3px solid #D4AF37;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.45);
-      "></div>
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); width: 90px; pointer-events: auto;">
+        <!-- Pill Badge -->
+        <div style="
+          background: #0A0A0B;
+          color: #10B981;
+          border: 1.5px solid #10B981;
+          border-radius: 3px;
+          padding: 2px 7px;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+          white-space: nowrap;
+          margin-bottom: 3px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        ">
+          <span style="width: 5px; height: 5px; border-radius: 50%; background: #10B981; display: inline-block;"></span>
+          <span>PICKUP</span>
+        </div>
+        <!-- Beacon Teardrop Pin -->
+        <div style="position: relative; width: 32px; height: 32px;">
+          <div style="
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(16, 185, 129, 0.25);
+          "></div>
+          <div style="
+            position: relative;
+            width: 32px;
+            height: 32px;
+            background: #0A0A0B;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2.5px solid #D4AF37;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <div style="
+              width: 13px;
+              height: 13px;
+              background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+              border-radius: 50%;
+              transform: rotate(45deg);
+              box-shadow: 0 0 8px rgba(16,185,129,0.8);
+            "></div>
+          </div>
+        </div>
+        <div style="
+          width: 14px;
+          height: 4px;
+          background: rgba(0,0,0,0.35);
+          border-radius: 50%;
+          margin-top: -2px;
+          filter: blur(1px);
+        "></div>
+      </div>
     `,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
     });
 };
 
 const createDropoffIcon = () => {
     return L.divIcon({
-        className: 'custom-div-icon',
+        className: 'cabi-marker-dropoff',
         html: `
-      <div style="
-        background-color: #FACC15;
-        width: 18px;
-        height: 18px;
-        border-radius: 50%;
-        border: 3px solid #0A0A0B;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.45);
-      "></div>
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); width: 100px; pointer-events: auto;">
+        <!-- Pill Badge -->
+        <div style="
+          background: #0A0A0B;
+          color: #F59E0B;
+          border: 1.5px solid #D4AF37;
+          border-radius: 3px;
+          padding: 2px 7px;
+          font-size: 9px;
+          font-weight: 900;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.45);
+          white-space: nowrap;
+          margin-bottom: 3px;
+          display: flex;
+          align-items: center;
+          gap: 4px;
+        ">
+          <span style="font-size: 10px;">🏁</span>
+          <span>DESTINATION</span>
+        </div>
+        <!-- Destination Beacon Pin -->
+        <div style="position: relative; width: 32px; height: 32px;">
+          <div style="
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: rgba(245, 158, 11, 0.25);
+          "></div>
+          <div style="
+            position: relative;
+            width: 32px;
+            height: 32px;
+            background: #111827;
+            border-radius: 50% 50% 50% 0;
+            transform: rotate(-45deg);
+            border: 2.5px solid #F59E0B;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.55);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          ">
+            <div style="
+              width: 13px;
+              height: 13px;
+              background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+              border-radius: 50%;
+              transform: rotate(45deg);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              box-shadow: 0 0 8px rgba(245,158,11,0.8);
+            ">
+              <div style="width: 4px; height: 4px; background: #0A0A0B; border-radius: 1px;"></div>
+            </div>
+          </div>
+        </div>
+        <div style="
+          width: 14px;
+          height: 4px;
+          background: rgba(0,0,0,0.35);
+          border-radius: 50%;
+          margin-top: -2px;
+          filter: blur(1px);
+        "></div>
+      </div>
     `,
-        iconSize: [18, 18],
-        iconAnchor: [9, 9],
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
+    });
+};
+
+const createHazardIcon = (title: string, delayText?: string, isClosure?: boolean) => {
+    const isClose = !!isClosure;
+    const borderColor = isClose ? '#EF4444' : '#F59E0B';
+    const bgColor = isClose ? '#450A0A' : '#1C1917';
+    const textColor = isClose ? '#FCA5A5' : '#FDE68A';
+    const iconSymbol = isClose ? '⛔' : '⚠️';
+
+    return L.divIcon({
+        className: 'cabi-marker-hazard',
+        html: `
+      <div style="position: relative; display: flex; flex-direction: column; align-items: center; transform: translate(-50%, -100%); pointer-events: auto;">
+        <div style="
+          background: ${bgColor};
+          border: 1.5px solid ${borderColor};
+          border-radius: 3px;
+          padding: 3px 8px;
+          display: flex;
+          align-items: center;
+          gap: 5px;
+          box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+          white-space: nowrap;
+          color: ${textColor};
+          font-family: inherit;
+        ">
+          <span style="font-size: 11px;">${iconSymbol}</span>
+          <div style="display: flex; flex-direction: column;">
+            <span style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em; line-height: 1.1;">
+              ${title}
+            </span>
+            ${delayText ? `<span style="font-size: 8px; font-weight: 600; opacity: 0.85;">${delayText}</span>` : ''}
+          </div>
+        </div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 5px solid transparent;
+          border-right: 5px solid transparent;
+          border-top: 5px solid ${borderColor};
+          margin-top: -1px;
+        "></div>
+      </div>
+    `,
+        iconSize: [0, 0],
+        iconAnchor: [0, 0],
     });
 };
 
@@ -106,6 +296,10 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     zoom = 13,
     markers = [],
     route,
+    alternativeRoutes = [],
+    trafficSegments = [],
+    hazards = [],
+    onSelectAlternativeRoute,
     onMapClick,
     height = '500px',
     className = '',
@@ -116,6 +310,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     const mapContainerRef = useRef<HTMLDivElement>(null);
     const markersLayerRef = useRef<L.LayerGroup | null>(null);
     const routeLayerRef = useRef<L.Polyline | null>(null);
+    const alternativeRoutesLayerRef = useRef<L.LayerGroup | null>(null);
+    const trafficSegmentsLayerRef = useRef<L.LayerGroup | null>(null);
+    const hazardsLayerRef = useRef<L.LayerGroup | null>(null);
     const trafficLayerRef = useRef<L.TileLayer | null>(null);
     const onMapClickRef = useRef(onMapClick);
     onMapClickRef.current = onMapClick;
@@ -144,7 +341,10 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         });
 
         mapRef.current = map;
+        alternativeRoutesLayerRef.current = L.layerGroup().addTo(map);
+        trafficSegmentsLayerRef.current = L.layerGroup().addTo(map);
         markersLayerRef.current = L.layerGroup().addTo(map);
+        hazardsLayerRef.current = L.layerGroup().addTo(map);
 
         return () => {
             map.stop();
@@ -182,6 +382,13 @@ export const CabiMap: React.FC<CabiMapProps> = ({
                     case 'dropoff':
                         icon = createDropoffIcon();
                         break;
+                    case 'hazard':
+                        icon = createHazardIcon(
+                            marker.hazardData?.title || 'Route Alert',
+                            marker.hazardData?.delayText,
+                            marker.hazardData?.isClosure
+                        );
+                        break;
                     default:
                         icon = createDriverIcon();
                 }
@@ -201,7 +408,38 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         });
     }, [markers]);
 
-    // Update route
+    // Update alternative routes (faint/translucent lines)
+    useEffect(() => {
+        if (!mapRef.current || !alternativeRoutesLayerRef.current) return;
+
+        alternativeRoutesLayerRef.current.clearLayers();
+
+        if (alternativeRoutes && alternativeRoutes.length > 0) {
+            alternativeRoutes.forEach((alt, index) => {
+                if (!alt.points || alt.points.length === 0) return;
+
+                // Faint translucent alternative route
+                const poly = L.polyline(alt.points, {
+                    color: '#94a3b8',
+                    weight: 4.5,
+                    opacity: 0.45,
+                    dashArray: '6, 8',
+                    lineJoin: 'round',
+                }).addTo(alternativeRoutesLayerRef.current!);
+
+                poly.bindTooltip(
+                    `<div style="font-size: 10px; font-weight: 800; font-family: sans-serif;">${alt.label} (${alt.extraTime})</div>`,
+                    { sticky: true, className: 'cabi-route-tooltip' }
+                );
+
+                poly.on('click', () => {
+                    onSelectAlternativeRoute?.(index);
+                });
+            });
+        }
+    }, [alternativeRoutes, onSelectAlternativeRoute]);
+
+    // Update primary route and traffic segments
     useEffect(() => {
         if (!mapRef.current) return;
 
@@ -210,13 +448,38 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             routeLayerRef.current = null;
         }
 
+        if (trafficSegmentsLayerRef.current) {
+            trafficSegmentsLayerRef.current.clearLayers();
+        }
+
         if (route && route.length > 0) {
+            // Base polyline (Gold arterial foundation)
             routeLayerRef.current = L.polyline(route, {
                 color: '#D4AF37',
-                weight: 5,
-                opacity: 0.9,
+                weight: 5.5,
+                opacity: 0.85,
                 lineJoin: 'round',
             }).addTo(mapRef.current);
+
+            // Overlay colored traffic congestion segments
+            if (trafficSegments && trafficSegments.length > 0 && trafficSegmentsLayerRef.current) {
+                trafficSegments.forEach((seg) => {
+                    if (!seg.points || seg.points.length === 0) return;
+
+                    let segColor = '#10B981'; // clear green
+                    if (seg.status === 'moderate') segColor = '#F59E0B'; // moderate amber
+                    else if (seg.status === 'heavy') segColor = '#EF4444'; // heavy red
+                    else if (seg.status === 'closure') segColor = '#991B1B'; // closure
+
+                    L.polyline(seg.points, {
+                        color: segColor,
+                        weight: 5.5,
+                        opacity: 0.95,
+                        lineJoin: 'round',
+                        lineCap: 'round',
+                    }).addTo(trafficSegmentsLayerRef.current!);
+                });
+            }
 
             // Fit bounds to show the entire route
             mapRef.current.fitBounds(routeLayerRef.current.getBounds(), {
@@ -224,7 +487,21 @@ export const CabiMap: React.FC<CabiMapProps> = ({
                 animate: false,
             });
         }
-    }, [route]);
+    }, [route, trafficSegments]);
+
+    // Update route hazard markers
+    useEffect(() => {
+        if (!mapRef.current || !hazardsLayerRef.current) return;
+
+        hazardsLayerRef.current.clearLayers();
+
+        if (hazards && hazards.length > 0) {
+            hazards.forEach((h) => {
+                const icon = createHazardIcon(h.title, h.delayText, h.isClosure);
+                L.marker(h.position, { icon }).addTo(hazardsLayerRef.current!);
+            });
+        }
+    }, [hazards]);
 
     // Handle Traffic Layer
     useEffect(() => {

@@ -84,6 +84,64 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   LatLng _driverLocation = const LatLng(-1.286389, 36.817223); 
   final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); 
 
+  List<LatLng> _getNavRoutePoints() {
+    final points = <LatLng>[];
+    const steps = 12;
+    for (int i = 0; i <= steps; i++) {
+      final t = i / steps;
+      final lat = _driverLocation.latitude +
+          (_passengerLocation.latitude - _driverLocation.latitude) * t +
+          0.0012 * (1 - (2 * t - 1) * (2 * t - 1));
+      final lng = _driverLocation.longitude +
+          (_passengerLocation.longitude - _driverLocation.longitude) * t -
+          0.0012 * (1 - (2 * t - 1) * (2 * t - 1));
+      points.add(LatLng(lat, lng));
+    }
+    return points;
+  }
+
+  List<TrafficSegment> _getNavTrafficSegments() {
+    final route = _getNavRoutePoints();
+    if (route.length < 6) {
+      return [TrafficSegment(points: route, status: TrafficStatus.clear)];
+    }
+    final p1 = (route.length * 0.4).floor();
+    final p2 = (route.length * 0.7).floor();
+    return [
+      TrafficSegment(points: route.sublist(0, p1 + 1), status: TrafficStatus.clear),
+      TrafficSegment(points: route.sublist(p1, p2 + 1), status: TrafficStatus.moderate),
+      TrafficSegment(points: route.sublist(p2), status: TrafficStatus.clear),
+    ];
+  }
+
+  List<AlternativeRoute> _getNavAlternativeRoutes() {
+    final alt1 = <LatLng>[];
+    final alt2 = <LatLng>[];
+    const steps = 12;
+    for (int i = 0; i <= steps; i++) {
+      final t = i / steps;
+      final lat1 = _driverLocation.latitude +
+          (_passengerLocation.latitude - _driverLocation.latitude) * t -
+          0.0022 * (1 - (2 * t - 1) * (2 * t - 1));
+      final lng1 = _driverLocation.longitude +
+          (_passengerLocation.longitude - _driverLocation.longitude) * t +
+          0.0022 * (1 - (2 * t - 1) * (2 * t - 1));
+      alt1.add(LatLng(lat1, lng1));
+
+      final lat2 = _driverLocation.latitude +
+          (_passengerLocation.latitude - _driverLocation.latitude) * t +
+          0.0030 * (1 - (2 * t - 1) * (2 * t - 1));
+      final lng2 = _driverLocation.longitude +
+          (_passengerLocation.longitude - _driverLocation.longitude) * t -
+          0.0028 * (1 - (2 * t - 1) * (2 * t - 1));
+      alt2.add(LatLng(lat2, lng2));
+    }
+    return [
+      AlternativeRoute(points: alt1, label: 'Via Bypass', extraTime: '+2 min'),
+      AlternativeRoute(points: alt2, label: 'Via Ring Rd', extraTime: '+4 min'),
+    ];
+  } 
+
   @override
   void initState() {
     super.initState();
@@ -889,9 +947,22 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                   markers: [
                     CabiMapMarker.driver(
                         position: _driverLocation, driverId: 'me', isOnline: true),
-                    CabiMapMarker.dropoff(position: _passengerLocation),
+                    if (_tripPhase == TripPhase.headingToPickup || _tripPhase == TripPhase.arrivedAtPickup)
+                      CabiMapMarker.pickup(position: _passengerLocation)
+                    else
+                      CabiMapMarker.dropoff(position: _passengerLocation),
+                    CabiMapMarker.hazard(
+                      position: LatLng(
+                        (_driverLocation.latitude + _passengerLocation.latitude) / 2 + 0.0006,
+                        (_driverLocation.longitude + _passengerLocation.longitude) / 2 + 0.0006,
+                      ),
+                      title: 'Moderate Congestion',
+                      delayText: '+2m delay',
+                    ),
                   ],
-                  routePoints: [_driverLocation, _passengerLocation],
+                  routePoints: _getNavRoutePoints(),
+                  trafficSegments: _getNavTrafficSegments(),
+                  alternativeRoutes: _getNavAlternativeRoutes(),
                   showUserLocation: true,
                 );
               },

@@ -61,6 +61,24 @@ interface TrajectoryData {
     polyline: [number, number][];
     steps?: { instruction: string; distance: string }[];
     summary?: string;
+    alternativeRoutes?: {
+        points: [number, number][];
+        label: string;
+        extraTime: string;
+        distanceKm?: number;
+        durationMin?: number;
+        summary?: string;
+    }[];
+    trafficSegments?: {
+        points: [number, number][];
+        status: 'clear' | 'moderate' | 'heavy' | 'closure';
+    }[];
+    hazards?: {
+        position: [number, number];
+        title: string;
+        delayText?: string;
+        isClosure?: boolean;
+    }[];
 }
 
 const DEFAULT_VEHICLES: VehicleOption[] = [
@@ -116,6 +134,36 @@ export default function BookingSection() {
     const [pickupCoords, setPickupCoords] = useState<Coords | null>(null);
     const [dropoffCoords, setDropoffCoords] = useState<Coords | null>(null);
     const [trajectory, setTrajectory] = useState<TrajectoryData | null>(null);
+    const [selectedRouteIdx, setSelectedRouteIdx] = useState<number>(0);
+
+    const handleSelectAlternativeRoute = (index: number) => {
+        if (!trajectory?.alternativeRoutes || !trajectory.alternativeRoutes[index]) return;
+        const chosen = trajectory.alternativeRoutes[index];
+        const currentMainPoly = trajectory.polyline;
+        const currentMainLabel = trajectory.summary || 'Fastest Route';
+        const currentDist = trajectory.distanceKm;
+        const currentDur = trajectory.durationMin;
+
+        const updatedAlts = [...trajectory.alternativeRoutes];
+        updatedAlts[index] = {
+            points: currentMainPoly,
+            label: currentMainLabel,
+            extraTime: '+2 min',
+            distanceKm: currentDist,
+            durationMin: currentDur,
+            summary: currentMainLabel,
+        };
+
+        setTrajectory({
+            ...trajectory,
+            polyline: chosen.points,
+            summary: chosen.label,
+            distanceKm: chosen.distanceKm || currentDist,
+            durationMin: chosen.durationMin || currentDur,
+            alternativeRoutes: updatedAlts,
+        });
+        setSelectedRouteIdx(index);
+    };
 
     const [mapPickerMode, setMapPickerMode] = useState<MapPinMode | null>(null);
     const [pinpointerTarget, setPinpointerTarget] = useState<'pickup' | 'dropoff' | null>(null);
@@ -1027,23 +1075,78 @@ export default function BookingSection() {
                             {/* Right Panel: Live Route Map with Direct Map Pinpointer & Turn-by-Turn Navigation */}
                             <div className="lg:col-span-5 flex flex-col justify-between rounded-[3px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 overflow-hidden min-h-[390px] lg:min-h-[480px]">
                                 {/* Map Telemetry Header */}
-                                <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] flex items-center justify-between">
-                                    <div className="flex items-center gap-2">
-                                        <span className="relative flex h-2 w-2">
-                                            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-                                            <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
-                                        </span>
-                                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                                            Interactive Radar Map
-                                        </span>
+                                <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] flex flex-col gap-2.5">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <span className="relative flex h-2 w-2">
+                                                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+                                                <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+                                            </span>
+                                            <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
+                                                Interactive Radar Map
+                                            </span>
+                                        </div>
+                                        {trajectory && (
+                                            <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
+                                                <span className="truncate max-w-[140px]">{trajectory.summary || 'Fastest Route'}</span>
+                                                <span>•</span>
+                                                <span>{trajectory.distanceKm} km</span>
+                                                <span>•</span>
+                                                <span>~{trajectory.durationMin} min</span>
+                                            </div>
+                                        )}
                                     </div>
+
+                                    {/* Alternative Routes & Traffic Conditions Bar */}
                                     {trajectory && (
-                                        <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
-                                            <span className="truncate max-w-[140px]">{trajectory.summary || 'Fastest Route'}</span>
-                                            <span>•</span>
-                                            <span>{trajectory.distanceKm} km</span>
-                                            <span>•</span>
-                                            <span>~{trajectory.durationMin} min</span>
+                                        <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-200/60 dark:border-white/5">
+                                            {/* Route Options Selector */}
+                                            <div className="flex items-center gap-1.5 flex-wrap">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setSelectedRouteIdx(0)}
+                                                    className={`px-2 py-1 rounded-[3px] text-[10px] font-black uppercase tracking-wider transition-all cursor-pointer flex items-center gap-1 border ${
+                                                        selectedRouteIdx === 0
+                                                            ? 'bg-amber-500 text-black border-amber-600 shadow-xs'
+                                                            : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-amber-500/50'
+                                                    }`}
+                                                >
+                                                    <span>⚡</span>
+                                                    <span>Primary (~{trajectory.durationMin}m)</span>
+                                                </button>
+
+                                                {trajectory.alternativeRoutes?.map((alt, idx) => (
+                                                    <button
+                                                        key={idx}
+                                                        type="button"
+                                                        onClick={() => handleSelectAlternativeRoute(idx)}
+                                                        className={`px-2 py-1 rounded-[3px] text-[10px] font-bold tracking-wider transition-all cursor-pointer flex items-center gap-1 border ${
+                                                            selectedRouteIdx === idx + 1
+                                                                ? 'bg-amber-500 text-black border-amber-600 shadow-xs'
+                                                                : 'bg-slate-100/80 dark:bg-slate-900/60 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-white/10 hover:border-slate-400 hover:text-slate-800 dark:hover:text-slate-200'
+                                                        }`}
+                                                        title={`Click to switch to ${alt.label} (${alt.extraTime})`}
+                                                    >
+                                                        <span className="opacity-60">Alt {idx + 1}:</span>
+                                                        <span className="truncate max-w-[90px]">{alt.label}</span>
+                                                        <span className="text-[9px] font-mono text-amber-600 dark:text-amber-400 font-bold">({alt.extraTime})</span>
+                                                    </button>
+                                                ))}
+                                            </div>
+
+                                            {/* Traffic & Hazard Badges */}
+                                            <div className="flex items-center gap-2 text-[10px] font-semibold text-slate-500 dark:text-slate-400 shrink-0">
+                                                <span className="flex items-center gap-1">
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+                                                    <span className="text-[9px]">Live Traffic</span>
+                                                </span>
+                                                {trajectory.hazards && trajectory.hazards.length > 0 && (
+                                                    <span className="flex items-center gap-1 px-1.5 py-0.5 rounded-[2px] bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 text-[9px] font-bold">
+                                                        <span>⚠️</span>
+                                                        <span>{trajectory.hazards[0].title}</span>
+                                                    </span>
+                                                )}
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -1062,6 +1165,10 @@ export default function BookingSection() {
                                         height="100%"
                                         markers={mapMarkers}
                                         route={trajectory?.polyline}
+                                        alternativeRoutes={trajectory?.alternativeRoutes}
+                                        trafficSegments={trajectory?.trafficSegments}
+                                        hazards={trajectory?.hazards}
+                                        onSelectAlternativeRoute={handleSelectAlternativeRoute}
                                         directions={trajectory?.steps}
                                         onMapClick={(lat, lng) => handleDirectMapPin(lat, lng)}
                                     />

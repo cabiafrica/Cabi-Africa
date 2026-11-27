@@ -22,6 +22,51 @@ enum CabiMapSource {
   cabiAfrica,
 }
 
+/// Traffic congestion status for route segments
+enum TrafficStatus {
+  clear,
+  moderate,
+  heavy,
+  closure,
+}
+
+/// Segment of a route with colored traffic telemetry
+class TrafficSegment {
+  final List<LatLng> points;
+  final TrafficStatus status;
+
+  const TrafficSegment({
+    required this.points,
+    this.status = TrafficStatus.clear,
+  });
+
+  Color get color {
+    switch (status) {
+      case TrafficStatus.clear:
+        return const Color(0xFF10B981); // Emerald flow
+      case TrafficStatus.moderate:
+        return const Color(0xFFF59E0B); // Amber delay
+      case TrafficStatus.heavy:
+        return const Color(0xFFEF4444); // Red congestion
+      case TrafficStatus.closure:
+        return const Color(0xFF991B1B); // Dark road closure
+    }
+  }
+}
+
+/// Alternative route option displayed in faint colors
+class AlternativeRoute {
+  final List<LatLng> points;
+  final String label;
+  final String extraTime;
+
+  const AlternativeRoute({
+    required this.points,
+    required this.label,
+    required this.extraTime,
+  });
+}
+
 /// Custom map widget for Cabi platform
 /// Supports both Google Maps and Cabi Africa Maps
 class CabiMap extends StatefulWidget {
@@ -29,6 +74,9 @@ class CabiMap extends StatefulWidget {
   final double initialZoom;
   final List<CabiMapMarker> markers;
   final List<LatLng>? routePoints;
+  final List<AlternativeRoute>? alternativeRoutes;
+  final List<TrafficSegment>? trafficSegments;
+  final Function(int routeIndex)? onSelectAlternativeRoute;
   final Function(LatLng)? onTap;
   final Function(LatLng)? onLongPress;
   final bool showUserLocation;
@@ -45,6 +93,9 @@ class CabiMap extends StatefulWidget {
     this.initialZoom = 13.0,
     this.markers = const [],
     this.routePoints,
+    this.alternativeRoutes,
+    this.trafficSegments,
+    this.onSelectAlternativeRoute,
     this.onTap,
     this.onLongPress,
     this.onMapCreated,
@@ -76,6 +127,8 @@ class _CabiMapState extends State<CabiMap> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDark = widget.theme == CabiMapTheme.dark;
+
     return FlutterMap(
       mapController: _mapController,
       options: MapOptions(
@@ -105,7 +158,7 @@ class _CabiMapState extends State<CabiMap> {
         // Universal clean basemap tile layer (CartoDB Positron for light, Dark Matter for dark)
         TileLayer(
           key: ValueKey('cabi_clean_map_${widget.theme.name}'),
-          urlTemplate: widget.theme == CabiMapTheme.dark
+          urlTemplate: isDark
               ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}.png'
               : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png',
           subdomains: const ['a', 'b', 'c', 'd'],
@@ -113,23 +166,51 @@ class _CabiMapState extends State<CabiMap> {
           maxZoom: 20,
         ),
 
-        // Route polyline if provided
+        // Up to 2 Alternative Routes in Faint Colors (beneath primary route)
+        if (widget.alternativeRoutes != null && widget.alternativeRoutes!.isNotEmpty)
+          PolylineLayer(
+            polylines: widget.alternativeRoutes!.map((alt) {
+              return Polyline(
+                points: alt.points,
+                strokeWidth: 3.5,
+                color: isDark
+                    ? const Color(0x5594A3B8) // Faint muted slate in dark mode
+                    : const Color(0x6664748B), // Faint slate in light mode
+                borderStrokeWidth: 1.0,
+                borderColor: isDark ? const Color(0x33000000) : const Color(0x33FFFFFF),
+              );
+            }).toList(),
+          ),
+
+        // Primary Route Polyline (Gold base)
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty)
           PolylineLayer(
             polylines: [
               Polyline(
                 points: widget.routePoints!,
-                strokeWidth: 4.5,
-                color: const Color(0xFFE5A93C),
+                strokeWidth: 5.0,
+                color: const Color(0xFFD4AF37),
                 borderStrokeWidth: 2.0,
-                borderColor: widget.theme == CabiMapTheme.dark
-                    ? const Color(0xFF141414)
-                    : Colors.white,
+                borderColor: isDark ? const Color(0xFF0A0A0B) : Colors.white,
               ),
             ],
           ),
 
-        // Markers
+        // Traffic Congestion Overlay Segments (Green flow, Amber moderate, Red heavy)
+        if (widget.trafficSegments != null && widget.trafficSegments!.isNotEmpty)
+          PolylineLayer(
+            polylines: widget.trafficSegments!.map((seg) {
+              return Polyline(
+                points: seg.points,
+                strokeWidth: 4.0,
+                color: seg.color,
+                borderStrokeWidth: 1.0,
+                borderColor: Colors.black26,
+              );
+            }).toList(),
+          ),
+
+        // Markers Layer
         MarkerLayer(
           markers: widget.markers.map((marker) {
             return Marker(
