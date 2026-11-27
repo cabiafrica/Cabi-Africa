@@ -70,6 +70,7 @@ export interface CabiMapProps {
     className?: string;
     showTraffic?: boolean;
     directions?: DirectionStep[];
+    themeMode?: 'light' | 'dark' | 'auto';
 }
 
 // Moderate, non-aggressive vehicle category colors (strictly no purple)
@@ -397,6 +398,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     className = '',
     showTraffic = false,
     directions = [],
+    themeMode = 'auto',
 }) => {
     const mapRef = useRef<L.Map | null>(null);
     const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -406,6 +408,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     const trafficSegmentsLayerRef = useRef<L.LayerGroup | null>(null);
     const hazardsLayerRef = useRef<L.LayerGroup | null>(null);
     const trafficLayerRef = useRef<L.TileLayer | null>(null);
+    const baseTileLayerRef = useRef<L.TileLayer | null>(null);
     const onMapClickRef = useRef(onMapClick);
     onMapClickRef.current = onMapClick;
 
@@ -423,7 +426,10 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         // Add zoom control to bottom right
         L.control.zoom({ position: 'bottomright' }).addTo(map);
 
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        // High-reliability monochrome basemap with shaded greys:
+        // Uses OpenStreetMap tiles with custom SVG/CSS filter matrices for crystal-clear
+        // black/white/grey shaded streets without any third-party API key requirements.
+        baseTileLayerRef.current = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '© OpenStreetMap contributors',
             maxZoom: 19,
         }).addTo(map);
@@ -518,12 +524,13 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             alternativeRoutes.forEach((alt, index) => {
                 if (!alt.points || alt.points.length === 0) return;
 
-                // Faint translucent alternative route
+                // Faint translucent alternative route (grey shaded)
+                const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true;
                 const poly = L.polyline(alt.points, {
-                    color: '#94a3b8',
-                    weight: 4.5,
-                    opacity: 0.45,
-                    dashArray: '6, 8',
+                    color: isDark ? '#64748B' : '#94A3B8',
+                    weight: 4.0,
+                    opacity: 0.40,
+                    dashArray: '5, 8',
                     lineJoin: 'round',
                 }).addTo(alternativeRoutesLayerRef.current!);
 
@@ -630,6 +637,15 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
     return (
         <div className="relative w-full h-full overflow-hidden rounded-[3px] border border-slate-200 dark:border-white/10 shadow-lg">
+            {/* Target purely by html.dark or html:not(.dark) without mutating Leaflet container classes */}
+            <style jsx global>{`
+                html.dark .leaflet-tile-pane {
+                    filter: grayscale(100%) invert(92%) contrast(110%) brightness(82%);
+                }
+                html:not(.dark) .leaflet-tile-pane {
+                    filter: grayscale(100%) contrast(92%) brightness(102%);
+                }
+            `}</style>
             <div
                 ref={mapContainerRef}
                 style={{ height, width: '100%' }}

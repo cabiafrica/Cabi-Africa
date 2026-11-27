@@ -154,13 +154,11 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             zoomControl: false // Custom zoom control styling can be added later
         }).setView(center, zoom);
 
-        const googleMapsKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0';
-        const tileUrl = `https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${googleMapsKey}`;
+        const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
 
         tileLayerRef.current = L.tileLayer(tileUrl, {
-            subdomains: ['0', '1', '2', '3'],
-            attribution: '&copy; Google Maps',
-            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap contributors',
+            maxZoom: 19,
         }).addTo(map);
 
         L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -182,8 +180,9 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
     useEffect(() => {
         if (!mapRef.current || !tileLayerRef.current) return;
-        const googleMapsKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0';
-        const tileUrl = `https://mt{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}&key=${googleMapsKey}`;
+        const tileUrl = isDark
+            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
+            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
         tileLayerRef.current.setUrl(tileUrl);
     }, [isDark]);
 
@@ -255,11 +254,21 @@ export const CabiMap: React.FC<CabiMapProps> = ({
     }, [route]);
 
     return (
-        <div
-            ref={mapContainerRef}
-            style={{ height, width: '100%' }}
-            className={`rounded-2xl overflow-hidden ${className}`}
-        />
+        <div className="relative w-full h-full overflow-hidden rounded-[3px]">
+            <style>{`
+                .cabi-admin-map-dark .leaflet-tile-pane {
+                    filter: grayscale(100%) invert(92%) contrast(110%) brightness(82%);
+                }
+                .cabi-admin-map-light .leaflet-tile-pane {
+                    filter: grayscale(100%) contrast(92%) brightness(102%);
+                }
+            `}</style>
+            <div
+                ref={mapContainerRef}
+                style={{ height, width: '100%' }}
+                className={`overflow-hidden ${isDark ? 'cabi-admin-map-dark' : 'cabi-admin-map-light'} ${className}`}
+            />
+        </div>
     );
 };
 

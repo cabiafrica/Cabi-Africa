@@ -992,21 +992,19 @@ export default function BookingSection() {
                                                     key={v.id}
                                                     onClick={() => setSelectedVehicle(v.id)}
                                                     style={{
-                                                        borderColor: isSelected ? tierColor : undefined,
-                                                        boxShadow: isSelected ? `0 0 0 1px ${tierColor}, 0 4px 12px ${tierColor}25` : undefined,
+                                                        borderBottomColor: isSelected ? tierColor : undefined,
+                                                        borderBottomWidth: isSelected ? '2px' : '1px',
+                                                        borderTopWidth: isSelected ? '0px' : '1px',
+                                                        borderLeftWidth: isSelected ? '0px' : '1px',
+                                                        borderRightWidth: isSelected ? '0px' : '1px',
+                                                        boxShadow: isSelected ? `0 6px 14px -3px ${tierColor}20` : undefined,
                                                     }}
-                                                    className={`p-3.5 rounded-[3px] border transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden group min-h-[125px] ${
+                                                    className={`p-3.5 rounded-[3px] border border-slate-200/80 dark:border-white/10 transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden group min-h-[125px] ${
                                                         isSelected
-                                                            ? 'text-slate-900 dark:text-white'
-                                                            : 'bg-white dark:bg-[#11131a] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-slate-400 dark:hover:border-white/20'
+                                                            ? 'bg-slate-50/70 dark:bg-white/[0.03] text-slate-900 dark:text-white'
+                                                            : 'bg-white dark:bg-[#11131a] text-slate-700 dark:text-slate-300 hover:border-slate-300 dark:hover:border-white/20'
                                                     }`}
                                                 >
-                                                    {/* Category Color Accent Header Bar */}
-                                                    <div
-                                                        className="absolute top-0 left-0 right-0 h-1 transition-all"
-                                                        style={{ backgroundColor: tierColor, opacity: isSelected ? 1 : 0.45 }}
-                                                    />
-
                                                     {/* Realistic Vehicle Background with Faded Opacity for Crystal Text Readability */}
                                                     <div
                                                         className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 pointer-events-none opacity-20 dark:opacity-25"
@@ -1016,15 +1014,15 @@ export default function BookingSection() {
                                                     <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-[#0c0e14]/95 dark:via-[#0c0e14]/85 dark:to-[#0c0e14]/65 pointer-events-none" />
 
                                                     {/* Content Overlay */}
-                                                    <div className="relative z-10 flex flex-col justify-between h-full pt-1">
+                                                    <div className="relative z-10 flex flex-col justify-between h-full">
                                                         <div className="flex items-start justify-between gap-1 mb-2">
                                                             {/* Stylized Vector Vehicle Icon Badge Color-Coded */}
                                                             <div
                                                                 className="w-7 h-7 rounded-[3px] flex items-center justify-center border transition-colors"
                                                                 style={{
-                                                                    backgroundColor: isSelected ? tierColor : `${tierColor}15`,
-                                                                    color: isSelected ? '#FFFFFF' : tierColor,
-                                                                    borderColor: isSelected ? tierColor : `${tierColor}40`,
+                                                                    backgroundColor: isSelected ? `${tierColor}20` : `${tierColor}10`,
+                                                                    color: tierColor,
+                                                                    borderColor: `${tierColor}35`,
                                                                 }}
                                                             >
                                                                 {v.id === 'boda' && <FaMotorcycle className="text-xs" />}
@@ -1037,9 +1035,9 @@ export default function BookingSection() {
                                                                 <span
                                                                     className="text-[8px] font-mono font-black px-1.5 py-0.5 rounded-[2px] transition-colors"
                                                                     style={{
-                                                                        backgroundColor: isSelected ? `${tierColor}25` : undefined,
+                                                                        backgroundColor: isSelected ? `${tierColor}20` : undefined,
                                                                         color: isSelected ? tierColor : undefined,
-                                                                        border: isSelected ? `1px solid ${tierColor}50` : undefined,
+                                                                        border: isSelected ? `1px solid ${tierColor}40` : undefined,
                                                                     }}
                                                                 >
                                                                     {v.tag}
@@ -1050,7 +1048,7 @@ export default function BookingSection() {
                                                         <div>
                                                             <div className="flex items-center gap-1.5">
                                                                 <span
-                                                                    className="w-2 h-2 rounded-full inline-block"
+                                                                    className="w-1.5 h-1.5 rounded-full inline-block"
                                                                     style={{ backgroundColor: tierColor }}
                                                                     title={`Tier Accent: ${tierColor}`}
                                                                 />

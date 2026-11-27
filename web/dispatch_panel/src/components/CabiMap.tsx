@@ -295,12 +295,24 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         }
     }, [route]);
 
+    const isDark = typeof document !== 'undefined' ? document.documentElement.classList.contains('dark') : true;
+
     return (
-        <div
-            ref={mapContainerRef}
-            style={{ height, width: '100%' }}
-            className={className}
-        />
+        <div className="relative w-full h-full overflow-hidden rounded-[3px]">
+            <style>{`
+                .cabi-dispatch-map-dark .leaflet-tile-pane {
+                    filter: grayscale(100%) invert(92%) contrast(110%) brightness(82%);
+                }
+                .cabi-dispatch-map-light .leaflet-tile-pane {
+                    filter: grayscale(100%) contrast(92%) brightness(102%);
+                }
+            `}</style>
+            <div
+                ref={mapContainerRef}
+                style={{ height, width: '100%' }}
+                className={`overflow-hidden ${isDark ? 'cabi-dispatch-map-dark' : 'cabi-dispatch-map-light'} ${className}`}
+            />
+        </div>
     );
 };
 
