@@ -183,10 +183,15 @@ export const CabiMap: React.FC<CabiMapProps> = ({
 
     useEffect(() => {
         if (!mapRef.current || !tileLayerRef.current) return;
-        const tileUrl = isDark
-            ? 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png'
-            : 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png';
-        tileLayerRef.current.setUrl(tileUrl);
+        // Standard OpenStreetMap tiles - reliable, open, and requires no third-party API key
+        tileLayerRef.current.setUrl('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png');
+        
+        const container = mapRef.current.getContainer();
+        if (isDark) {
+            container.classList.add('cabi-dark-tiles');
+        } else {
+            container.classList.remove('cabi-dark-tiles');
+        }
     }, [isDark]);
 
     useEffect(() => {

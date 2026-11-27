@@ -10,7 +10,8 @@ import {
     FilterList,
     Refresh,
     Layers,
-    Map
+    Map,
+    Search
 } from '@mui/icons-material';
 
 interface DriverStats {
@@ -25,6 +26,7 @@ export const LiveMap: React.FC = () => {
     const [markers, setMarkers] = useState<MapMarker[]>([]);
     const [stats, setStats] = useState<DriverStats>({ total: 0, available: 0, onTrip: 0, offline: 0 });
     const [filter, setFilter] = useState<'ALL' | 'AVAILABLE' | 'ON_TRIP' | 'OFFLINE'>('ALL');
+    const [searchQuery, setSearchQuery] = useState('');
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [isAutoRefresh, setIsAutoRefresh] = useState(true);
 
@@ -60,10 +62,16 @@ export const LiveMap: React.FC = () => {
     }, [isAutoRefresh]);
 
     useEffect(() => {
-        // Filter Markers
-        const filteredDrivers = filter === 'ALL'
-            ? drivers
-            : drivers.filter(d => d.status === filter);
+        // Filter Markers by status and search query
+        const filteredDrivers = drivers.filter(d => {
+            const matchesFilter = filter === 'ALL' || d.status === filter;
+            const matchesSearch = !searchQuery.trim() ||
+                d.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                d.id?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                d.vehicle?.model?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                d.vehicle?.plate?.toLowerCase().includes(searchQuery.toLowerCase());
+            return matchesFilter && matchesSearch;
+        });
 
         const newMarkers: MapMarker[] = filteredDrivers
             .filter((d: any) => d && typeof d.lat === 'number' && typeof d.lng === 'number' && !isNaN(d.lat) && !isNaN(d.lng))
@@ -72,24 +80,29 @@ export const LiveMap: React.FC = () => {
                 position: [d.lat, d.lng],
                 type: 'driver',
                 status: d.status === 'AVAILABLE' ? 'online' : d.status === 'ON_TRIP' ? 'busy' : 'offline',
-                // We could customize icons here based on status if CabiMap supported dynamic icons better
-                // For now, we rely on the popup content
                 popup: `
-                <div class="p-2 min-w-[150px]">
-                    <h3 class="font-bold text-sm mb-1">${d.name || 'Unknown Driver'}</h3>
-                    <div class="flex items-center gap-2 text-xs">
-                        <span class="px-2 py-0.5 rounded-full ${d.status === 'AVAILABLE' ? 'bg-green-100 text-green-800' :
-                    d.status === 'ON_TRIP' ? 'bg-amber-100 text-amber-800' : 'bg-gray-100 text-gray-800'
-                }">
+                <div style="padding: 8px; min-width: 190px; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                        <h3 style="font-weight: 700; font-size: 13px; margin: 0; color: #0f172a;">${d.name || 'Unknown Driver'}</h3>
+                        <span style="font-size: 11px; font-weight: 700; color: #d97706;">★ ${d.rating || '5.0'}</span>
+                    </div>
+                    <div style="font-size: 11px; color: #475569; margin-bottom: 6px;">
+                        <span>${d.vehicle?.model || 'Vehicle'} • <code style="font-family: monospace; font-size: 10px; font-weight: 700;">${d.vehicle?.plate || d.id.substring(0, 6)}</code></span>
+                    </div>
+                    <div style="display: flex; align-items: center; justify-content: space-between; font-size: 11px; padding-top: 4px; border-top: 1px solid #e2e8f0;">
+                        <span style="padding: 2px 6px; border-radius: 4px; font-weight: 600; font-size: 10px; ${
+                            d.status === 'AVAILABLE' ? 'background: #dcfce7; color: #166534;' :
+                            d.status === 'ON_TRIP' ? 'background: #fef3c7; color: #92400e;' : 'background: #f1f5f9; color: #475569;'
+                        }">
                             ${d.status}
                         </span>
-                        <span class="text-gray-500">ID: ${d.id.substring(0, 6)}</span>
+                        <span style="color: #64748b; font-size: 10px;">${d.phone || ''}</span>
                     </div>
                 </div>
             `
         }));
         setMarkers(newMarkers);
-    }, [drivers, filter]);
+    }, [drivers, filter, searchQuery]);
 
     return (
         <div className="space-y-4">
@@ -189,15 +202,32 @@ export const LiveMap: React.FC = () => {
                             <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1">
                                 <Layers fontSize="small" /> Map Filters
                             </span>
-                            {filter !== 'ALL' && (
+                            {(filter !== 'ALL' || searchQuery) && (
                                 <button
-                                    onClick={() => setFilter('ALL')}
+                                    onClick={() => {
+                                        setFilter('ALL');
+                                        setSearchQuery('');
+                                    }}
                                     className="text-[11px] text-amber-400 font-bold hover:underline"
                                 >
-                                    Clear
+                                    Reset
                                 </button>
                             )}
                         </div>
+
+                        {/* Search Input */}
+                        <div className="relative">
+                            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                            <input
+                                type="text"
+                                placeholder="Search driver, plate, or ID..."
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                style={{ paddingLeft: '2.25rem' }}
+                                className="w-full !pl-8 pr-2.5 py-1.5 bg-[#0a0a0a] border border-white/10 rounded-[3px] text-xs text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                            />
+                        </div>
+
                         <div className="flex flex-wrap gap-1.5">
                             {['ALL', 'AVAILABLE', 'ON_TRIP', 'OFFLINE'].map((f) => (
                                 <button
