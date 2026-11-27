@@ -41,17 +41,51 @@ const GOLD_GRADIENT = 'linear-gradient(45deg, #F59E0B 30%, #D4AF37 90%)';
 const GLASS_BG = '#131722';
 const CARD_BORDER = 'rgba(255, 255, 255, 0.08)';
 
-const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
+export interface OccurrenceMediaItem {
+  type: 'image' | 'audio' | 'video';
+  url: string;
+  title: string;
+  duration?: string;
+  size?: string;
+}
+
+export interface DetailedOccurrence extends OccurrenceSummary {
+  description?: string;
+  location?: string;
+  media?: OccurrenceMediaItem[];
+  actionsTaken?: string[];
+  investigatingOfficer?: string;
+}
+
+const MOCK_OCCURRENCE_RECORDS: DetailedOccurrence[] = [
   {
     id: 'occ-001',
     obNumber: 'OB-CAN-48192',
     category: 'DISPUTE',
     severity: 'MEDIUM',
     title: 'Disputed Wait Fee Cancellation (Wait: 5m, KES 50 charged)',
+    description: 'Rider contends driver did not arrive at the pin location before triggering the 5-minute wait timer. Driver telemetry confirms vehicle was stationary within 35 meters of pickup for 5m 22s.',
+    location: 'Westlands Square, Nairobi',
     status: 'DISPUTED',
     createdAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
     driverName: 'Samuel Mwangi (DRV-84192)',
     passengerName: 'Brian K. (PAX-84192)',
+    investigatingOfficer: 'Sgt. J. Kimani (Badge #819)',
+    actionsTaken: ['Fare hold placed', 'GPS trace exported', 'Driver statement recorded'],
+    media: [
+      {
+        type: 'image',
+        title: 'Telemetry Route Pin Capture',
+        url: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?auto=format&fit=crop&w=800&q=80',
+        size: '1.2 MB'
+      },
+      {
+        type: 'audio',
+        title: 'Passenger Dispatch Voice Complaint',
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3',
+        duration: '0:45'
+      }
+    ]
   },
   {
     id: 'occ-002',
@@ -59,10 +93,34 @@ const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
     category: 'SAFETY_VIOLATION',
     severity: 'CRITICAL',
     title: 'Panic SOS Trigger: Off-Route Telemetry Alert',
+    description: 'In-cabin panic button triggered by rider along Southern Bypass. Dispatch operations contacted driver immediately. Vehicle deviated from route towards industrial road.',
+    location: 'Southern Bypass Interchange, Nairobi',
     status: 'OPEN',
     createdAt: new Date(Date.now() - 42 * 60 * 1000).toISOString(),
     driverName: 'John O. (DRV-39102)',
     passengerName: 'Faith N. (PAX-55104)',
+    investigatingOfficer: 'Insp. A. Mutua (Rapid Response)',
+    actionsTaken: ['Emergency patrol dispatched', 'Vehicle engine remote cut-off enabled', 'Audio listen-in initiated'],
+    media: [
+      {
+        type: 'video',
+        title: 'Front Dashcam Stream (SOS Snapshot)',
+        url: 'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4',
+        duration: '0:15'
+      },
+      {
+        type: 'audio',
+        title: 'Cabin Audio Listen-in Stream',
+        url: 'https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3',
+        duration: '1:12'
+      },
+      {
+        type: 'image',
+        title: 'Route Deviation Geofence Alarm',
+        url: 'https://images.unsplash.com/photo-1569336415962-a4bd9f69cd83?auto=format&fit=crop&w=800&q=80',
+        size: '850 KB'
+      }
+    ]
   },
   {
     id: 'occ-003',
@@ -70,10 +128,21 @@ const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
     category: 'TRAFFIC_OFFENSE',
     severity: 'HIGH',
     title: 'Expressway Speed Infraction (Radar: 118 km/h)',
+    description: 'Automated expressway speed sensor clocked vehicle at 118 km/h in an 80 km/h zone. Safety threshold exceeded.',
+    location: 'Nairobi Expressway, JKIA Tollgate Exit',
     status: 'UNDER_INVESTIGATION',
     createdAt: new Date(Date.now() - 2 * 3600 * 1000).toISOString(),
     driverName: 'David K. (DRV-78190)',
     passengerName: 'Dispatch Radar',
+    investigatingOfficer: 'Traffic Fleet Desk',
+    media: [
+      {
+        type: 'image',
+        title: 'High-Speed Automated Camera Capture',
+        url: 'https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?auto=format&fit=crop&w=800&q=80',
+        size: '2.1 MB'
+      }
+    ]
   },
   {
     id: 'occ-004',
@@ -81,10 +150,22 @@ const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
     category: 'FRAUD',
     severity: 'MEDIUM',
     title: 'Off-App Fare Solicitation Dispute',
+    description: 'Rider reported driver requested direct cash transfer outside Cabi wallet system to evade platform commission.',
+    location: 'Kilimani, Argwings Kodhek Rd',
     status: 'RESOLVED',
     createdAt: new Date(Date.now() - 5 * 3600 * 1000).toISOString(),
     driverName: 'Kevin M. (DRV-11029)',
     passengerName: 'Alice W. (PAX-90124)',
+    investigatingOfficer: 'Audit & Compliance Officer Ochieng',
+    actionsTaken: ['Driver fined KES 1,000', 'Account put on 7-day probation'],
+    media: [
+      {
+        type: 'image',
+        title: 'M-PESA Screenshot Submitted by Passenger',
+        url: 'https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80',
+        size: '450 KB'
+      }
+    ]
   },
   {
     id: 'occ-005',
@@ -92,15 +173,27 @@ const MOCK_OCCURRENCE_RECORDS: OccurrenceSummary[] = [
     category: 'PROPERTY_DAMAGE',
     severity: 'LOW',
     title: 'Left Item Report: Black Leather Bag in Trunk',
+    description: 'Passenger left laptop bag in vehicle trunk after airport dropoff. Driver confirmed custody and surrendered item to Nairobi Central Station.',
+    location: 'JKIA Terminal 1D Dropoff',
     status: 'RESOLVED',
     createdAt: new Date(Date.now() - 24 * 3600 * 1000).toISOString(),
     driverName: 'Peter N. (DRV-44910)',
     passengerName: 'James O. (PAX-23910)',
+    investigatingOfficer: 'Lost & Found Support Rep Sarah',
+    actionsTaken: ['Item verified', 'Handover signed', 'Case closed'],
+    media: [
+      {
+        type: 'image',
+        title: 'Photo of Recovered Leather Bag in Custody',
+        url: 'https://images.unsplash.com/photo-1548036328-c9fa89d128fa?auto=format&fit=crop&w=800&q=80',
+        size: '1.8 MB'
+      }
+    ]
   },
 ];
 
 export const OccurrenceList = () => {
-  const [occurrences, setOccurrences] = useState<OccurrenceSummary[]>([]);
+  const [occurrences, setOccurrences] = useState<DetailedOccurrence[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -108,6 +201,16 @@ export const OccurrenceList = () => {
   const [selectedSeverity, setSelectedSeverity] = useState<string>('ALL');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [filterAnchorEl, setFilterAnchorEl] = useState<null | HTMLElement>(null);
+  const [selectedOccurrence, setSelectedOccurrence] = useState<DetailedOccurrence | null>(null);
+  const [colWidths, setColWidths] = useState({
+    ob: 140,
+    time: 120,
+    title: 320,
+    parties: 200,
+    priority: 110,
+    status: 140,
+    actions: 100,
+  });
   const navigate = useNavigate();
   const theme = useTheme();
 
@@ -251,9 +354,36 @@ export const OccurrenceList = () => {
               </IconButton>
             </Box>
           </Box>
-          {/* Golden Gradient Separator */}
-          <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', my: 2.5 }} />
+        {/* Golden Gradient Separator and Column Width Controls */}
+        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', my: 2 }}>
+          <div className="flex items-center gap-2 text-xs text-slate-400">
+            <span className="font-semibold uppercase text-[10px] tracking-wider text-amber-500">Column Layout:</span>
+            <button
+              type="button"
+              onClick={() => setColWidths({ ob: 120, time: 100, title: 260, parties: 180, priority: 90, status: 120, actions: 90 })}
+              className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-[11px]"
+            >
+              Compact
+            </button>
+            <button
+              type="button"
+              onClick={() => setColWidths({ ob: 150, time: 130, title: 340, parties: 210, priority: 110, status: 140, actions: 100 })}
+              className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-400 border border-amber-500/20 text-[11px] font-semibold"
+            >
+              Standard
+            </button>
+            <button
+              type="button"
+              onClick={() => setColWidths({ ob: 190, time: 160, title: 450, parties: 260, priority: 130, status: 160, actions: 120 })}
+              className="px-2 py-0.5 rounded bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 text-[11px]"
+            >
+              Wide / Expanded
+            </button>
+          </div>
+          <span className="text-[11px] text-slate-500">Click any record to inspect narrative & play multimedia evidence</span>
         </Box>
+        <Box sx={{ height: '2px', width: '100%', background: 'linear-gradient(to right, rgba(245, 158, 11, 0.8), rgba(245, 158, 11, 0.2), transparent)', mb: 2.5 }} />
+      </Box>
 
             {/* Filter Menu Popover */}
             <Menu
@@ -393,13 +523,13 @@ export const OccurrenceList = () => {
           <Table>
             <TableHead>
               <TableRow sx={{ bgcolor: 'rgba(0,0,0,0.3)' }}>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>OB Reference</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Timestamp</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category / Title</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Involved Parties</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Priority</TableCell>
-                <TableCell sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Current Status</TableCell>
-                <TableCell align="right" sx={{ color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Actions</TableCell>
+                <TableCell sx={{ width: colWidths.ob, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>OB Reference</TableCell>
+                <TableCell sx={{ width: colWidths.time, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Timestamp</TableCell>
+                <TableCell sx={{ width: colWidths.title, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Category / Title</TableCell>
+                <TableCell sx={{ width: colWidths.parties, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Involved Parties</TableCell>
+                <TableCell sx={{ width: colWidths.priority, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Priority</TableCell>
+                <TableCell sx={{ width: colWidths.status, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Current Status</TableCell>
+                <TableCell align="right" sx={{ width: colWidths.actions, color: 'text.secondary', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>Actions</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -422,8 +552,10 @@ export const OccurrenceList = () => {
                     <TableRow 
                       key={occurrence.id} 
                       hover 
+                      onClick={() => setSelectedOccurrence(occurrence)}
                       sx={{ 
-                        '&:hover': { bgcolor: 'rgba(245,158,11,0.03)' },
+                        cursor: 'pointer',
+                        '&:hover': { bgcolor: 'rgba(245,158,11,0.06) !important' },
                         '& td': { borderBottom: '1px solid rgba(255,255,255,0.04)' }
                       }}
                     >
@@ -524,6 +656,175 @@ export const OccurrenceList = () => {
             </TableBody>
           </Table>
         </TableContainer>
+        {/* Multimedia OB Record Detail Modal */}
+        {selectedOccurrence && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+            <div className="bg-[#131722] border border-white/10 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col overflow-hidden animate-scale-up">
+              {/* Modal Header */}
+              <div className="p-5 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                <div className="flex items-center gap-3">
+                  <div className="p-2.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                    <ShieldIcon />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                        {selectedOccurrence.obNumber}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 rounded font-bold uppercase" style={{
+                        backgroundColor: getSeverityStyle(selectedOccurrence.severity).bg,
+                        color: getSeverityStyle(selectedOccurrence.severity).color,
+                        border: `1px solid ${getSeverityStyle(selectedOccurrence.severity).color}33`
+                      }}>
+                        {selectedOccurrence.severity}
+                      </span>
+                    </div>
+                    <h3 className="text-lg font-bold text-white mt-1">{selectedOccurrence.title}</h3>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOccurrence(null)}
+                  className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Modal Body */}
+              <div className="flex-1 overflow-y-auto p-6 space-y-6">
+                {/* Meta details grid */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                  <div className="p-3 rounded-lg bg-[#0a0a0a] border border-white/5">
+                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Incident Time</span>
+                    <span className="text-xs text-white font-medium">{new Date(selectedOccurrence.createdAt).toLocaleString()}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-[#0a0a0a] border border-white/5">
+                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Category</span>
+                    <span className="text-xs text-amber-400 font-semibold">{selectedOccurrence.category.replace(/_/g, ' ')}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-[#0a0a0a] border border-white/5">
+                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Location</span>
+                    <span className="text-xs text-white font-medium">{selectedOccurrence.location || 'Nairobi Central Sector'}</span>
+                  </div>
+                  <div className="p-3 rounded-lg bg-[#0a0a0a] border border-white/5">
+                    <span className="text-[10px] text-slate-400 uppercase font-semibold block">Investigating Officer</span>
+                    <span className="text-xs text-slate-200">{selectedOccurrence.investigatingOfficer || 'Command Desk'}</span>
+                  </div>
+                </div>
+
+                {/* Narrative Statement */}
+                <div className="p-4 rounded-lg bg-[#0a0a0a] border border-white/5 space-y-2">
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-400">Official Incident Narrative</h4>
+                  <p className="text-sm text-slate-200 leading-relaxed">
+                    {selectedOccurrence.description || 'No detailed narrative entered at time of log.'}
+                  </p>
+                </div>
+
+                {/* Parties Involved */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="p-4 rounded-lg bg-[#0a0a0a] border border-white/5 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-amber-400 uppercase">
+                      <Avatar sx={{ width: 22, height: 22, fontSize: '0.7rem', bgcolor: 'rgba(245,158,11,0.2)', color: '#F59E0B' }}>D</Avatar>
+                      Driver Involved
+                    </div>
+                    <div className="text-sm font-semibold text-white">{selectedOccurrence.driverName || 'N/A'}</div>
+                    <div className="text-xs text-slate-400">Telemetry Status: Active on Fleet Matrix</div>
+                  </div>
+                  <div className="p-4 rounded-lg bg-[#0a0a0a] border border-white/5 space-y-2">
+                    <div className="flex items-center gap-2 text-xs font-bold text-slate-300 uppercase">
+                      <Avatar sx={{ width: 22, height: 22, fontSize: '0.7rem', bgcolor: 'rgba(255,255,255,0.1)', color: 'white' }}>P</Avatar>
+                      Passenger / Complainant
+                    </div>
+                    <div className="text-sm font-semibold text-white">{selectedOccurrence.passengerName || 'N/A'}</div>
+                    <div className="text-xs text-slate-400">Account Status: Verified Mobile Passenger</div>
+                  </div>
+                </div>
+
+                {/* Multimedia Evidence Section */}
+                <div className="p-4 rounded-lg bg-[#0a0a0a] border border-white/5 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <h4 className="text-xs font-bold uppercase tracking-wider text-amber-500">
+                      Uploaded Media Evidence ({selectedOccurrence.media?.length || 0})
+                    </h4>
+                    <span className="text-[11px] text-slate-500">Audio, Video, Dashcam & Photo Evidence</span>
+                  </div>
+
+                  {(!selectedOccurrence.media || selectedOccurrence.media.length === 0) ? (
+                    <div className="py-6 text-center text-xs text-slate-500">No multimedia evidence attached to this OB entry.</div>
+                  ) : (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {selectedOccurrence.media.map((item, idx) => (
+                        <div key={idx} className="p-3 rounded bg-white/[0.02] border border-white/10 space-y-2">
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="font-semibold text-white truncate max-w-[200px]">{item.title}</span>
+                            <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-white/10 text-slate-300">
+                              {item.type}
+                            </span>
+                          </div>
+
+                          {/* Image Player */}
+                          {item.type === 'image' && (
+                            <div className="relative group overflow-hidden rounded border border-white/10">
+                              <img
+                                src={item.url}
+                                alt={item.title}
+                                className="w-full h-44 object-cover transition-transform group-hover:scale-105"
+                              />
+                              <div className="absolute bottom-1 right-1 px-1.5 py-0.5 bg-black/70 text-[10px] text-white rounded">
+                                {item.size || 'Image'}
+                              </div>
+                            </div>
+                          )}
+
+                          {/* Audio Player */}
+                          {item.type === 'audio' && (
+                            <div className="p-3 rounded bg-[#131722] border border-white/10 space-y-2">
+                              <div className="flex items-center justify-between text-xs text-slate-400">
+                                <span>Voice / Dispatch Recording</span>
+                                <span className="font-mono text-amber-400">{item.duration || '0:30'}</span>
+                              </div>
+                              <audio controls className="w-full h-8" src={item.url}>
+                                Your browser does not support audio playback.
+                              </audio>
+                            </div>
+                          )}
+
+                          {/* Video Player */}
+                          {item.type === 'video' && (
+                            <div className="rounded border border-white/10 overflow-hidden bg-black">
+                              <video controls className="w-full max-h-48" src={item.url}>
+                                Your browser does not support video playback.
+                              </video>
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Modal Footer */}
+              <div className="p-4 border-t border-white/10 bg-white/[0.02] flex items-center justify-between">
+                <button
+                  type="button"
+                  onClick={() => navigate(`/resolution-dashboard/${selectedOccurrence.id}`)}
+                  className="px-4 py-2 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition-colors"
+                >
+                  Open in Resolution Console
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSelectedOccurrence(null)}
+                  className="px-4 py-2 rounded bg-white/10 hover:bg-white/15 text-white font-semibold text-xs transition-colors"
+                >
+                  Close Dossier
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </Box>
     </Fade>
   );

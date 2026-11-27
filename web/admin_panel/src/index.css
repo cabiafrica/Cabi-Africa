@@ -37,6 +37,31 @@ body {
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
+/* Fix MUI Outlined Input label overlapping border */
+.MuiInputLabel-outlined {
+  background-color: var(--surface) !important;
+  padding: 0 6px !important;
+  border-radius: 4px;
+  margin-left: -2px !important;
+  z-index: 1 !important;
+}
+html.dark .MuiInputLabel-outlined {
+  background-color: #131722 !important;
+  color: #94a3b8 !important;
+}
+html.dark .MuiInputLabel-outlined.Mui-focused {
+  color: #f59e0b !important;
+}
+.MuiOutlinedInput-notchedOutline {
+  border-color: rgba(255, 255, 255, 0.12) !important;
+}
+.MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+  border-color: rgba(245, 158, 11, 0.5) !important;
+}
+.MuiOutlinedInput-root.Mui-focused .MuiOutlinedInput-notchedOutline {
+  border-color: #f59e0b !important;
+}
+
 /* Custom Scrollbar for Webkit */
 ::-webkit-scrollbar {
   width: 8px;

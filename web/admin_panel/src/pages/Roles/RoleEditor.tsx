@@ -18,11 +18,36 @@ import {
     AdminPanelSettings as AdminIcon,
     Smartphone as MobileIcon,
     Web as WebIcon,
-    Dns as ApiIcon
+    Dns as ApiIcon,
+    SupervisorAccount as SupervisorAccountIcon,
+    Person as PersonIcon,
+    VpnKey as VpnKeyIcon,
+    DirectionsCar as DirectionsCarIcon,
+    HeadsetMic as HeadsetMicIcon,
+    AccountBalance as AccountBalanceIcon,
+    VerifiedUser as VerifiedUserIcon,
+    Assessment as AssessmentIcon,
+    LocalPolice as LocalPoliceIcon,
+    Badge as BadgeIcon
 } from '@mui/icons-material';
 import { useNavigate, useParams } from 'react-router-dom';
 import { roleService } from '../../services/roleService';
 import { PERMISSION_CATEGORIES, PERMISSIONS_LIST } from '../../constants/permissions';
+
+export const ROLE_ICON_CHOICES = [
+    { id: 'AdminPanelSettings', label: 'Admin', icon: <AdminIcon /> },
+    { id: 'Security', label: 'Security', icon: <SecurityIcon /> },
+    { id: 'SupervisorAccount', label: 'Supervisor', icon: <SupervisorAccountIcon /> },
+    { id: 'Person', label: 'Member', icon: <PersonIcon /> },
+    { id: 'VpnKey', label: 'Key & Access', icon: <VpnKeyIcon /> },
+    { id: 'DirectionsCar', label: 'Fleet & Ops', icon: <DirectionsCarIcon /> },
+    { id: 'HeadsetMic', label: 'Support / Care', icon: <HeadsetMicIcon /> },
+    { id: 'AccountBalance', label: 'Finance / Sacco', icon: <AccountBalanceIcon /> },
+    { id: 'VerifiedUser', label: 'Trust & Safety', icon: <VerifiedUserIcon /> },
+    { id: 'Assessment', label: 'Audit / Analytics', icon: <AssessmentIcon /> },
+    { id: 'LocalPolice', label: 'Compliance', icon: <LocalPoliceIcon /> },
+    { id: 'Badge', label: 'Officer / Badge', icon: <BadgeIcon /> },
+];
 
 const RoleEditor: React.FC = () => {
     const navigate = useNavigate();
@@ -35,6 +60,7 @@ const RoleEditor: React.FC = () => {
         description: '',
         type: 'ADMIN',
         platform: 'ADMIN_PANEL',
+        icon: 'AdminPanelSettings',
         permissions: [] as string[],
         isActive: true
     });
@@ -57,6 +83,7 @@ const RoleEditor: React.FC = () => {
                 description: role.description || '',
                 type: role.type,
                 platform: role.platform,
+                icon: role.icon || 'AdminPanelSettings',
                 permissions: role.permissions,
                 isActive: role.isActive
             });
@@ -204,6 +231,33 @@ const RoleEditor: React.FC = () => {
                                     InputLabelProps={{ className: "dark:text-slate-400" }}
                                     InputProps={{ className: "dark:text-white" }}
                                 />
+                            </div>
+
+                            {/* Role Icon Selection */}
+                            <div className="col-span-1 md:col-span-2">
+                                <p className="text-sm font-semibold text-slate-500 dark:text-slate-400 mb-3 uppercase tracking-wider">Role Icon & Badge Symbol</p>
+                                <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
+                                    {ROLE_ICON_CHOICES.map((choice) => {
+                                        const isSelected = formData.icon === choice.id;
+                                        return (
+                                            <button
+                                                type="button"
+                                                key={choice.id}
+                                                onClick={() => setFormData({ ...formData, icon: choice.id })}
+                                                className={`flex flex-col items-center justify-center p-3 rounded-[3px] border transition-all duration-200 cursor-pointer ${
+                                                    isSelected
+                                                        ? 'bg-gradient-to-r from-amber-500 to-amber-600 text-black font-bold border-amber-500 shadow-sm shadow-amber-500/20'
+                                                        : 'bg-white/5 border-white/10 text-slate-400 hover:text-white hover:bg-white/10'
+                                                }`}
+                                            >
+                                                <div className={`mb-1.5 ${isSelected ? 'text-black' : 'text-amber-500'}`}>
+                                                    {choice.icon}
+                                                </div>
+                                                <span className="text-xs truncate w-full text-center">{choice.label}</span>
+                                            </button>
+                                        );
+                                    })}
+                                </div>
                             </div>
 
                             {/* Platform Selection */}

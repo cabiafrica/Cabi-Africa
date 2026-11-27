@@ -38,6 +38,13 @@ interface DriverGroupsListProps {
   onDelete?: (group: DriverGroup) => void;
 }
 
+export const formatHumanGroupId = (group: DriverGroup): string => {
+  if (group.id && group.id.startsWith('GRP-')) return group.id;
+  const prefix = group.name ? group.name.replace(/[^A-Za-z0-9]/g, '').slice(0, 3).toUpperCase() : 'NAI';
+  const suffix = group.id ? group.id.replace(/[^A-Za-z0-9]/g, '').slice(-3).toUpperCase() : '01';
+  return `GRP-${prefix || 'NAI'}-${suffix || '01'}`;
+};
+
 export function DriverGroupsList({
   groups,
   loading = false,
@@ -104,6 +111,7 @@ export function DriverGroupsList({
       <Table sx={{ minWidth: 650 }}>
         <TableHead>
           <TableRow sx={{ bgcolor: 'rgba(255, 255, 255, 0.02)' }}>
+            <TableCell sx={{ color: '#cbd5e1', fontWeight: 600, borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Group ID</TableCell>
             <TableCell sx={{ color: '#cbd5e1', fontWeight: 600, borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Group Name</TableCell>
             <TableCell sx={{ color: '#cbd5e1', fontWeight: 600, borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Description</TableCell>
             <TableCell sx={{ color: '#cbd5e1', fontWeight: 600, borderBottom: '1px solid rgba(255, 255, 255, 0.06)', textTransform: 'uppercase', fontSize: '0.75rem', letterSpacing: '0.05em' }}>Parent Group</TableCell>
@@ -117,6 +125,11 @@ export function DriverGroupsList({
         <TableBody>
           {groups.map((group) => (
             <TableRow key={group.id} hover sx={{ '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.03) !important' }, '& td': { borderBottom: '1px solid rgba(255, 255, 255, 0.04)' } }}>
+              <TableCell sx={{ fontWeight: 600 }}>
+                <span className="font-mono text-xs font-bold text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded border border-amber-500/20">
+                  {formatHumanGroupId(group)}
+                </span>
+              </TableCell>
               <TableCell sx={{ fontWeight: 600, color: '#f8fafc' }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                   <BuildingIcon sx={{ color: '#F59E0B', fontSize: 18 }} />

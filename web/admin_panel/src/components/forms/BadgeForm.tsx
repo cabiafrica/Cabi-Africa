@@ -16,7 +16,13 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
 
   const handleRuleChange = (index: number, field: keyof BadgeRule, val: any) => {
     const newRules = [...rules];
-    (newRules[index] as any)[field] = field === 'value' ? parseFloat(val) : val;
+    if (field === 'value') {
+      const sanitized = String(val).replace(/^0+(?=\d)/, '');
+      const parsed = parseFloat(sanitized);
+      (newRules[index] as any)[field] = isNaN(parsed) ? 0 : parsed;
+    } else {
+      (newRules[index] as any)[field] = val;
+    }
     setRules(newRules);
   };
 
@@ -126,10 +132,10 @@ export const BadgeForm: React.FC<Props> = ({ badge, onSave, onCancel }) => {
                 <input
                   type="number"
                   step="0.01"
-                  value={rule.value}
+                  placeholder="0"
+                  value={rule.value === 0 ? '' : rule.value}
                   onChange={e => handleRuleChange(index, 'value', e.target.value)}
                   className="w-28 text-sm bg-[#131722] border border-white/10 rounded text-white p-2 focus:border-amber-500 outline-none"
-                  placeholder="Value"
                 />
 
                 <button

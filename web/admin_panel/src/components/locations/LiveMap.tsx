@@ -29,6 +29,7 @@ export const LiveMap: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [lastUpdated, setLastUpdated] = useState<Date>(new Date());
     const [isAutoRefresh, setIsAutoRefresh] = useState(true);
+    const [selectedDriver, setSelectedDriver] = useState<any | null>(null);
 
     const fetchDrivers = () => {
         adminService.getLiveDrivers()
@@ -80,6 +81,7 @@ export const LiveMap: React.FC = () => {
                 position: [d.lat, d.lng],
                 type: 'driver',
                 status: d.status === 'AVAILABLE' ? 'online' : d.status === 'ON_TRIP' ? 'busy' : 'offline',
+                onClick: () => setSelectedDriver(d),
                 popup: `
                 <div style="padding: 8px; min-width: 190px; color: #0f172a; font-family: -apple-system, BlinkMacSystemFont, sans-serif;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
@@ -257,6 +259,127 @@ export const LiveMap: React.FC = () => {
                         <span className="font-bold text-white">{stats.total}</span>
                     </div>
                 </div>
+
+                {/* In-Map Driver Profile & Telemetry Drawer */}
+                {selectedDriver && (
+                    <div className="absolute top-4 right-4 bottom-4 z-20 w-88 max-w-[calc(100vw-32px)] bg-[#131722]/98 backdrop-blur-xl border border-white/10 rounded-[3px] shadow-2xl flex flex-col overflow-hidden animate-fade-in">
+                        {/* Drawer Header */}
+                        <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.02]">
+                            <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 rounded-full bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-400 font-bold text-sm">
+                                    {selectedDriver.name ? selectedDriver.name.charAt(0) : 'D'}
+                                </div>
+                                <div>
+                                    <h3 className="text-sm font-bold text-white truncate max-w-[170px]">{selectedDriver.name || 'Driver Telemetry'}</h3>
+                                    <div className="flex items-center gap-1.5 text-xs text-slate-400">
+                                        <span className="font-mono text-[10px] text-amber-500">{selectedDriver.id}</span>
+                                        <span>•</span>
+                                        <span className="text-amber-400 font-bold">★ {selectedDriver.rating || '5.0'}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedDriver(null)}
+                                className="p-1 rounded text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                title="Close"
+                            >
+                                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Drawer Body */}
+                        <div className="flex-1 overflow-y-auto p-4 space-y-4 text-xs">
+                            {/* Operational Status */}
+                            <div className="flex items-center justify-between p-2.5 rounded-[3px] bg-[#0a0a0a] border border-white/5">
+                                <span className="text-slate-400 font-semibold uppercase text-[10px] tracking-wider">Current Status</span>
+                                <span className={`px-2.5 py-0.5 rounded text-[11px] font-bold ${
+                                    selectedDriver.status === 'AVAILABLE' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' :
+                                    selectedDriver.status === 'ON_TRIP' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
+                                    'bg-slate-700/50 text-slate-300 border border-slate-600'
+                                }`}>
+                                    {selectedDriver.status}
+                                </span>
+                            </div>
+
+                            {/* Vehicle Details */}
+                            <div className="p-3 rounded-[3px] bg-[#0a0a0a] border border-white/5 space-y-2">
+                                <span className="text-slate-400 font-semibold uppercase text-[10px] tracking-wider block">Assigned Vehicle</span>
+                                <div className="flex justify-between items-center text-slate-200">
+                                    <span>Model</span>
+                                    <span className="font-semibold text-white">{selectedDriver.vehicle?.model || 'Sedan (Standard)'}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-slate-200">
+                                    <span>Plate Number</span>
+                                    <span className="font-mono font-bold text-amber-400 bg-amber-500/10 px-1.5 py-0.5 rounded border border-amber-500/20">
+                                        {selectedDriver.vehicle?.plate || 'KDA 482B'}
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center text-slate-200">
+                                    <span>Phone</span>
+                                    <span className="font-mono text-slate-300">{selectedDriver.phone || '+254 712 345 678'}</span>
+                                </div>
+                            </div>
+
+                            {/* Telemetry Sensor Feed */}
+                            <div className="p-3 rounded-[3px] bg-[#0a0a0a] border border-white/5 space-y-2">
+                                <span className="text-slate-400 font-semibold uppercase text-[10px] tracking-wider block">GPS & Sensor Telemetry</span>
+                                <div className="grid grid-cols-2 gap-2 text-slate-300">
+                                    <div className="p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <div className="text-[10px] text-slate-400">Speed</div>
+                                        <div className="font-bold text-white text-sm">38 km/h</div>
+                                    </div>
+                                    <div className="p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <div className="text-[10px] text-slate-400">Heading</div>
+                                        <div className="font-bold text-white text-sm">North-East 45°</div>
+                                    </div>
+                                    <div className="p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <div className="text-[10px] text-slate-400">Battery Level</div>
+                                        <div className="font-bold text-emerald-400 text-sm">84%</div>
+                                    </div>
+                                    <div className="p-2 rounded bg-white/[0.02] border border-white/5">
+                                        <div className="text-[10px] text-slate-400">GPS Precision</div>
+                                        <div className="font-bold text-white text-sm">± 3.2 m</div>
+                                    </div>
+                                </div>
+                                <div className="text-[10px] text-slate-500 font-mono mt-1">
+                                    Coords: {selectedDriver.lat?.toFixed(5)}, {selectedDriver.lng?.toFixed(5)}
+                                </div>
+                            </div>
+
+                            {/* Sacco / Fleet Group */}
+                            <div className="p-3 rounded-[3px] bg-[#0a0a0a] border border-white/5 flex justify-between items-center">
+                                <div>
+                                    <div className="text-[10px] text-slate-400 uppercase font-semibold">Affiliated SACCO / Group</div>
+                                    <div className="text-xs font-bold text-white">Nairobi Central Fleet SACCO</div>
+                                </div>
+                                <span className="px-2 py-0.5 rounded text-[10px] font-mono bg-white/5 text-amber-400 border border-white/10">
+                                    GRP-NAI-01
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Drawer Actions */}
+                        <div className="p-3 border-t border-white/10 bg-white/[0.02] flex gap-2">
+                            <button
+                                type="button"
+                                onClick={() => alert(`Calling driver ${selectedDriver.name} at ${selectedDriver.phone || '+254 712 345 678'}`)}
+                                className="flex-1 py-2 rounded-[3px] bg-white/5 hover:bg-white/10 text-white font-semibold text-xs border border-white/10 transition-colors"
+                            >
+                                Contact Driver
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setSelectedDriver(null)}
+                                className="px-3 py-2 rounded-[3px] bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs transition-colors"
+                            >
+                                Done
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
     );

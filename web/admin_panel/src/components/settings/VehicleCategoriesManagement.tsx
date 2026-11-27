@@ -122,6 +122,7 @@ export const VehicleCategoriesManagement: React.FC = () => {
 
     // Modal Edit State
     const [editingCategory, setEditingCategory] = useState<CategoryPricingConfig | null>(null);
+    const [viewingCategory, setViewingCategory] = useState<CategoryPricingConfig | null>(null);
     const [isCreatingCategory, setIsCreatingCategory] = useState(false);
     const [newCategory, setNewCategory] = useState<CategoryPricingConfig>({
         category: '',
@@ -364,21 +365,26 @@ export const VehicleCategoriesManagement: React.FC = () => {
                                 </div>
                                 <div className="flex items-center gap-1">
                                     <button
+                                        onClick={() => setViewingCategory(c)}
+                                        className="p-1.5 rounded text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                                        title="View Service Details"
+                                    >
+                                        <InfoOutlined fontSize="small" />
+                                    </button>
+                                    <button
                                         onClick={() => setEditingCategory({ ...c })}
                                         className="p-1.5 rounded text-slate-400 hover:text-amber-400 hover:bg-amber-500/10 transition-colors cursor-pointer"
                                         title="Edit Category Rates"
                                     >
                                         <Edit fontSize="small" />
                                     </button>
-                                    {!['BODA', 'BASIC', 'STANDARD', 'XL', 'PREMIUM'].includes(c.category) && (
-                                        <button
-                                            onClick={() => handleDeleteCategory(c.category)}
-                                            className="p-1.5 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
-                                            title="Delete Custom Category"
-                                        >
-                                            <DeleteOutline fontSize="small" />
-                                        </button>
-                                    )}
+                                    <button
+                                        onClick={() => handleDeleteCategory(c.category)}
+                                        className="p-1.5 rounded text-slate-500 hover:text-red-400 hover:bg-red-500/10 transition-colors cursor-pointer"
+                                        title={`Delete Service "${c.displayName}"`}
+                                    >
+                                        <DeleteOutline fontSize="small" />
+                                    </button>
                                 </div>
                             </div>
 
@@ -1025,6 +1031,94 @@ export const VehicleCategoriesManagement: React.FC = () => {
                             >
                                 <Add fontSize="small" />
                                 <span>Create Tier</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* View Service Details Modal */}
+            {viewingCategory && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+                    <div className="bg-[#131722] border border-white/10 rounded-lg shadow-2xl w-full max-w-lg overflow-hidden animate-scale-up">
+                        <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                            <div className="flex items-center gap-2.5">
+                                <div className="p-2 rounded bg-[#0a0a0a] border border-white/10">
+                                    {getCategoryIcon(viewingCategory.category)}
+                                </div>
+                                <div>
+                                    <h3 className="font-bold text-white text-base">{viewingCategory.displayName}</h3>
+                                    <span className="text-xs font-mono text-amber-400">{viewingCategory.category}</span>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setViewingCategory(null)}
+                                className="text-slate-400 hover:text-white p-1 rounded hover:bg-white/10"
+                            >
+                                <Close fontSize="small" />
+                            </button>
+                        </div>
+
+                        <div className="p-6 space-y-4 text-xs">
+                            <p className="text-slate-300 text-sm">{viewingCategory.description || 'No description provided.'}</p>
+
+                            <div className="grid grid-cols-2 gap-3 p-4 rounded bg-[#0a0a0a] border border-white/5 font-mono">
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Base Fare</span>
+                                    <span className="font-bold text-white text-sm">KES {viewingCategory.baseFare}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Per Kilometer Rate</span>
+                                    <span className="font-bold text-white text-sm">KES {viewingCategory.perKmRate} / km</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Per Minute Rate</span>
+                                    <span className="font-bold text-white text-sm">KES {viewingCategory.perMinuteRate} / min</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Minimum Fare Floor</span>
+                                    <span className="font-bold text-white text-sm">KES {viewingCategory.minimumFare}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Taximeter Rounding Step</span>
+                                    <span className="font-bold text-amber-400 text-sm">Nearest KES {viewingCategory.roundingStep}</span>
+                                </div>
+                                <div>
+                                    <span className="text-slate-400 uppercase text-[10px] font-sans block">Capacity</span>
+                                    <span className="font-bold text-slate-200 text-sm font-sans">{viewingCategory.capacity || '4 Passengers'}</span>
+                                </div>
+                            </div>
+
+                            <div className="flex items-center justify-between p-3 rounded bg-white/[0.02] border border-white/5">
+                                <div>
+                                    <span className="text-slate-400 block text-[10px] uppercase font-semibold">Service Status</span>
+                                    <span className="text-white font-bold">{viewingCategory.isActive ? 'Active in Dispatch' : 'Disabled'}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                    <span className="w-3 h-3 rounded-full" style={{ backgroundColor: viewingCategory.colorCode || '#D97706' }} />
+                                    <span className="font-mono text-slate-300">{viewingCategory.colorCode || '#D97706'}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="p-4 border-t border-white/10 bg-white/[0.02] flex justify-end gap-2">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    setEditingCategory({ ...viewingCategory });
+                                    setViewingCategory(null);
+                                }}
+                                className="px-3.5 py-1.5 rounded bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs"
+                            >
+                                Edit Service
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => setViewingCategory(null)}
+                                className="px-3.5 py-1.5 rounded bg-white/10 hover:bg-white/15 text-white font-semibold text-xs"
+                            >
+                                Close
                             </button>
                         </div>
                     </div>

@@ -80,6 +80,7 @@ export interface Role {
     permissions: string[]; // List of permission strings
     isActive: boolean;
     isSystem: boolean;
+    icon?: string;
 }
 
 export type RoleFormData = Omit<Role, 'id' | 'isSystem'>;

@@ -72,6 +72,19 @@ export const ReferralConfiguration: React.FC = () => {
   }
 
   // Handlers
+  const parseNaturalNumber = (raw: string): number => {
+    if (!raw || raw.trim() === '') return 0;
+    // Strip leading zeros if followed by digit, allow decimal points
+    const sanitized = raw.replace(/^0+(?=\d)/, '');
+    const num = Number(sanitized);
+    return isNaN(num) ? 0 : num;
+  };
+
+  const formatNumber = (val: number | undefined | null): string => {
+    if (val === undefined || val === null || val === 0) return '';
+    return String(val);
+  };
+
   const handleConfigChange = (path: string, value: any) => {
     const newConfig: any = { ...config };
     const parts = path.split('.');
@@ -168,8 +181,9 @@ export const ReferralConfiguration: React.FC = () => {
                           <input
                             type="number"
                             step="0.1"
-                            value={config.driverProgram.l1Percentage}
-                            onChange={(e) => handleConfigChange('driverProgram.l1Percentage', Number(e.target.value))}
+                            placeholder="0"
+                            value={formatNumber(config.driverProgram.l1Percentage)}
+                            onChange={(e) => handleConfigChange('driverProgram.l1Percentage', parseNaturalNumber(e.target.value))}
                             className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                           />
                           <span className="text-slate-400 font-bold">%</span>
@@ -179,8 +193,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <label className="text-sm text-slate-600 dark:text-slate-400">Max Active Drivers (Cap)</label>
                         <input
                           type="number"
-                          value={config.driverProgram.maxL1Drivers}
-                          onChange={(e) => handleConfigChange('driverProgram.maxL1Drivers', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.driverProgram.maxL1Drivers)}
+                          onChange={(e) => handleConfigChange('driverProgram.maxL1Drivers', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                       </div>
@@ -193,8 +208,9 @@ export const ReferralConfiguration: React.FC = () => {
                           <input
                             type="number"
                             step="0.1"
-                            value={config.driverProgram.l2Percentage}
-                            onChange={(e) => handleConfigChange('driverProgram.l2Percentage', Number(e.target.value))}
+                            placeholder="0"
+                            value={formatNumber(config.driverProgram.l2Percentage)}
+                            onChange={(e) => handleConfigChange('driverProgram.l2Percentage', parseNaturalNumber(e.target.value))}
                             className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                           />
                           <span className="text-slate-400 font-bold">%</span>
@@ -204,8 +220,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <label className="text-sm text-slate-600 dark:text-slate-400">Max Active Drivers (Cap)</label>
                         <input
                           type="number"
-                          value={config.driverProgram.maxL2Drivers}
-                          onChange={(e) => handleConfigChange('driverProgram.maxL2Drivers', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.driverProgram.maxL2Drivers)}
+                          onChange={(e) => handleConfigChange('driverProgram.maxL2Drivers', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                       </div>
@@ -232,9 +249,10 @@ export const ReferralConfiguration: React.FC = () => {
                       <div className="flex items-center gap-1.5">
                         <input
                           type="number"
+                          placeholder="0"
                           disabled={!config.saccoMatchingPool.enabled}
-                          value={config.saccoMatchingPool.defaultSavingsPercent}
-                          onChange={(e) => handleConfigChange('saccoMatchingPool.defaultSavingsPercent', Number(e.target.value))}
+                          value={formatNumber(config.saccoMatchingPool.defaultSavingsPercent)}
+                          onChange={(e) => handleConfigChange('saccoMatchingPool.defaultSavingsPercent', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono disabled:opacity-50"
                         />
                         <span className="text-slate-400 font-bold">%</span>
@@ -284,8 +302,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <input
                           type="number"
                           step="0.1"
-                          value={config.passengerProgram.l1Percentage}
-                          onChange={(e) => handleConfigChange('passengerProgram.l1Percentage', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.passengerProgram.l1Percentage)}
+                          onChange={(e) => handleConfigChange('passengerProgram.l1Percentage', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                         <span className="text-slate-400 font-bold">%</span>
@@ -297,8 +316,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <input
                           type="number"
                           step="0.1"
-                          value={config.passengerProgram.l2Percentage}
-                          onChange={(e) => handleConfigChange('passengerProgram.l2Percentage', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.passengerProgram.l2Percentage)}
+                          onChange={(e) => handleConfigChange('passengerProgram.l2Percentage', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                         <span className="text-slate-400 font-bold">%</span>
@@ -315,8 +335,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <input
                           type="number"
                           step="0.1"
-                          value={config.passengerProgram.paxReferDriverFirstWeekPercent}
-                          onChange={(e) => handleConfigChange('passengerProgram.paxReferDriverFirstWeekPercent', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.passengerProgram.paxReferDriverFirstWeekPercent)}
+                          onChange={(e) => handleConfigChange('passengerProgram.paxReferDriverFirstWeekPercent', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                       </div>
@@ -324,8 +345,9 @@ export const ReferralConfiguration: React.FC = () => {
                         <label className="text-sm text-slate-600 dark:text-slate-400">Duration (Days)</label>
                         <input
                           type="number"
-                          value={config.passengerProgram.firstWeekDurationDays}
-                          onChange={(e) => handleConfigChange('passengerProgram.firstWeekDurationDays', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.passengerProgram.firstWeekDurationDays)}
+                          onChange={(e) => handleConfigChange('passengerProgram.firstWeekDurationDays', parseNaturalNumber(e.target.value))}
                           className="w-20 px-2 py-1 bg-slate-50 dark:bg-surface-dark border rounded text-right font-mono"
                         />
                       </div>
@@ -386,8 +408,9 @@ export const ReferralConfiguration: React.FC = () => {
                       </div>
                       <input
                         type="number"
-                        value={config.qualifiers.disqualifyingFareThreshold}
-                        onChange={(e) => handleConfigChange('qualifiers.disqualifyingFareThreshold', Number(e.target.value))}
+                        placeholder="0"
+                        value={formatNumber(config.qualifiers.disqualifyingFareThreshold)}
+                        onChange={(e) => handleConfigChange('qualifiers.disqualifyingFareThreshold', parseNaturalNumber(e.target.value))}
                         className="w-28 px-3 py-1.5 bg-slate-50 dark:bg-surface-dark border rounded font-mono text-right"
                       />
                     </div>
@@ -400,8 +423,9 @@ export const ReferralConfiguration: React.FC = () => {
                       <div className="flex items-center gap-1.5">
                         <input
                           type="number"
-                          value={config.qualifiers.escrowHoldingHours}
-                          onChange={(e) => handleConfigChange('qualifiers.escrowHoldingHours', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.qualifiers.escrowHoldingHours)}
+                          onChange={(e) => handleConfigChange('qualifiers.escrowHoldingHours', parseNaturalNumber(e.target.value))}
                           className="w-24 px-3 py-1.5 bg-slate-50 dark:bg-surface-dark border rounded font-mono text-right"
                         />
                         <span className="text-slate-400 font-bold">hrs</span>
@@ -416,8 +440,9 @@ export const ReferralConfiguration: React.FC = () => {
                       <div className="flex items-center gap-1.5">
                         <input
                           type="number"
-                          value={config.qualifiers.maxPlatformFeeDeductionPercent}
-                          onChange={(e) => handleConfigChange('qualifiers.maxPlatformFeeDeductionPercent', Number(e.target.value))}
+                          placeholder="0"
+                          value={formatNumber(config.qualifiers.maxPlatformFeeDeductionPercent)}
+                          onChange={(e) => handleConfigChange('qualifiers.maxPlatformFeeDeductionPercent', parseNaturalNumber(e.target.value))}
                           className="w-20 px-3 py-1.5 bg-slate-50 dark:bg-surface-dark border rounded font-mono text-right"
                         />
                         <span className="text-slate-400 font-bold">%</span>

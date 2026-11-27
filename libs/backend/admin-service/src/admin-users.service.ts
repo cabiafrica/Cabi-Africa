@@ -129,7 +129,7 @@ export class AdminUsersService {
         await this.updateRoles(user.id, roleNames);
 
         // 1. Send Email 1: Username & Temporary Password
-        const adminPanelUrl = process.env.ADMIN_PANEL_URL || 'http://localhost:5173';
+        const adminPanelUrl = process.env.ADMIN_PANEL_URL || 'http://localhost:3001';
         const email1Html = `
 <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #0a0a0a; color: #f8fafc; padding: 40px; border-radius: 12px; max-width: 600px; margin: 0 auto; border: 1px solid #27272a;">
   <div style="text-align: center; margin-bottom: 24px;">

@@ -15,10 +15,38 @@ import {
     Smartphone as MobileIcon,
     Web as WebIcon,
     Dns as ApiIcon,
-    People as PeopleIcon
+    People as PeopleIcon,
+    SupervisorAccount as SupervisorAccountIcon,
+    Person as PersonIcon,
+    VpnKey as VpnKeyIcon,
+    DirectionsCar as DirectionsCarIcon,
+    HeadsetMic as HeadsetMicIcon,
+    AccountBalance as AccountBalanceIcon,
+    VerifiedUser as VerifiedUserIcon,
+    Assessment as AssessmentIcon,
+    LocalPolice as LocalPoliceIcon,
+    Badge as BadgeIcon
 } from '@mui/icons-material';
 import { useNavigate } from 'react-router-dom';
 import { roleService, Role } from '../../services/roleService';
+
+const getRoleIconElement = (iconName?: string) => {
+    switch (iconName) {
+        case 'AdminPanelSettings': return <AdminIcon fontSize="small" />;
+        case 'Security': return <SecurityIcon fontSize="small" />;
+        case 'SupervisorAccount': return <SupervisorAccountIcon fontSize="small" />;
+        case 'Person': return <PersonIcon fontSize="small" />;
+        case 'VpnKey': return <VpnKeyIcon fontSize="small" />;
+        case 'DirectionsCar': return <DirectionsCarIcon fontSize="small" />;
+        case 'HeadsetMic': return <HeadsetMicIcon fontSize="small" />;
+        case 'AccountBalance': return <AccountBalanceIcon fontSize="small" />;
+        case 'VerifiedUser': return <VerifiedUserIcon fontSize="small" />;
+        case 'Assessment': return <AssessmentIcon fontSize="small" />;
+        case 'LocalPolice': return <LocalPoliceIcon fontSize="small" />;
+        case 'Badge': return <BadgeIcon fontSize="small" />;
+        default: return <SecurityIcon fontSize="small" />;
+    }
+};
 
 const RolesList: React.FC = () => {
     const navigate = useNavigate();
@@ -172,7 +200,7 @@ const RolesList: React.FC = () => {
                                     <TableCell sx={{ borderBottom: '1px solid rgba(255,255,255,0.05)', color: 'white' }}>
                                         <Box display="flex" alignItems="center" gap={2}>
                                             <Avatar sx={{ bgcolor: 'rgba(245, 158, 11, 0.18)', color: '#F59E0B' }}>
-                                                <SecurityIcon fontSize="small" />
+                                                {getRoleIconElement(role.icon)}
                                             </Avatar>
                                             <Box>
                                                 <Typography variant="body1" fontWeight="bold">{role.displayName}</Typography>

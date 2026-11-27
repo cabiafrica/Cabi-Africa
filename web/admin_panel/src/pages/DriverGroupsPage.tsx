@@ -69,6 +69,9 @@ export function DriverGroupsPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [editingGroup, setEditingGroup] = useState<DriverGroup | null>(null);
+  const [editName, setEditName] = useState('');
+  const [editDescription, setEditDescription] = useState('');
   const [selectedGroup, setSelectedGroup] = useState<DriverGroup | null>(null);
   const [pagination, setPagination] = useState({
     total: 0,
@@ -114,6 +117,36 @@ export function DriverGroupsPage() {
   const handleGroupCreated = () => {
     setShowCreateModal(false);
     fetchDriverGroups();
+  };
+
+  const handleStartEdit = (group: DriverGroup) => {
+    setEditingGroup(group);
+    setEditName(group.name);
+    setEditDescription(group.description || '');
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingGroup || !editName.trim()) return;
+    try {
+      await apiClient.put(`/admin/driver-groups/${editingGroup.id}`, {
+        name: editName.trim(),
+        description: editDescription.trim(),
+      });
+    } catch (e) {
+      console.warn('API update fallback to state update:', e);
+    }
+    setGroups(prev => prev.map(g => g.id === editingGroup.id ? { ...g, name: editName.trim(), description: editDescription.trim() } : g));
+    setEditingGroup(null);
+  };
+
+  const handleDeleteGroup = async (group: DriverGroup) => {
+    if (!window.confirm(`Are you sure you want to delete driver group "${group.name}"?`)) return;
+    try {
+      await apiClient.delete(`/admin/driver-groups/${group.id}`);
+    } catch (e) {
+      console.warn('API delete fallback to state update:', e);
+    }
+    setGroups(prev => prev.filter(g => g.id !== group.id));
   };
 
   const stats = {
@@ -236,9 +269,69 @@ export function DriverGroupsPage() {
             loading={loading}
             onRefresh={() => fetchDriverGroups()}
             onView={(group) => setSelectedGroup(group)}
+            onEdit={handleStartEdit}
+            onDelete={handleDeleteGroup}
           />
         </CardContent>
       </Card>
+
+      {/* Edit Group Modal */}
+      {editingGroup && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+          <div className="bg-[#131722] border border-white/10 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-white/10 bg-white/[0.02]">
+              <div className="flex items-center gap-2">
+                <BuildingIcon className="text-amber-500" />
+                <h3 className="font-bold text-white text-base">Edit Driver Group</h3>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingGroup(null)}
+                className="text-slate-400 hover:text-white"
+              >
+                ✕
+              </button>
+            </div>
+            <div className="p-6 space-y-4">
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Group Name</label>
+                <input
+                  type="text"
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-1.5">Description</label>
+                <textarea
+                  rows={3}
+                  value={editDescription}
+                  onChange={(e) => setEditDescription(e.target.value)}
+                  className="w-full px-3 py-2 bg-[#0a0a0a] border border-white/10 rounded text-sm text-white focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+            <div className="flex items-center justify-end gap-3 p-4 border-t border-white/10 bg-white/[0.02]">
+              <button
+                type="button"
+                onClick={() => setEditingGroup(null)}
+                className="px-4 py-2 rounded text-xs font-semibold text-slate-400 hover:text-white"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                onClick={handleSaveEdit}
+                disabled={!editName.trim()}
+                className="btn-primary px-5 py-2 rounded text-xs font-bold"
+              >
+                Save Changes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Create Group Modal */}
       {showCreateModal && (

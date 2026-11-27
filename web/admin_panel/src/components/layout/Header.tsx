@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Search, ChevronLeft, ChevronRight } from 'lucide-react';
 import { adminService } from '../../services/adminService';
 import { SosManager } from '../sos/SosManager';
 
 export const Header: React.FC<{ currentView: string }> = ({ currentView }) => {
+    const navigate = useNavigate();
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<any[]>([]);
     const [showResults, setShowResults] = useState(false);
@@ -35,12 +37,34 @@ export const Header: React.FC<{ currentView: string }> = ({ currentView }) => {
 
     return (
         <header className="glass-panel shadow-md h-16 flex items-center px-6 justify-between sticky top-0 z-10 border-b border-white/5">
-            <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-3 flex-1">
+                {/* Back and Forward navigation buttons */}
+                <div className="flex items-center gap-1.5 mr-2">
+                    <button
+                        type="button"
+                        onClick={() => navigate(-1)}
+                        className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/60 shadow-sm cursor-pointer"
+                        title="Go back"
+                        aria-label="Go back"
+                    >
+                        <ChevronLeft className="w-4 h-4" />
+                    </button>
+                    <button
+                        type="button"
+                        onClick={() => navigate(1)}
+                        className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 hover:text-white transition-colors border border-slate-700/60 shadow-sm cursor-pointer"
+                        title="Go forward"
+                        aria-label="Go forward"
+                    >
+                        <ChevronRight className="w-4 h-4" />
+                    </button>
+                </div>
+
                 <h2 className="text-xl font-semibold text-slate-100 capitalize whitespace-nowrap tracking-tight">
                     {currentView.replace(/-/g, ' ')}
                 </h2>
                 {/* Global Search Bar */}
-                <div className="relative max-w-md w-full ml-8 hidden sm:block" ref={searchRef}>
+                <div className="relative max-w-md w-full ml-4 hidden sm:block" ref={searchRef}>
                     <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none">
                         <Search className="w-4 h-4 text-slate-400" />
                     </div>

@@ -185,8 +185,36 @@ function App() {
   const { user, isAuthenticated, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const [expandedMenus, setExpandedMenus] = useState<string[]>(['Command Center']);
+  const [expandedMenus, setExpandedMenus] = useState<string[]>(() => {
+    try {
+      const saved = localStorage.getItem('cabi_admin_expanded_menus');
+      if (saved) return JSON.parse(saved);
+    } catch (_) {}
+    return ['Command Center'];
+  });
   const [isCommandOpen, setIsCommandOpen] = useState(false);
+
+  // Sync expandedMenus with localStorage for persistence
+  useEffect(() => {
+    try {
+      localStorage.setItem('cabi_admin_expanded_menus', JSON.stringify(expandedMenus));
+    } catch (_) {}
+  }, [expandedMenus]);
+
+  // Keep active category expanded on route navigation
+  useEffect(() => {
+    const matchingGroup = SIDEBAR_MENU.find(group =>
+      group.items.some(item => item.view && (location.pathname === item.view || location.pathname.startsWith(`${item.view}/`)))
+    );
+    if (matchingGroup) {
+      setExpandedMenus(prev => {
+        if (!prev.includes(matchingGroup.label)) {
+          return [...prev, matchingGroup.label];
+        }
+        return prev;
+      });
+    }
+  }, [location.pathname]);
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {

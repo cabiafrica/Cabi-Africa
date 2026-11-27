@@ -45,6 +45,10 @@ export const DualApprovalDashboard: React.FC = () => {
     const [rejectModalReq, setRejectModalReq] = useState<DualApprovalRequest | null>(null);
     const [rejectReason, setRejectReason] = useState('');
 
+    // Super Admin Password Approval Modal State
+    const [approveModalReq, setApproveModalReq] = useState<DualApprovalRequest | null>(null);
+    const [approvalPassword, setApprovalPassword] = useState('');
+
     // Break-Glass Modal State
     const [breakGlassReq, setBreakGlassReq] = useState<DualApprovalRequest | null>(null);
     const [justification, setJustification] = useState('');
@@ -69,15 +73,25 @@ export const DualApprovalDashboard: React.FC = () => {
         fetchRequests();
     }, [fetchRequests]);
 
-    const handleApprove = async (id: string) => {
+    const handleApprove = (req: DualApprovalRequest) => {
+        setApproveModalReq(req);
+        setApprovalPassword('');
+    };
+
+    const handleConfirmApprove = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!approveModalReq || !approvalPassword.trim()) return;
+        const id = approveModalReq.id;
         setActionLoading(id);
         setFeedback(null);
         try {
-            await apiClient.post(`/admin/dual-approvals/${id}/approve`, {});
-            setFeedback({ type: 'success', message: `Proposal ${id} successfully approved and executed.` });
+            await apiClient.post(`/admin/dual-approvals/${id}/approve`, { password: approvalPassword.trim() });
+            setFeedback({ type: 'success', message: `Proposal ${id} successfully authorized with Super Admin password and executed.` });
+            setApproveModalReq(null);
+            setApprovalPassword('');
             await fetchRequests();
         } catch (err: any) {
-            setFeedback({ type: 'error', message: err.response?.data?.message || 'Approval failed.' });
+            setFeedback({ type: 'error', message: err.response?.data?.message || 'Password approval failed. Invalid credentials or expired request.' });
         } finally {
             setActionLoading(null);
         }
@@ -271,9 +285,9 @@ export const DualApprovalDashboard: React.FC = () => {
                                                     <div className="flex items-center justify-end gap-2">
                                                         {/* Approve Button */}
                                                         <button
-                                                            onClick={() => handleApprove(req.id)}
+                                                            onClick={() => handleApprove(req)}
                                                             disabled={actionLoading === req.id || isRequester}
-                                                            title={isRequester ? 'Four-Eyes Principle: You cannot approve your own proposal' : 'Approve proposal as second operator'}
+                                                            title={isRequester ? 'Four-Eyes Principle: You cannot approve your own proposal' : 'Approve proposal with Super Admin master password'}
                                                             className="px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 disabled:opacity-40 disabled:hover:bg-emerald-500 text-black font-bold rounded-lg transition-all flex items-center gap-1 cursor-pointer"
                                                         >
                                                             <UserCheck className="w-3.5 h-3.5" />
@@ -315,6 +329,65 @@ export const DualApprovalDashboard: React.FC = () => {
                     </div>
                 )}
             </div>
+
+            {/* ===================== SUPER ADMIN PASSWORD APPROVAL MODAL ===================== */}
+            {approveModalReq && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-fade-in">
+                    <div className="bg-[#131722] border border-amber-500/30 rounded-[3px] p-6 max-w-md w-full shadow-2xl">
+                        <div className="flex items-center gap-3 text-amber-500 mb-3">
+                            <KeyRound className="w-6 h-6" />
+                            <div>
+                                <h3 className="text-base font-bold text-white">Super Admin Password Authorization</h3>
+                                <p className="text-[10px] text-amber-400 font-semibold uppercase tracking-wider">Required for User & Role Mutations</p>
+                            </div>
+                        </div>
+                        <div className="bg-amber-500/10 border border-amber-500/20 p-3 rounded-[3px] text-xs text-amber-200 mb-4 space-y-1">
+                            <p className="font-semibold text-white">Proposal: {approveModalReq.targetDescription || approveModalReq.actionType}</p>
+                            <p className="text-[11px] text-slate-400">Target ID: <span className="font-mono text-amber-400">{approveModalReq.targetId}</span></p>
+                            <p className="text-[11px] text-slate-400">Requested by: <span className="text-slate-300">{approveModalReq.requestedByEmail}</span></p>
+                        </div>
+                        <form onSubmit={handleConfirmApprove} className="space-y-4">
+                            <div>
+                                <label className="block text-xs uppercase tracking-wider font-semibold text-gray-300 mb-1.5 flex items-center gap-1.5">
+                                    <span>Enter Super Admin Password</span>
+                                </label>
+                                <input
+                                    type="password"
+                                    value={approvalPassword}
+                                    onChange={(e) => setApprovalPassword(e.target.value)}
+                                    placeholder="Enter your master password..."
+                                    className="w-full py-2 px-3 bg-[#0a0a0a] border border-white/10 rounded-[3px] focus:border-amber-500 text-white text-sm outline-none transition-colors"
+                                    required
+                                    autoFocus
+                                />
+                                <span className="text-[10px] text-gray-500 mt-1 block">
+                                    Your password cryptographically signs and seals the execution of this change.
+                                </span>
+                            </div>
+                            <div className="flex items-center justify-end gap-2 pt-2 border-t border-white/10">
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        setApproveModalReq(null);
+                                        setApprovalPassword('');
+                                    }}
+                                    className="btn-secondary"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={!approvalPassword.trim() || actionLoading === approveModalReq.id}
+                                    className="px-4 py-2 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-400 hover:to-amber-500 disabled:opacity-40 text-black font-bold rounded-[3px] text-xs transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                                >
+                                    <ShieldCheck className="w-4 h-4" />
+                                    <span>Authorize & Execute</span>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            )}
 
             {/* ===================== REJECT MODAL ===================== */}
             {rejectModalReq && (

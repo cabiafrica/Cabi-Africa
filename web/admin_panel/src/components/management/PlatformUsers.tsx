@@ -109,26 +109,7 @@ export const UserManagementDashboard: React.FC = () => {
         }
     };
 
-    if (viewingPaymentsFor) {
-        return (
-            <UserPaymentHistory
-                userId={viewingPaymentsFor}
-                onBack={() => setViewingPaymentsFor(null)}
-            />
-        );
-    }
-
-    if (selectedUser) {
-        return (
-            <UserDetails
-                userId={selectedUser.id}
-                userName={selectedUser.name}
-                onBack={() => setSelectedUser(null)}
-                onShowPayments={() => setViewingPaymentsFor(selectedUser.id)}
-            />
-        );
-    }
-
+    // Remove early full-page returns to preserve background directory visibility per user request
     return (
         <div className="space-y-6">
             <PageHeader
@@ -384,6 +365,71 @@ export const UserManagementDashboard: React.FC = () => {
                             </button>
                         </div>
                     </form>
+                </div>
+            </div>
+        )}
+
+        {/* Slide-out Side Drawer for User Details (keeps directory visible in background) */}
+        {selectedUser && (
+            <div className="fixed inset-0 z-50 overflow-hidden flex justify-end animate-fade-in">
+                {/* Backdrop overlay */}
+                <div 
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm transition-opacity cursor-pointer"
+                    onClick={() => setSelectedUser(null)}
+                />
+                {/* Slide-out side drawer */}
+                <div className="relative w-full max-w-2xl bg-[#131722] border-l border-white/10 shadow-2xl h-full flex flex-col z-10 overflow-y-auto">
+                    <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02] sticky top-0 bg-[#131722] z-20">
+                        <div className="flex items-center gap-2.5">
+                            <div className="p-2 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-500">
+                                <UserCog className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-white text-base">User Profile & Access Dossier</h3>
+                                <p className="text-xs text-slate-400">Managing {selectedUser.name} • {selectedUser.type}</p>
+                            </div>
+                        </div>
+                        <button
+                            type="button"
+                            onClick={() => setSelectedUser(null)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                            title="Close drawer"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+                    <div className="flex-1 p-6">
+                        <UserDetails
+                            userId={selectedUser.id}
+                            userName={selectedUser.name}
+                            onBack={() => setSelectedUser(null)}
+                            onShowPayments={() => setViewingPaymentsFor(selectedUser.id)}
+                        />
+                    </div>
+                </div>
+            </div>
+        )}
+
+        {/* User Payment History Modal */}
+        {viewingPaymentsFor && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
+                <div className="bg-[#131722] border border-white/10 rounded-xl shadow-2xl w-full max-w-3xl max-h-[85vh] flex flex-col overflow-hidden">
+                    <div className="p-4 border-b border-white/10 flex items-center justify-between bg-white/[0.02]">
+                        <h3 className="font-bold text-white text-base">User Payment History</h3>
+                        <button
+                            type="button"
+                            onClick={() => setViewingPaymentsFor(null)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-6">
+                        <UserPaymentHistory
+                            userId={viewingPaymentsFor}
+                            onBack={() => setViewingPaymentsFor(null)}
+                        />
+                    </div>
                 </div>
             </div>
         )}
