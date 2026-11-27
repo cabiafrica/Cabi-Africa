@@ -4,6 +4,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'map_marker.dart';
 import 'map_controller.dart';
+import 'offline_tile_provider.dart';
 
 /// Map theme for Cabi maps
 enum CabiMapTheme {
@@ -84,6 +85,7 @@ class CabiMap extends StatefulWidget {
   final bool enableInteraction;
   final CabiMapTheme theme;
   final CabiMapSource mapSource;
+  final bool isOfflineMode;
   final double? progressRatio; // 0.0 to 1.0 (portion of route already traveled, turns grey)
   final Function(LatLng center, bool hasGesture)? onCameraMove;
   final Function(CabiMapController)? onMapCreated;
@@ -107,6 +109,7 @@ class CabiMap extends StatefulWidget {
     this.enableInteraction = true,
     this.theme = CabiMapTheme.dark,
     this.mapSource = CabiMapSource.googleMaps,
+    this.isOfflineMode = false,
     this.apiKey,
   });
 
@@ -194,10 +197,11 @@ class _CabiMapState extends State<CabiMap> {
       children: [
         // Universal clean basemap tile layer (Monochrome black & white / grey shaded, Light & Dark modes)
         TileLayer(
-          key: ValueKey('cabi_clean_map_${widget.theme.name}'),
+          key: ValueKey('cabi_clean_map_${widget.theme.name}_${widget.isOfflineMode}'),
           urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           userAgentPackageName: 'com.cabi.app',
           maxZoom: 19,
+          tileProvider: widget.isOfflineMode ? CabiOfflineTileProvider(isDark: isDark) : null,
           tileBuilder: (context, tileWidget, tile) {
             return ColorFiltered(
               colorFilter: isDark

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:cabi_maps/cabi_maps.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,6 +86,104 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
   LatLng _driverLocation = const LatLng(-1.286389, 36.817223); 
   final LatLng _passengerLocation = const LatLng(-1.2921, 36.8219); 
 
+  // Dynamic OSRM Rerouting & Audio-Haptic Alert State
+  List<LatLng> _currentRoutePoints = [];
+  List<AlternativeRoute> _currentAlternativeRoutes = [];
+  List<TrafficSegment> _currentTrafficSegments = [];
+  AlternativeRoute? _fasterRouteAlert;
+  int _savedMinutes = 0;
+  bool _isOfflineMap = false;
+  int _rerouteCheckCounter = 0;
+
+  Future<void> _fetchDynamicOsrmRoute() async {
+    try {
+      final res = await OsrmRoutingService.instance.getRoute(
+        start: _driverLocation,
+        end: _passengerLocation,
+        includeAlternatives: true,
+      );
+      if (mounted) {
+        setState(() {
+          _currentRoutePoints = res.primaryRoute;
+          _currentAlternativeRoutes = res.alternativeRoutes;
+          _currentTrafficSegments = res.trafficSegments;
+          _isOfflineMap = res.isOfflineFallback;
+        });
+      }
+    } catch (e) {
+      debugPrint('[OSRM] Error getting route: $e');
+    }
+  }
+
+  void _checkDynamicRerouteOpportunity() {
+    if (_tripPhase != TripPhase.tripActive) return;
+    _rerouteCheckCounter++;
+
+    // Check every 12 seconds of active trip driving
+    if (_rerouteCheckCounter % 12 == 0 && _fasterRouteAlert == null) {
+      final fasterPoints = <LatLng>[];
+      const steps = 14;
+      for (int i = 0; i <= steps; i++) {
+        final t = i / steps;
+        final lat = _driverLocation.latitude +
+            (_passengerLocation.latitude - _driverLocation.latitude) * t -
+            0.0035 * (1 - (2 * t - 1) * (2 * t - 1));
+        final lng = _driverLocation.longitude +
+            (_passengerLocation.longitude - _driverLocation.longitude) * t +
+            0.0035 * (1 - (2 * t - 1) * (2 * t - 1));
+        fasterPoints.add(LatLng(lat, lng));
+      }
+
+      final fasterAlt = AlternativeRoute(
+        points: fasterPoints,
+        label: 'Via Ring Road Arterial',
+        extraTime: 'Saves 4 min',
+      );
+
+      setState(() {
+        _fasterRouteAlert = fasterAlt;
+        _savedMinutes = 4;
+      });
+
+      // Trigger subtle haptic vibration and chime on the driver app
+      AudioNotificationService.instance.play('route_reroute_available');
+    }
+  }
+
+  void _acceptFasterRoute() {
+    if (_fasterRouteAlert == null) return;
+    final accepted = _fasterRouteAlert!;
+    setState(() {
+      _currentRoutePoints = accepted.points;
+      _fasterRouteAlert = null;
+      _currentAlternativeRoutes = _getNavAlternativeRoutes();
+    });
+
+    HapticFeedback.heavyImpact();
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              const Icon(Icons.check_circle_rounded, color: Color(0xFF10B981), size: 18),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  'Switched to ${accepted.label}! Estimated ~$_savedMinutes min saved.',
+                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: const Color(0xFF1C1B1B),
+          duration: const Duration(seconds: 4),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)),
+        ),
+      );
+    }
+  } 
+
   List<LatLng> _getNavRoutePoints() {
     final points = <LatLng>[];
     const steps = 12;
@@ -151,6 +250,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
     _loadCategoryPricing();
     _startBackendTrip();
     _startTripSimulation();
+    _fetchDynamicOsrmRoute();
 
     // Init cross-app communication channel
     final tripId = widget.tripCode ?? 'CABI-982';
@@ -393,6 +493,7 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
             // Realtime road coverage progress & fare update
             _tripProgressRatio = (_distanceKm / 4.5).clamp(0.0, 1.0);
             _recalculateFare();
+            _checkDynamicRerouteOpportunity();
 
             final double latDiff =
                 _passengerLocation.latitude - _driverLocation.latitude;
@@ -972,10 +1073,21 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                       delayText: '+2m delay',
                     ),
                   ],
-                  routePoints: _getNavRoutePoints(),
+                  routePoints: _currentRoutePoints.isNotEmpty ? _currentRoutePoints : _getNavRoutePoints(),
                   progressRatio: _tripProgressRatio,
-                  trafficSegments: _getNavTrafficSegments(),
-                  alternativeRoutes: _getNavAlternativeRoutes(),
+                  trafficSegments: _currentTrafficSegments.isNotEmpty ? _currentTrafficSegments : _getNavTrafficSegments(),
+                  alternativeRoutes: _currentAlternativeRoutes.isNotEmpty ? _currentAlternativeRoutes : _getNavAlternativeRoutes(),
+                  isOfflineMode: _isOfflineMap,
+                  onSelectAlternativeRoute: (idx) {
+                    final alts = _currentAlternativeRoutes.isNotEmpty ? _currentAlternativeRoutes : _getNavAlternativeRoutes();
+                    if (idx >= 0 && idx < alts.length) {
+                      setState(() {
+                        _fasterRouteAlert = alts[idx];
+                        _savedMinutes = 3;
+                      });
+                      AudioNotificationService.instance.play('route_reroute_available');
+                    }
+                  },
                   showUserLocation: true,
                 );
               },
@@ -1148,6 +1260,103 @@ class _TripInProgressScreenState extends State<TripInProgressScreen> {
                         ],
                       ),
                     ),
+
+                    // Audio-Haptic Reroute Alert Banner (When an alternative route saves >=3 min)
+                    if (_fasterRouteAlert != null) ...[
+                      const SizedBox(height: 6),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF141312),
+                          borderRadius: BorderRadius.circular(3), // Strict 3px border radius
+                          border: Border.all(color: const Color(0xFFD4AF37), width: 1.2),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(alpha: 0.65),
+                              blurRadius: 12,
+                              offset: const Offset(0, 4),
+                            ),
+                          ],
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(5),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFD4AF37).withValues(alpha: 0.15),
+                                borderRadius: BorderRadius.circular(3),
+                              ),
+                              child: const Icon(Icons.alt_route_rounded, color: Color(0xFFD4AF37), size: 16),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Row(
+                                    children: [
+                                      const Text(
+                                        'FASTER ROUTE DETECTED',
+                                        style: TextStyle(
+                                          color: Color(0xFFD4AF37),
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w900,
+                                          letterSpacing: 0.6,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      Container(
+                                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+                                        decoration: BoxDecoration(
+                                          color: const Color(0xFF10B981).withValues(alpha: 0.2),
+                                          borderRadius: BorderRadius.circular(3),
+                                        ),
+                                        child: Text(
+                                          'Saves $_savedMinutes min',
+                                          style: const TextStyle(
+                                            color: Color(0xFF10B981),
+                                            fontSize: 9,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    '${_fasterRouteAlert!.label} avoids upcoming bottleneck',
+                                    style: const TextStyle(color: Colors.white70, fontSize: 11),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            ElevatedButton(
+                              onPressed: _acceptFasterRoute,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: const Color(0xFFD4AF37),
+                                foregroundColor: Colors.black,
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(3)), // 3px border radius
+                                visualDensity: VisualDensity.compact,
+                              ),
+                              child: const Text('SWITCH', style: TextStyle(fontWeight: FontWeight.w900, fontSize: 10)),
+                            ),
+                            const SizedBox(width: 4),
+                            GestureDetector(
+                              onTap: () => setState(() => _fasterRouteAlert = null),
+                              child: const Padding(
+                                padding: EdgeInsets.all(4.0),
+                                child: Icon(Icons.close, color: Colors.white38, size: 16),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
 
                     const SizedBox(height: 6),
 

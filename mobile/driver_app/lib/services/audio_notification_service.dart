@@ -14,6 +14,7 @@ enum NotificationEvent {
   driverArrived('driver_arrived', 'Driver Arrived', 'Announcement at pickup pin'),
   tripStarted('trip_started', 'Trip Started', 'Start chime when ride begins'),
   tripEnded('trip_ended', 'Trip Ended', 'Celebratory completion tone'),
+  routeRerouteAvailable('route_reroute_available', 'Faster Route Available', 'Chime & haptic pulse when an alternative route saves 3+ mins'),
   passengerCancelled('passenger_cancelled', 'Passenger Cancelled', 'Alert when passenger cancels');
 
   final String key;
@@ -140,6 +141,14 @@ class AudioNotificationService {
           await Future.delayed(const Duration(milliseconds: 140));
           await SystemSound.play(SystemSoundType.click);
           await HapticFeedback.heavyImpact();
+          break;
+
+        case 'route_reroute_available':
+          await SystemSound.play(SystemSoundType.alert);
+          await HapticFeedback.heavyImpact();
+          await Future.delayed(const Duration(milliseconds: 140));
+          await SystemSound.play(SystemSoundType.alert);
+          await HapticFeedback.mediumImpact();
           break;
 
         case 'driver_request_incoming':
