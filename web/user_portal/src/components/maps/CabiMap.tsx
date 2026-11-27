@@ -249,24 +249,38 @@ export const CabiMap: React.FC<CabiMapProps> = ({
         }
     }, [showTraffic]);
 
+    const [showDirections, setShowDirections] = useState(false);
+
     return (
-        <div className="relative w-full h-full overflow-hidden rounded-xl border border-slate-200 dark:border-white/10 shadow-lg">
+        <div className="relative w-full h-full overflow-hidden rounded-[3px] border border-slate-200 dark:border-white/10 shadow-lg">
             <div
                 ref={mapContainerRef}
                 style={{ height, width: '100%' }}
                 className={className}
             />
 
-            {/* Directions Overlay (Uber-like bottom sheet or side panel) */}
-            {directions.length > 0 && (
-                <div className="absolute top-4 left-4 z-[1000] w-72 max-h-[80%] bg-white/90 dark:bg-brand-black/90 backdrop-blur-md rounded-xl shadow-2xl overflow-y-auto p-4 border border-slate-200 dark:border-white/10 animate-slide-in">
-                    <h3 className="text-sm font-black uppercase tracking-widest text-brand-yellow mb-4">Directions</h3>
-                    <div className="space-y-4">
+            {/* Turn-by-Turn Directions Overlay */}
+            {directions && directions.length > 0 && showDirections && (
+                <div className="absolute top-3 left-3 z-[1000] w-72 max-h-[75%] bg-white/95 dark:bg-[#0c0e14]/95 backdrop-blur-md rounded-[3px] shadow-2xl overflow-y-auto p-4 border border-slate-200 dark:border-amber-500/30 animate-fade-in">
+                    <div className="flex items-center justify-between mb-3 pb-2 border-b border-slate-200 dark:border-white/10">
+                        <h3 className="text-xs font-black uppercase tracking-wider text-amber-600 dark:text-amber-400">
+                            Turn-by-Turn Route
+                        </h3>
+                        <button
+                            type="button"
+                            onClick={() => setShowDirections(false)}
+                            className="text-slate-400 hover:text-slate-900 dark:hover:text-white text-xs p-1"
+                        >
+                            ✕
+                        </button>
+                    </div>
+                    <div className="space-y-3">
                         {directions.map((step, i) => (
-                            <div key={i} className="flex gap-3 items-start border-l-2 border-slate-200 dark:border-white/10 pl-3 pb-2">
-                                <div className="text-xs font-bold text-slate-800 dark:text-white">
-                                    <p>{step.instruction}</p>
-                                    <p className="text-[10px] text-slate-500 font-normal mt-1">{step.distance}</p>
+                            <div key={i} className="flex gap-2.5 items-start border-l-2 border-amber-500/40 pl-2.5 pb-1">
+                                <span className="text-[10px] font-mono text-amber-500 font-bold shrink-0">{i + 1}.</span>
+                                <div className="text-xs font-medium text-slate-800 dark:text-slate-200">
+                                    <p className="leading-snug">{step.instruction}</p>
+                                    <p className="text-[10px] text-slate-500 font-mono mt-0.5">{step.distance}</p>
                                 </div>
                             </div>
                         ))}
@@ -274,14 +288,23 @@ export const CabiMap: React.FC<CabiMapProps> = ({
                 </div>
             )}
 
-            {/* Traffic Toggle */}
-            <div className="absolute top-4 right-4 z-[1000] flex flex-col gap-2">
-                <button
-                    className={`p-3 rounded-full shadow-lg transition-all ${showTraffic ? 'bg-brand-yellow text-black' : 'bg-white dark:bg-brand-black text-slate-600 dark:text-gray-400 opacity-80 hover:opacity-100'}`}
-                    title="Toggle Traffic"
-                >
-                    🚦
-                </button>
+            {/* Map Action Buttons (Top Right) */}
+            <div className="absolute top-3 right-3 z-[1000] flex flex-col gap-2">
+                {directions && directions.length > 0 && (
+                    <button
+                        type="button"
+                        onClick={() => setShowDirections(!showDirections)}
+                        className={`px-2.5 py-1.5 rounded-[3px] shadow-md text-[10px] font-black uppercase tracking-wider transition-all flex items-center gap-1.5 cursor-pointer ${
+                            showDirections
+                                ? 'bg-amber-500 text-black'
+                                : 'bg-white/90 dark:bg-black/80 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-white/10'
+                        }`}
+                        title="Toggle Turn-by-Turn Directions"
+                    >
+                        <span>🗺️</span>
+                        <span>{showDirections ? 'Hide Steps' : 'Turn-by-Turn'}</span>
+                    </button>
+                )}
             </div>
         </div>
     );

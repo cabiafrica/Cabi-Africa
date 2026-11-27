@@ -10,8 +10,11 @@ import {
     FaTimes,
     FaSms,
     FaFingerprint,
-    FaUserFriends,
-    FaCar,
+    FaMotorcycle,
+    FaCarSide,
+    FaCrown,
+    FaShuttleVan,
+    FaCrosshairs,
 } from 'react-icons/fa';
 import { useAuth } from '@/context/AuthContext';
 import { isValidContactPhone } from '@/config/contactConfig';
@@ -20,6 +23,7 @@ import MapPinModal, {
     Coords,
     MapPinMode,
     inferCoordsFromText,
+    resolveAddressFromCoords,
     buildPinMarkers,
 } from '@/components/maps/MapPinModal';
 import LocationAutocomplete from '@/components/ui/LocationAutocomplete';
@@ -31,7 +35,7 @@ const CabiMap = dynamic(() => import('@/components/maps/CabiMap'), {
         <div className="w-full h-full min-h-[300px] rounded-[3px] bg-slate-100 dark:bg-surface-dark border border-slate-200 dark:border-white/10 flex items-center justify-center text-xs font-bold text-neutral-500">
             <div className="flex items-center gap-2">
                 <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
-                <span>Loading interactive route map...</span>
+                <span>Loading interactive route radar...</span>
             </div>
         </div>
     ),
@@ -43,8 +47,10 @@ interface VehicleOption {
     price: number;
     eta: number;
     icon: string;
+    bgImage: string;
     tag?: string;
     capacity?: string;
+    description?: string;
 }
 
 interface TrajectoryData {
@@ -53,13 +59,55 @@ interface TrajectoryData {
     pickupCoords: Coords;
     dropoffCoords: Coords;
     polyline: [number, number][];
+    steps?: { instruction: string; distance: string }[];
+    summary?: string;
 }
 
 const DEFAULT_VEHICLES: VehicleOption[] = [
-    { id: 'boda', name: 'Cabi Boda', price: 150, eta: 3, icon: '🏍️', tag: 'FASTEST', capacity: '1 Seat' },
-    { id: 'cabigo', name: 'CabiGo', price: 320, eta: 4, icon: '🚗', tag: 'POPULAR', capacity: '4 Seats' },
-    { id: 'executive', name: 'Executive Suite', price: 650, eta: 6, icon: '✨', tag: 'LUXURY', capacity: '3 Seats' },
-    { id: 'xl', name: 'Diplomatic XL', price: 1100, eta: 8, icon: '🚙', tag: 'GROUP', capacity: '6 Seats' },
+    {
+        id: 'boda',
+        name: 'Cabi Boda',
+        price: 150,
+        eta: 3,
+        icon: '🏍️',
+        bgImage: '/images/vehicles/boda.png',
+        tag: 'FASTEST',
+        capacity: '1 Passenger',
+        description: 'Traffic bypass spec',
+    },
+    {
+        id: 'cabigo',
+        name: 'CabiGo',
+        price: 320,
+        eta: 4,
+        icon: '🚗',
+        bgImage: '/images/vehicles/cabigo.png',
+        tag: 'POPULAR',
+        capacity: '4 Passengers',
+        description: 'Clean air-conditioned sedan',
+    },
+    {
+        id: 'executive',
+        name: 'Executive Suite',
+        price: 650,
+        eta: 6,
+        icon: '✨',
+        bgImage: '/images/vehicles/executive.jpg',
+        tag: 'LUXURY',
+        capacity: '3 Passengers',
+        description: 'Suited captain & Mercedes E-Class',
+    },
+    {
+        id: 'xl',
+        name: 'Diplomatic XL',
+        price: 1100,
+        eta: 8,
+        icon: '🚙',
+        bgImage: '/images/vehicles/xl.png',
+        tag: 'DELEGATION',
+        capacity: '6 Passengers',
+        description: 'Alphard / Land Cruiser convoy',
+    },
 ];
 
 export default function BookingSection() {
@@ -70,6 +118,8 @@ export default function BookingSection() {
     const [trajectory, setTrajectory] = useState<TrajectoryData | null>(null);
 
     const [mapPickerMode, setMapPickerMode] = useState<MapPinMode | null>(null);
+    const [pinpointerTarget, setPinpointerTarget] = useState<'pickup' | 'dropoff' | null>(null);
+    const [pinpointerLoading, setPinpointerLoading] = useState(false);
 
     const [vehicleOptions, setVehicleOptions] = useState<VehicleOption[]>(DEFAULT_VEHICLES);
     const [loading, setLoading] = useState(false);
@@ -149,6 +199,10 @@ export default function BookingSection() {
                 const label = `Current Location (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
                 setPickup(label);
                 if (!silent) setGpsLoading(false);
+
+                if (dropoffCoords) {
+                    autoComputeRoute({ lat, lng }, dropoffCoords, label, destination);
+                }
             },
             (error) => {
                 if (!silent) {
@@ -289,15 +343,22 @@ export default function BookingSection() {
         if (!pickupCoords) setPickupCoords(resolvedPickup);
         if (!dropoffCoords) setDropoffCoords(resolvedDropoff);
 
+        await autoComputeRoute(resolvedPickup, resolvedDropoff, pickup, destination);
+    };
+
+    const autoComputeRoute = async (start: Coords, end: Coords, pAddress: string, dAddress: string) => {
+        setLoading(true);
+        setBookingError(null);
+
         try {
             const response = await fetch('/api/rides/estimate', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
-                    pickup,
-                    destination,
-                    pickupCoords: resolvedPickup,
-                    dropoffCoords: resolvedDropoff,
+                    pickup: pAddress,
+                    destination: dAddress,
+                    pickupCoords: start,
+                    dropoffCoords: end,
                     includeTrajectory: true,
                 }),
             });
@@ -305,10 +366,16 @@ export default function BookingSection() {
             if (response.ok) {
                 const data = await response.json();
                 const list = Array.isArray(data) ? data : data.estimates || [];
-                // Merge tags and capacities
+                // Merge tags, capacities and realistic bg images
                 const mergedList = list.map((v: VehicleOption) => {
                     const found = DEFAULT_VEHICLES.find((d) => d.id === v.id);
-                    return { ...v, tag: found?.tag, capacity: found?.capacity };
+                    return {
+                        ...v,
+                        tag: found?.tag,
+                        capacity: found?.capacity,
+                        bgImage: found?.bgImage || '',
+                        description: found?.description,
+                    };
                 });
                 setVehicleOptions(mergedList);
                 if (!Array.isArray(data) && data.trajectory) {
@@ -325,6 +392,34 @@ export default function BookingSection() {
             setBookingError('Network error while computing trajectory.');
         } finally {
             setLoading(false);
+        }
+    };
+
+    // Direct Map Pinpointer Handler (allows clicking directly on radar map)
+    const handleDirectMapPin = async (lat: number, lng: number) => {
+        const target = pinpointerTarget || (!pickupCoords ? 'pickup' : 'dropoff');
+        setPinpointerLoading(true);
+
+        try {
+            const address = await resolveAddressFromCoords(lat, lng);
+            if (target === 'pickup') {
+                setPickupCoords({ lat, lng });
+                setPickup(address);
+                if (dropoffCoords) {
+                    autoComputeRoute({ lat, lng }, dropoffCoords, address, destination);
+                }
+            } else {
+                setDropoffCoords({ lat, lng });
+                setDestination(address);
+                if (pickupCoords) {
+                    autoComputeRoute(pickupCoords, { lat, lng }, pickup, address);
+                }
+            }
+        } catch (e) {
+            console.error('Error resolving pin location', e);
+        } finally {
+            setPinpointerLoading(false);
+            setPinpointerTarget(null);
         }
     };
 
@@ -482,6 +577,7 @@ export default function BookingSection() {
         setSelectedVehicle('cabigo');
         setTrajectory(null);
         setOtpInput('');
+        setPinpointerTarget(null);
     };
 
     const mapMarkers: MapMarker[] = useMemo(
@@ -525,7 +621,7 @@ export default function BookingSection() {
     return (
         <section id="booking-section" className="relative z-20 mt-4 lg:mt-6 px-4 lg:px-6 mb-16 sm:mb-24">
             <div className="container mx-auto max-w-7xl">
-                {/* Main Glass Card with 3px radius and golden accent border */}
+                {/* Main Card with 3px radius and golden accent border */}
                 <div className="relative bg-white/95 dark:bg-[#0c0e14]/95 backdrop-blur-xl rounded-[3px] p-5 sm:p-7 lg:p-9 border border-slate-200 dark:border-white/10 shadow-2xl transition-all duration-300">
                     {/* Top Golden Accent Line */}
                     <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-amber-500 via-amber-400 to-amber-600 rounded-t-[3px]" />
@@ -594,7 +690,7 @@ export default function BookingSection() {
                         /* Modern Dual-Panel Layout */
                         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-stretch">
                             {/* Left Panel: Inputs + Vehicle Tiers + Action (lg:col-span-7) */}
-                            <div className="lg:col-span-7 flex flex-col justify-between space-y-6">
+                            <div className="lg:col-span-7 flex flex-col justify-between space-y-5">
                                 {/* Header Badge & Title */}
                                 <div>
                                     <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-[3px] bg-amber-500/15 border border-amber-500/30 text-amber-600 dark:text-amber-400 text-[10px] font-black uppercase tracking-widest mb-2 shadow-xs">
@@ -604,13 +700,13 @@ export default function BookingSection() {
                                     <h2 className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight">
                                         Book Your Ride
                                     </h2>
-                                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-1">
-                                        Transparent upfront pricing with verified professional captains.
+                                    <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400 mt-0.5">
+                                        Turn-by-turn fastest route navigation with verified professional captains.
                                     </p>
                                 </div>
 
                                 {/* Pickup & Drop-off Location Card */}
-                                <div className="p-4 sm:p-5 rounded-[3px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 space-y-4">
+                                <div className="p-4 sm:p-5 rounded-[3px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 space-y-3.5">
                                     {/* Pickup Location */}
                                     <div className="space-y-1.5">
                                         <div className="flex justify-between items-center px-0.5">
@@ -618,7 +714,7 @@ export default function BookingSection() {
                                                 <span className="w-2 h-2 rounded-[2px] bg-emerald-500 inline-block" />
                                                 <span>Pickup Location</span>
                                             </label>
-                                            <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-2.5">
                                                 <button
                                                     type="button"
                                                     onClick={() => getCurrentLocation(false)}
@@ -631,12 +727,16 @@ export default function BookingSection() {
                                                 </button>
                                                 <button
                                                     type="button"
-                                                    onClick={() => setMapPickerMode('pickup')}
-                                                    className="text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
-                                                    title="Pin pickup on map"
+                                                    onClick={() => setPinpointerTarget(pinpointerTarget === 'pickup' ? null : 'pickup')}
+                                                    className={`transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] cursor-pointer ${
+                                                        pinpointerTarget === 'pickup'
+                                                            ? 'bg-amber-500 text-black font-black animate-pulse'
+                                                            : 'text-amber-600 dark:text-amber-400 hover:text-amber-500'
+                                                    }`}
+                                                    title="Click on radar map to pinpoint pickup"
                                                 >
-                                                    <FaMapMarkerAlt className="text-[10px]" />
-                                                    <span>Pin on Map</span>
+                                                    <FaCrosshairs className="text-[10px]" />
+                                                    <span>{pinpointerTarget === 'pickup' ? 'Cancel Pin' : 'Pin on Map'}</span>
                                                 </button>
                                             </div>
                                         </div>
@@ -650,8 +750,11 @@ export default function BookingSection() {
                                             onSelect={(label, coords) => {
                                                 setPickup(label);
                                                 setPickupCoords(coords);
+                                                if (dropoffCoords) {
+                                                    autoComputeRoute(coords, dropoffCoords, label, destination);
+                                                }
                                             }}
-                                            onPinClick={() => setMapPickerMode('pickup')}
+                                            onPinClick={() => setPinpointerTarget('pickup')}
                                             placeholder="Enter pickup point or landmark"
                                             ariaLabel="Pickup Location"
                                             surfaceClassName="bg-white dark:bg-white/5 rounded-[3px]"
@@ -659,12 +762,14 @@ export default function BookingSection() {
                                             rightSlot={
                                                 <button
                                                     type="button"
-                                                    onClick={() => setMapPickerMode('pickup')}
+                                                    onClick={() => setPinpointerTarget(pinpointerTarget === 'pickup' ? null : 'pickup')}
                                                     aria-label="Select pickup pin on map"
-                                                    title="Pin pickup location on map"
+                                                    title="Pin pickup location directly on map"
                                                     className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-[3px] border transition-all cursor-pointer ${
-                                                        pickupCoords
-                                                            ? 'bg-amber-500 text-black border-amber-500'
+                                                        pinpointerTarget === 'pickup'
+                                                            ? 'bg-amber-500 text-black border-amber-500 animate-pulse'
+                                                            : pickupCoords
+                                                            ? 'bg-amber-500/20 text-amber-500 border-amber-500/40'
                                                             : 'bg-slate-100 dark:bg-white/10 text-amber-500 border-slate-200 dark:border-white/10 hover:border-amber-500'
                                                     }`}
                                                 >
@@ -688,12 +793,16 @@ export default function BookingSection() {
                                             </label>
                                             <button
                                                 type="button"
-                                                onClick={() => setMapPickerMode('dropoff')}
-                                                className="text-amber-600 dark:text-amber-400 hover:text-amber-500 transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider cursor-pointer"
-                                                title="Pin drop-off destination on map"
+                                                onClick={() => setPinpointerTarget(pinpointerTarget === 'dropoff' ? null : 'dropoff')}
+                                                className={`transition-colors flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded-[2px] cursor-pointer ${
+                                                    pinpointerTarget === 'dropoff'
+                                                        ? 'bg-amber-500 text-black font-black animate-pulse'
+                                                        : 'text-amber-600 dark:text-amber-400 hover:text-amber-500'
+                                                }`}
+                                                title="Click on radar map to pinpoint destination"
                                             >
-                                                <FaMapMarkerAlt className="text-[10px]" />
-                                                <span>Pin on Map</span>
+                                                <FaCrosshairs className="text-[10px]" />
+                                                <span>{pinpointerTarget === 'dropoff' ? 'Cancel Pin' : 'Pin on Map'}</span>
                                             </button>
                                         </div>
                                         <LocationAutocomplete
@@ -706,8 +815,11 @@ export default function BookingSection() {
                                             onSelect={(label, coords) => {
                                                 setDestination(label);
                                                 setDropoffCoords(coords);
+                                                if (pickupCoords) {
+                                                    autoComputeRoute(pickupCoords, coords, pickup, label);
+                                                }
                                             }}
-                                            onPinClick={() => setMapPickerMode('dropoff')}
+                                            onPinClick={() => setPinpointerTarget('dropoff')}
                                             placeholder="Enter destination address or building"
                                             ariaLabel="Drop-off Destination"
                                             surfaceClassName="bg-white dark:bg-white/5 rounded-[3px]"
@@ -715,12 +827,14 @@ export default function BookingSection() {
                                             rightSlot={
                                                 <button
                                                     type="button"
-                                                    onClick={() => setMapPickerMode('dropoff')}
+                                                    onClick={() => setPinpointerTarget(pinpointerTarget === 'dropoff' ? null : 'dropoff')}
                                                     aria-label="Select drop-off pin on map"
-                                                    title="Pin drop-off destination on map"
+                                                    title="Pin drop-off destination directly on map"
                                                     className={`absolute right-2 top-1/2 -translate-y-1/2 p-2 rounded-[3px] border transition-all cursor-pointer ${
-                                                        dropoffCoords
-                                                            ? 'bg-amber-500 text-black border-amber-500'
+                                                        pinpointerTarget === 'dropoff'
+                                                            ? 'bg-amber-500 text-black border-amber-500 animate-pulse'
+                                                            : dropoffCoords
+                                                            ? 'bg-amber-500/20 text-amber-500 border-amber-500/40'
                                                             : 'bg-slate-100 dark:bg-white/10 text-amber-500 border-slate-200 dark:border-white/10 hover:border-amber-500'
                                                     }`}
                                                 >
@@ -731,14 +845,14 @@ export default function BookingSection() {
                                     </div>
                                 </div>
 
-                                {/* Upfront Vehicle Tiers Selection */}
+                                {/* Upfront Vehicle Tiers Selection with Realistic Faded Vehicle Images */}
                                 <div>
                                     <div className="flex items-center justify-between mb-2 px-0.5">
                                         <span className="text-[10px] font-black uppercase tracking-wider text-slate-700 dark:text-slate-300">
-                                            Choose Vehicle Tier
+                                            Choose Vehicle Fleet
                                         </span>
-                                        <span className="text-[10px] font-mono text-slate-500">
-                                            {trajectory ? 'Live Route Fare' : 'Starting Base Estimate'}
+                                        <span className="text-[10px] font-mono text-amber-600 dark:text-amber-400 font-bold">
+                                            {trajectory ? '⚡ Fastest Turn-by-Turn Fares' : 'Starting Base Estimate'}
                                         </span>
                                     </div>
 
@@ -749,39 +863,67 @@ export default function BookingSection() {
                                                 <div
                                                     key={v.id}
                                                     onClick={() => setSelectedVehicle(v.id)}
-                                                    className={`p-3 rounded-[3px] border transition-all duration-150 cursor-pointer flex flex-col justify-between relative ${
+                                                    className={`p-3.5 rounded-[3px] border transition-all duration-200 cursor-pointer flex flex-col justify-between relative overflow-hidden group min-h-[125px] ${
                                                         isSelected
-                                                            ? 'bg-amber-500/10 border-amber-500 text-slate-900 dark:text-white ring-1 ring-amber-500/50 shadow-xs'
-                                                            : 'bg-white dark:bg-white/[0.02] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-amber-500/40'
+                                                            ? 'bg-amber-500/[0.08] border-amber-500 text-slate-900 dark:text-white ring-1 ring-amber-500 shadow-md'
+                                                            : 'bg-white dark:bg-[#11131a] border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-300 hover:border-amber-500/50'
                                                     }`}
                                                 >
-                                                    {v.tag && (
-                                                        <span
-                                                            className={`absolute top-2 right-2 text-[8px] font-mono font-black px-1.5 py-0.5 rounded-[2px] ${
-                                                                isSelected
-                                                                    ? 'bg-amber-500 text-black'
-                                                                    : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
-                                                            }`}
-                                                        >
-                                                            {v.tag}
-                                                        </span>
-                                                    )}
-                                                    <div>
-                                                        <span className="text-2xl mb-1 block">{v.icon}</span>
-                                                        <p className="font-bold text-xs uppercase tracking-tight truncate">
-                                                            {v.name}
-                                                        </p>
-                                                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
-                                                            {v.capacity || `${v.eta}m away`}
-                                                        </span>
-                                                    </div>
-                                                    <div className="mt-3 pt-2 border-t border-slate-200 dark:border-white/10">
-                                                        <span className="text-[9px] uppercase font-bold text-slate-400 block">
-                                                            {trajectory ? 'Fare' : 'From'}
-                                                        </span>
-                                                        <p className="font-black text-sm text-amber-600 dark:text-amber-400">
-                                                            KES {Math.round(v.price).toLocaleString()}
-                                                        </p>
+                                                    {/* Realistic Vehicle Background with Faded Opacity for Crystal Text Readability */}
+                                                    <div
+                                                        className="absolute inset-0 bg-cover bg-center transition-transform duration-500 group-hover:scale-105 pointer-events-none opacity-20 dark:opacity-25"
+                                                        style={{ backgroundImage: `url(${v.bgImage})` }}
+                                                    />
+                                                    {/* Subtle Gradient Veil for Perfect Contrast */}
+                                                    <div className="absolute inset-0 bg-gradient-to-t from-white/95 via-white/85 to-white/60 dark:from-[#0c0e14]/95 dark:via-[#0c0e14]/85 dark:to-[#0c0e14]/65 pointer-events-none" />
+
+                                                    {/* Content Overlay */}
+                                                    <div className="relative z-10 flex flex-col justify-between h-full">
+                                                        <div className="flex items-start justify-between gap-1 mb-2">
+                                                            {/* Stylized Vector Vehicle Icon Badge */}
+                                                            <div
+                                                                className={`w-7 h-7 rounded-[3px] flex items-center justify-center border transition-colors ${
+                                                                    isSelected
+                                                                        ? 'bg-amber-500 text-black border-amber-500'
+                                                                        : 'bg-slate-100 dark:bg-white/10 text-amber-500 border-slate-200 dark:border-white/10'
+                                                                }`}
+                                                            >
+                                                                {v.id === 'boda' && <FaMotorcycle className="text-xs" />}
+                                                                {v.id === 'cabigo' && <FaCarSide className="text-xs" />}
+                                                                {v.id === 'executive' && <FaCrown className="text-xs" />}
+                                                                {v.id === 'xl' && <FaShuttleVan className="text-xs" />}
+                                                            </div>
+
+                                                            {v.tag && (
+                                                                <span
+                                                                    className={`text-[8px] font-mono font-black px-1.5 py-0.5 rounded-[2px] ${
+                                                                        isSelected
+                                                                            ? 'bg-amber-500 text-black'
+                                                                            : 'bg-slate-100 dark:bg-white/10 text-slate-600 dark:text-slate-400'
+                                                                    }`}
+                                                                >
+                                                                    {v.tag}
+                                                                </span>
+                                                            )}
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="font-extrabold text-xs uppercase tracking-tight truncate">
+                                                                {v.name}
+                                                            </p>
+                                                            <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                                                                {v.capacity || `${v.eta}m away`}
+                                                            </span>
+                                                        </div>
+
+                                                        <div className="mt-2.5 pt-2 border-t border-slate-200/80 dark:border-white/10 flex items-baseline justify-between">
+                                                            <span className="text-[9px] uppercase font-bold text-slate-400">
+                                                                {trajectory ? 'Fare' : 'From'}
+                                                            </span>
+                                                            <p className="font-black text-sm text-amber-600 dark:text-amber-400">
+                                                                KES {Math.round(v.price).toLocaleString()}
+                                                            </p>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             );
@@ -847,7 +989,7 @@ export default function BookingSection() {
                                             {loading ? (
                                                 <>
                                                     <div className="w-4 h-4 border-2 border-black/30 border-t-black rounded-full animate-spin" />
-                                                    <span>Calculating Route &amp; Fares...</span>
+                                                    <span>Calculating Fastest Route &amp; Fares...</span>
                                                 </>
                                             ) : (
                                                 <>
@@ -863,7 +1005,7 @@ export default function BookingSection() {
                                                 onClick={handleComputeTrajectory}
                                                 disabled={loading}
                                                 className="px-4 py-3.5 rounded-[3px] border border-slate-300 dark:border-white/10 text-slate-700 dark:text-white text-xs font-bold uppercase tracking-wider hover:bg-slate-100 dark:hover:bg-white/5 transition-colors cursor-pointer"
-                                                title="Recompute route"
+                                                title="Recompute fastest route"
                                             >
                                                 Refresh
                                             </button>
@@ -882,8 +1024,8 @@ export default function BookingSection() {
                                 </div>
                             </div>
 
-                            {/* Right Panel: Live Route Map & Telemetry (lg:col-span-5) */}
-                            <div className="lg:col-span-5 flex flex-col justify-between rounded-[3px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 overflow-hidden min-h-[380px] lg:min-h-[460px]">
+                            {/* Right Panel: Live Route Map with Direct Map Pinpointer & Turn-by-Turn Navigation */}
+                            <div className="lg:col-span-5 flex flex-col justify-between rounded-[3px] bg-slate-50 dark:bg-black/30 border border-slate-200 dark:border-white/10 overflow-hidden min-h-[390px] lg:min-h-[480px]">
                                 {/* Map Telemetry Header */}
                                 <div className="p-3.5 sm:p-4 border-b border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] flex items-center justify-between">
                                     <div className="flex items-center gap-2">
@@ -897,6 +1039,8 @@ export default function BookingSection() {
                                     </div>
                                     {trajectory && (
                                         <div className="flex items-center gap-2 text-[10px] font-mono font-bold text-amber-600 dark:text-amber-400">
+                                            <span className="truncate max-w-[140px]">{trajectory.summary || 'Fastest Route'}</span>
+                                            <span>•</span>
                                             <span>{trajectory.distanceKm} km</span>
                                             <span>•</span>
                                             <span>~{trajectory.durationMin} min</span>
@@ -904,8 +1048,8 @@ export default function BookingSection() {
                                     )}
                                 </div>
 
-                                {/* Map Display */}
-                                <div className="flex-1 relative w-full h-full min-h-[300px]">
+                                {/* Map Display with Interactive Pinpointer and Turn-by-turn Navigation */}
+                                <div className="flex-1 relative w-full h-full min-h-[320px]">
                                     <CabiMap
                                         center={
                                             trajectory
@@ -918,12 +1062,42 @@ export default function BookingSection() {
                                         height="100%"
                                         markers={mapMarkers}
                                         route={trajectory?.polyline}
+                                        directions={trajectory?.steps}
+                                        onMapClick={(lat, lng) => handleDirectMapPin(lat, lng)}
                                     />
 
-                                    {!trajectory && (
-                                        <div className="absolute bottom-3 left-3 right-3 p-2.5 rounded-[3px] bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border border-slate-200 dark:border-white/10 text-center shadow-sm pointer-events-none">
+                                    {/* Direct Pinpointer Active HUD */}
+                                    {pinpointerTarget && (
+                                        <div className="absolute top-3 left-3 right-3 z-[1001] px-3.5 py-2 rounded-[3px] bg-amber-500 text-black font-extrabold text-xs shadow-2xl flex items-center justify-between animate-fade-in border border-black/20">
+                                            <div className="flex items-center gap-2 truncate">
+                                                <span className="w-2 h-2 rounded-full bg-black animate-ping shrink-0" />
+                                                <span className="truncate">
+                                                    Click on map to pin {pinpointerTarget === 'pickup' ? 'Pickup Location' : 'Destination'}
+                                                </span>
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={() => setPinpointerTarget(null)}
+                                                className="ml-2 px-2 py-0.5 rounded-[2px] bg-black text-amber-400 text-[9px] font-black uppercase hover:bg-neutral-800 transition-colors shrink-0 cursor-pointer"
+                                            >
+                                                Done
+                                            </button>
+                                        </div>
+                                    )}
+
+                                    {pinpointerLoading && (
+                                        <div className="absolute inset-0 z-[1002] bg-black/40 backdrop-blur-xs flex items-center justify-center">
+                                            <div className="p-3 rounded-[3px] bg-white dark:bg-card-dark border border-slate-200 dark:border-white/10 text-xs font-bold flex items-center gap-2 shadow-xl">
+                                                <div className="w-3.5 h-3.5 border-2 border-amber-500 border-t-transparent rounded-full animate-spin" />
+                                                <span>Resolving pinned address...</span>
+                                            </div>
+                                        </div>
+                                    )}
+
+                                    {!trajectory && !pinpointerTarget && (
+                                        <div className="absolute bottom-3 left-3 right-3 p-2.5 rounded-[3px] bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border border-slate-200 dark:border-white/10 text-center shadow-sm pointer-events-none">
                                             <p className="text-[11px] text-slate-600 dark:text-slate-300 font-medium">
-                                                📍 Enter pickup and destination to calculate live route trajectory.
+                                                📍 Click anywhere on map to pin or enter locations to preview fastest turn-by-turn route.
                                             </p>
                                         </div>
                                     )}
@@ -933,19 +1107,27 @@ export default function BookingSection() {
                                 <div className="p-3 border-t border-slate-200 dark:border-white/10 bg-white/60 dark:bg-white/[0.02] flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-wider">
                                     <button
                                         type="button"
-                                        onClick={() => setMapPickerMode('pickup')}
-                                        className="hover:text-amber-500 transition-colors flex items-center gap-1 cursor-pointer"
+                                        onClick={() => setPinpointerTarget('pickup')}
+                                        className={`transition-colors flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded-[2px] ${
+                                            pinpointerTarget === 'pickup'
+                                                ? 'bg-amber-500 text-black font-black'
+                                                : 'hover:text-amber-500'
+                                        }`}
                                     >
-                                        <FaMapMarkerAlt className="text-emerald-500" />
+                                        <FaCrosshairs className="text-emerald-500" />
                                         <span>Pin Pickup</span>
                                     </button>
                                     <span className="text-slate-300 dark:text-white/10">|</span>
                                     <button
                                         type="button"
-                                        onClick={() => setMapPickerMode('dropoff')}
-                                        className="hover:text-amber-500 transition-colors flex items-center gap-1 cursor-pointer"
+                                        onClick={() => setPinpointerTarget('dropoff')}
+                                        className={`transition-colors flex items-center gap-1.5 cursor-pointer px-2 py-1 rounded-[2px] ${
+                                            pinpointerTarget === 'dropoff'
+                                                ? 'bg-amber-500 text-black font-black'
+                                                : 'hover:text-amber-500'
+                                        }`}
                                     >
-                                        <FaMapMarkerAlt className="text-amber-500" />
+                                        <FaCrosshairs className="text-amber-500" />
                                         <span>Pin Destination</span>
                                     </button>
                                 </div>
@@ -955,7 +1137,7 @@ export default function BookingSection() {
                 </div>
             </div>
 
-            {/* Interactive Map Pin-Point Modal */}
+            {/* Interactive Map Pin-Point Modal (Fallback) */}
             <MapPinModal
                 mode={mapPickerMode}
                 onModeChange={setMapPickerMode}
@@ -966,10 +1148,16 @@ export default function BookingSection() {
                 onPickupSelect={(label, coords) => {
                     setPickupCoords(coords);
                     setPickup(label);
+                    if (dropoffCoords) {
+                        autoComputeRoute(coords, dropoffCoords, label, destination);
+                    }
                 }}
                 onDropoffSelect={(label, coords) => {
                     setDropoffCoords(coords);
                     setDestination(label);
+                    if (pickupCoords) {
+                        autoComputeRoute(pickupCoords, coords, pickup, label);
+                    }
                 }}
             />
 
