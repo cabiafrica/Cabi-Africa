@@ -1,10 +1,15 @@
-import { RideRequest, Driver } from '../types';
+import { useState } from 'react';
+import { ExternalLink, User, Car } from 'lucide-react';
+import { RideRequest, Driver, Passenger } from '../types';
+import TripDetailsModal from './TripDetailsModal';
 
 interface RideRequestsListProps {
     rideRequests: RideRequest[];
     drivers: Driver[];
+    passengers?: Passenger[];
     onAssignDriver: (rideId: string, driverId: string) => void;
     onCancelRide: (rideId: string) => void;
+    onCompleteRide?: (rideId: string) => void;
     selectedRide: RideRequest | null;
     onSelectRide: (ride: RideRequest | null) => void;
 }
@@ -12,11 +17,14 @@ interface RideRequestsListProps {
 const RideRequestsList = ({
     rideRequests,
     drivers,
+    passengers = [],
     onAssignDriver,
     onCancelRide,
+    onCompleteRide,
     selectedRide,
     onSelectRide,
 }: RideRequestsListProps) => {
+    const [inspectedRide, setInspectedRide] = useState<RideRequest | null>(null);
     const getStatusColor = (status: RideRequest['status']) => {
         switch (status) {
             case 'pending':
@@ -149,11 +157,23 @@ const RideRequestsList = ({
                                         <span>KES {ride.estimatedFare}</span>
                                     </div>
                                 </div>
-                                {ride.assignedDriverId && (
-                                    <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">
-                                        Driver: {drivers.find(d => d.id === ride.assignedDriverId)?.name}
-                                    </span>
-                                )}
+                                <div className="flex items-center gap-2">
+                                    {ride.assignedDriverId && (
+                                        <span className="text-xs font-semibold text-amber-600 dark:text-amber-400">
+                                            Captain: {drivers.find(d => d.id === ride.assignedDriverId)?.name}
+                                        </span>
+                                    )}
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            setInspectedRide(ride);
+                                        }}
+                                        className="px-2.5 py-1 text-xs font-bold bg-amber-500/10 hover:bg-amber-500/20 text-amber-600 dark:text-amber-400 border border-amber-500/30 rounded-[3px] flex items-center gap-1 transition-colors"
+                                    >
+                                        <ExternalLink className="w-3 h-3" />
+                                        Dossier
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))}
@@ -163,9 +183,12 @@ const RideRequestsList = ({
             {/* Ride Details / Driver Assignment Panel */}
             <div className="lg:col-span-1">
                 {selectedRide ? (
-                    <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-6 sticky top-0 shadow-lg">
-                        <div className="flex items-center justify-between mb-6 pb-3 border-b border-slate-100 dark:border-slate-800">
-                            <h3 className="text-base font-bold text-slate-900 dark:text-white">Ride Details</h3>
+                    <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-6 sticky top-0 shadow-lg space-y-4">
+                        <div className="flex items-center justify-between pb-3 border-b border-slate-100 dark:border-slate-800">
+                            <div>
+                                <h3 className="text-base font-bold text-slate-900 dark:text-white">Active Dispatch View</h3>
+                                <p className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold">{selectedRide.id}</p>
+                            </div>
                             <button
                                 onClick={() => onSelectRide(null)}
                                 className="text-slate-400 hover:text-slate-600 dark:hover:text-white transition-colors"
@@ -176,27 +199,72 @@ const RideRequestsList = ({
                             </button>
                         </div>
 
-                        <div className="space-y-4 mb-6">
-                            <div>
-                                <p className="text-xs uppercase font-bold text-slate-400 mb-1">Request ID</p>
-                                <p className="text-sm font-mono font-bold text-slate-900 dark:text-white">{selectedRide.id}</p>
+                        {/* Open Full Dossier Button */}
+                        <button
+                            onClick={() => setInspectedRide(selectedRide)}
+                            className="w-full py-2.5 px-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-bold text-xs rounded-[3px] flex items-center justify-center gap-2 transition-all shadow-sm"
+                        >
+                            <ExternalLink className="w-4 h-4" />
+                            Open Full Trip & Profiles Dossier
+                        </button>
+
+                        {/* Passenger Mini Card */}
+                        <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-3 space-y-2">
+                            <div className="flex items-center justify-between">
+                                <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                    <User className="w-3.5 h-3.5 text-sky-500" /> Passenger
+                                </span>
+                                <span className="text-[10px] font-bold text-sky-600 dark:text-sky-400">Verified</span>
                             </div>
-                            <div>
-                                <p className="text-xs uppercase font-bold text-slate-400 mb-1">Estimated Fare</p>
-                                <p className="text-2xl font-black text-emerald-600 dark:text-emerald-400">KES {selectedRide.estimatedFare}</p>
+                            <p className="text-xs font-bold text-slate-900 dark:text-white">{selectedRide.passengerName}</p>
+                            <p className="text-[11px] text-slate-500 font-mono">{selectedRide.passengerPhone}</p>
+                        </div>
+
+                        {/* Assigned Driver Mini Card */}
+                        {selectedRide.assignedDriverId ? (
+                            (() => {
+                                const driver = drivers.find(d => d.id === selectedRide.assignedDriverId);
+                                return driver ? (
+                                    <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-3 space-y-2">
+                                        <div className="flex items-center justify-between">
+                                            <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 flex items-center gap-1.5">
+                                                <Car className="w-3.5 h-3.5 text-amber-500" /> Assigned Captain
+                                            </span>
+                                            <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400">⭐ {driver.rating}</span>
+                                        </div>
+                                        <div className="flex items-center justify-between">
+                                            <p className="text-xs font-bold text-slate-900 dark:text-white">{driver.name}</p>
+                                            <span className="text-[11px] font-bold font-mono px-1.5 py-0.5 rounded-[3px] bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200">
+                                                {driver.vehiclePlate || 'KDA 892J'}
+                                            </span>
+                                        </div>
+                                        <p className="text-[11px] text-slate-500">{driver.vehicleType} • {driver.phone}</p>
+                                    </div>
+                                ) : null;
+                            })()
+                        ) : (
+                            <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-[3px] text-center">
+                                <p className="text-xs font-bold text-rose-600 dark:text-rose-400">No Captain Assigned</p>
                             </div>
-                            <div>
-                                <p className="text-xs uppercase font-bold text-slate-400 mb-1">Distance</p>
-                                <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{selectedRide.distance} km</p>
+                        )}
+
+                        <div className="space-y-3 pt-2 border-t border-slate-100 dark:border-slate-800">
+                            <div className="flex items-center justify-between">
+                                <span className="text-xs font-bold text-slate-400">Estimated Fare</span>
+                                <span className="text-xl font-black text-emerald-600 dark:text-emerald-400">KES {selectedRide.estimatedFare}</span>
+                            </div>
+                            <div className="flex items-center justify-between text-xs font-medium">
+                                <span className="text-slate-400">Distance</span>
+                                <span className="text-slate-800 dark:text-slate-200 font-bold">{selectedRide.distance} km</span>
                             </div>
                         </div>
 
                         {selectedRide.status === 'pending' && (
                             <>
-                                <h4 className="text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 mb-3">
+                                <h4 className="text-xs uppercase tracking-wider font-bold text-slate-700 dark:text-slate-300 mb-3 pt-2">
                                     Available Drivers ({availableDrivers.length})
                                 </h4>
-                                <div className="space-y-2 mb-4 max-h-64 overflow-y-auto">
+                                <div className="space-y-2 mb-4 max-h-56 overflow-y-auto">
                                     {availableDrivers.map((driver) => (
                                         <button
                                             key={driver.id}
@@ -227,14 +295,6 @@ const RideRequestsList = ({
                                 </button>
                             </>
                         )}
-
-                        {selectedRide.status !== 'pending' && (
-                            <div className="bg-amber-500/10 border border-amber-500/20 rounded-[3px] p-4">
-                                <p className="text-sm font-semibold text-amber-700 dark:text-amber-400">
-                                    This ride is currently <span className="font-bold underline">{selectedRide.status}</span>
-                                </p>
-                            </div>
-                        )}
                     </div>
                 ) : (
                     <div className="bg-white dark:bg-slate-900/50 backdrop-blur-xl border border-slate-200 dark:border-slate-800/50 rounded-[3px] p-6 h-full flex items-center justify-center">
@@ -247,6 +307,20 @@ const RideRequestsList = ({
                     </div>
                 )}
             </div>
+
+            {/* Comprehensive Trip Details & Counterpart Profiles Modal */}
+            {inspectedRide && (
+                <TripDetailsModal
+                    trip={inspectedRide}
+                    driver={drivers.find(d => d.id === inspectedRide.assignedDriverId || d.activeRideId === inspectedRide.id)}
+                    passenger={passengers.find(p => p.id === inspectedRide.passengerId)}
+                    availableDrivers={availableDrivers}
+                    onClose={() => setInspectedRide(null)}
+                    onAssignDriver={onAssignDriver}
+                    onCancelRide={onCancelRide}
+                    onCompleteRide={onCompleteRide}
+                />
+            )}
         </div>
     );
 };

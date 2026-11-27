@@ -1,14 +1,17 @@
 import { useState, useMemo } from 'react';
-import { Calendar, MapPin, Star, Phone, User, TrendingUp } from 'lucide-react';
+import { Calendar, MapPin } from 'lucide-react';
 import SearchBar from './SearchBar';
 import AdvancedFilters, { FilterConfig } from './AdvancedFilters';
-import { TripHistory } from '../types';
+import { TripHistory, Driver, Passenger } from '../types';
+import TripDetailsModal from './TripDetailsModal';
 
 interface TripHistoryPageProps {
     trips: TripHistory[];
+    drivers?: Driver[];
+    passengers?: Passenger[];
 }
 
-const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
+const TripHistoryPage = ({ trips, drivers = [], passengers = [] }: TripHistoryPageProps) => {
     const [searchQuery, setSearchQuery] = useState('');
     const [filters, setFilters] = useState<Record<string, any>>({});
     const [selectedTrip, setSelectedTrip] = useState<TripHistory | null>(null);
@@ -314,162 +317,15 @@ const TripHistoryPage = ({ trips }: TripHistoryPageProps) => {
                 </div>
             </div>
 
-            {/* Trip Detail Modal */}
+            {/* Comprehensive Trip Details & Counterpart Dossier Modal */}
             {selectedTrip && (
-                <div
-                    className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
-                    onClick={() => setSelectedTrip(null)}
-                >
-                    <div
-                        className="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-[3px] max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
-                        onClick={(e) => e.stopPropagation()}
-                    >
-                        {/* Modal Header */}
-                        <div className="sticky top-0 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 p-6 flex items-center justify-between">
-                            <div>
-                                <h3 className="text-lg font-bold text-slate-900 dark:text-white">Trip Details</h3>
-                                <p className="text-xs text-amber-600 dark:text-amber-400 font-mono font-bold mt-0.5">{selectedTrip.id}</p>
-                            </div>
-                            <button
-                                onClick={() => setSelectedTrip(null)}
-                                className="p-1.5 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-[3px] transition-colors"
-                            >
-                                <svg className="w-5 h-5 text-slate-400 hover:text-slate-600 dark:hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </button>
-                        </div>
-
-                        {/* Modal Content */}
-                        <div className="p-6 space-y-6">
-                            {/* Status and Priority */}
-                            <div className="flex items-center gap-3">
-                                <span
-                                    className={`text-xs font-bold px-3 py-1 rounded-[3px] border ${getStatusColor(
-                                        selectedTrip.status
-                                    )}`}
-                                >
-                                    {selectedTrip.status}
-                                </span>
-                                <span
-                                    className={`text-xs font-bold px-3 py-1 rounded-[3px] border ${getPriorityColor(
-                                        selectedTrip.priority
-                                    )}`}
-                                >
-                                    {selectedTrip.priority} priority
-                                </span>
-                            </div>
-
-                            {/* Passenger Info */}
-                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
-                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Passenger Information</h4>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div className="flex items-center gap-2">
-                                        <User className="w-4 h-4 text-slate-400" />
-                                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-200">{selectedTrip.passengerName}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <Phone className="w-4 h-4 text-slate-400" />
-                                        <span className="text-sm font-semibold text-slate-900 dark:text-slate-200">{selectedTrip.passengerPhone}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Route Info */}
-                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
-                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Route Information</h4>
-                                <div className="space-y-3">
-                                    <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-[10px] uppercase font-bold text-slate-400">Pickup Location</p>
-                                            <p className="text-sm font-medium text-slate-900 dark:text-white">{selectedTrip.pickupLocation.address}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-start gap-3">
-                                        <MapPin className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
-                                        <div>
-                                            <p className="text-[10px] uppercase font-bold text-slate-400">Dropoff Location</p>
-                                            <p className="text-sm font-medium text-slate-900 dark:text-white">{selectedTrip.dropoffLocation.address}</p>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center gap-2 pt-1 border-t border-slate-200 dark:border-slate-700/50">
-                                        <TrendingUp className="w-4 h-4 text-amber-500" />
-                                        <span className="text-xs font-bold text-slate-800 dark:text-slate-200">{selectedTrip.distance} km</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Payment Info */}
-                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
-                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Payment Information</h4>
-                                <div className="grid grid-cols-2 gap-4">
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400">Fare Amount</p>
-                                        <p className="text-lg font-black text-emerald-600 dark:text-emerald-400">
-                                            KES {selectedTrip.actualFare?.toLocaleString() || selectedTrip.estimatedFare.toLocaleString()}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400">Payment Method</p>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white capitalize">{selectedTrip.paymentMethod}</p>
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400">Payment Status</p>
-                                        <p
-                                            className={`text-sm font-bold ${selectedTrip.paymentStatus === 'completed'
-                                                ? 'text-emerald-600 dark:text-emerald-400'
-                                                : selectedTrip.paymentStatus === 'pending'
-                                                    ? 'text-amber-600 dark:text-amber-400'
-                                                    : 'text-red-600 dark:text-red-400'
-                                                }`}
-                                        >
-                                            {selectedTrip.paymentStatus}
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] uppercase font-bold text-slate-400">Duration</p>
-                                        <p className="text-sm font-semibold text-slate-900 dark:text-white">{selectedTrip.duration} minutes</p>
-                                    </div>
-                                </div>
-                            </div>
-
-                            {/* Rating & Feedback */}
-                            {selectedTrip.rating && (
-                                <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-3">
-                                    <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Rating & Feedback</h4>
-                                    <div className="flex items-center gap-2">
-                                        <Star className="w-4 h-4 text-amber-500 fill-amber-500" />
-                                        <span className="text-base font-bold text-slate-900 dark:text-white">{selectedTrip.rating}</span>
-                                        <span className="text-xs text-slate-400">/ 5.0</span>
-                                    </div>
-                                    {selectedTrip.feedback && (
-                                        <p className="text-xs text-slate-600 dark:text-slate-300 italic">"{selectedTrip.feedback}"</p>
-                                    )}
-                                </div>
-                            )}
-
-                            {/* Timestamps */}
-                            <div className="bg-slate-50 dark:bg-slate-800/50 border border-slate-100 dark:border-slate-800 rounded-[3px] p-4 space-y-2">
-                                <h4 className="text-xs uppercase font-bold tracking-wider text-slate-700 dark:text-slate-300">Timeline</h4>
-                                <div className="space-y-1.5 text-xs">
-                                    <div className="flex items-center justify-between">
-                                        <span className="text-slate-500">Requested</span>
-                                        <span className="font-semibold text-slate-900 dark:text-white">{new Date(selectedTrip.requestedAt).toLocaleString()}</span>
-                                    </div>
-                                    {selectedTrip.completedAt && (
-                                        <div className="flex items-center justify-between">
-                                            <span className="text-slate-500">Completed</span>
-                                            <span className="font-semibold text-slate-900 dark:text-white">
-                                                {new Date(selectedTrip.completedAt).toLocaleString()}
-                                            </span>
-                                        </div>
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <TripDetailsModal
+                    trip={selectedTrip}
+                    driver={drivers.find(d => d.id === selectedTrip.assignedDriverId || d.activeRideId === selectedTrip.id)}
+                    passenger={passengers.find(p => p.id === selectedTrip.passengerId)}
+                    availableDrivers={drivers.filter(d => d.status === 'online')}
+                    onClose={() => setSelectedTrip(null)}
+                />
             )}
         </div>
     );

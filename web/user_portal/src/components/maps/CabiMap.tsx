@@ -582,30 +582,7 @@ export const CabiMap: React.FC<CabiMapProps> = ({
             const ratio = typeof progressRatio === 'number' ? Math.max(0, Math.min(1, progressRatio)) : 0;
             const splitIdx = Math.floor(route.length * ratio);
 
-            // Covered portion turns grey as vehicle moves from A to B!
-            if (splitIdx > 0) {
-                const coveredPoints = route.slice(0, splitIdx + 1);
-                coveredRouteLayerRef.current = L.polyline(coveredPoints, {
-                    color: '#64748B', // Muted slate grey for traveled roads
-                    weight: 5.5,
-                    opacity: 0.55,
-                    lineJoin: 'round',
-                    lineCap: 'round',
-                }).addTo(mapRef.current);
-            }
-
-            // Remaining active portion highlights in vivid gold
-            const remainingPoints = route.slice(splitIdx);
-            if (remainingPoints.length > 1) {
-                routeLayerRef.current = L.polyline(remainingPoints, {
-                    color: '#D4AF37',
-                    weight: 5.5,
-                    opacity: 0.90,
-                    lineJoin: 'round',
-                }).addTo(mapRef.current);
-            }
-
-            // Overlay colored traffic congestion segments
+            // 1. Overlay colored traffic congestion segments on the forward route
             if (trafficSegments && trafficSegments.length > 0 && trafficSegmentsLayerRef.current) {
                 trafficSegments.forEach((seg) => {
                     if (!seg.points || seg.points.length === 0) return;
@@ -618,11 +595,36 @@ export const CabiMap: React.FC<CabiMapProps> = ({
                     L.polyline(seg.points, {
                         color: segColor,
                         weight: 5.5,
-                        opacity: 0.95,
+                        opacity: 0.90,
                         lineJoin: 'round',
                         lineCap: 'round',
                     }).addTo(trafficSegmentsLayerRef.current!);
                 });
+            }
+
+            // 2. Remaining active forward portion highlights in vivid gold
+            const remainingPoints = route.slice(splitIdx);
+            if (remainingPoints.length > 1) {
+                routeLayerRef.current = L.polyline(remainingPoints, {
+                    color: '#D4AF37',
+                    weight: 5.5,
+                    opacity: 0.95,
+                    lineJoin: 'round',
+                }).addTo(mapRef.current);
+            }
+
+            // 3. Covered portion turns grey as vehicle moves from A to B (painted on top of covered traffic)
+            if (splitIdx > 0) {
+                const coveredPoints = route.slice(0, splitIdx + 1);
+                const coveredPoly = L.polyline(coveredPoints, {
+                    color: '#64748B', // Distinct muted slate grey for traveled roads
+                    weight: 6.0,
+                    opacity: 0.85,
+                    lineJoin: 'round',
+                    lineCap: 'round',
+                }).addTo(mapRef.current);
+                coveredPoly.bringToFront();
+                coveredRouteLayerRef.current = coveredPoly;
             }
 
             // Fit bounds to show the entire route

@@ -694,6 +694,7 @@ function App() {
                                     <RideRequestsList
                                         rideRequests={rideRequests}
                                         drivers={drivers}
+                                        passengers={passengersList}
                                         onAssignDriver={handleAssignDriver}
                                         onCancelRide={handleCancelRide}
                                         selectedRide={selectedRide}
@@ -715,7 +716,11 @@ function App() {
                                     <SurgeMonitor surgeZones={[]} />
                                 )}
                                 {activeView === 'trips' && (
-                                    <TripHistoryPage trips={tripHistory} />
+                                    <TripHistoryPage
+                                        trips={tripHistory}
+                                        drivers={drivers}
+                                        passengers={passengersList}
+                                    />
                                 )}
                                 {activeView === 'driver-history' && (
                                     <DriverHistoryPage drivers={driverHistory} />

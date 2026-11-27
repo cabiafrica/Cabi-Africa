@@ -243,31 +243,22 @@ class _CabiMapState extends State<CabiMap> {
           }),
         ],
 
-        // Primary Route Polyline (Covered portion turns grey; remaining portion highlights in gold)
+        // Traffic Congestion Overlay Segments (Green flow, Amber moderate, Red heavy)
+        if (widget.trafficSegments != null && widget.trafficSegments!.isNotEmpty)
+          PolylineLayer(
+            polylines: widget.trafficSegments!.map((seg) {
+              return Polyline(
+                points: seg.points,
+                strokeWidth: 4.0,
+                color: seg.color,
+                borderStrokeWidth: 1.0,
+                borderColor: Colors.black26,
+              );
+            }).toList(),
+          ),
+
+        // Primary Route Polylines (Covered portion turns grey; remaining portion highlights in gold)
         if (widget.routePoints != null && widget.routePoints!.isNotEmpty) ...[
-          // Covered road grey trail
-          if (widget.progressRatio != null && widget.progressRatio! > 0) ...[
-            Builder(
-              builder: (context) {
-                final int splitIdx = (widget.routePoints!.length * widget.progressRatio!.clamp(0.0, 1.0)).floor();
-                if (splitIdx > 0) {
-                  final covered = widget.routePoints!.sublist(0, math.min(splitIdx + 1, widget.routePoints!.length));
-                  return PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: covered,
-                        strokeWidth: 5.0,
-                        color: const Color(0xFF64748B), // Covered road turns grey
-                        borderStrokeWidth: 1.5,
-                        borderColor: isDark ? const Color(0xFF0F172A) : Colors.white70,
-                      ),
-                    ],
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-          ],
           // Active remaining route in Gold
           Builder(
             builder: (context) {
@@ -290,21 +281,30 @@ class _CabiMapState extends State<CabiMap> {
               );
             },
           ),
+          // Covered road grey trail (rendered on top of covered traffic segment)
+          if (widget.progressRatio != null && widget.progressRatio! > 0) ...[
+            Builder(
+              builder: (context) {
+                final int splitIdx = (widget.routePoints!.length * widget.progressRatio!.clamp(0.0, 1.0)).floor();
+                if (splitIdx > 0) {
+                  final covered = widget.routePoints!.sublist(0, math.min(splitIdx + 1, widget.routePoints!.length));
+                  return PolylineLayer(
+                    polylines: [
+                      Polyline(
+                        points: covered,
+                        strokeWidth: 5.5,
+                        color: const Color(0xFF64748B), // Covered road turns grey
+                        borderStrokeWidth: 1.5,
+                        borderColor: isDark ? const Color(0xFF0F172A) : Colors.white70,
+                      ),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
         ],
-
-        // Traffic Congestion Overlay Segments (Green flow, Amber moderate, Red heavy)
-        if (widget.trafficSegments != null && widget.trafficSegments!.isNotEmpty)
-          PolylineLayer(
-            polylines: widget.trafficSegments!.map((seg) {
-              return Polyline(
-                points: seg.points,
-                strokeWidth: 4.0,
-                color: seg.color,
-                borderStrokeWidth: 1.0,
-                borderColor: Colors.black26,
-              );
-            }).toList(),
-          ),
 
         // Markers Layer
         MarkerLayer(
