@@ -81,6 +81,7 @@ const AcquisitionChannelWidget = lazy(() => import('./components/widgets/Acquisi
 const PayoutProcessing = lazy(() => import('./components/PayoutProcessing').then(m => ({ default: m.PayoutProcessing })));
 const PayoutScheduler = lazy(() => import('./components/PayoutScheduler').then(m => ({ default: m.PayoutScheduler })));
 const ExportableReports = lazy(() => import('./components/ExportableReports').then(m => ({ default: m.ExportableReports })));
+const ProfilePage = lazy(() => import('./pages/ProfilePage').then(m => ({ default: m.ProfilePage })));
 
 const RouteFallback = () => (
   <div className="flex items-center justify-center py-20 text-sm text-gray-400">
@@ -108,6 +109,7 @@ const SIDEBAR_MENU: MenuGroup[] = [
     label: 'Command Center',
     items: [
       { icon: <LayoutDashboard className="w-4 h-4" />, label: 'Dashboard', view: '/dashboard', permission: 'DISPATCH_DASHBOARD_VIEW' },
+      { icon: <UserIcon className="w-4 h-4" />, label: 'My Profile', view: '/profile' },
       { icon: <Radio className="w-4 h-4" />, label: 'Live Map', view: '/live-map', permission: 'DISPATCH_REAL_TIME_MAP' },
       { icon: <Flame className="w-4 h-4" />, label: 'Heat Maps', view: '/heat-maps', permission: 'DISPATCH_ANALYTICS_VIEW' },
       { icon: <TrendingUp className="w-4 h-4" />, label: 'BI Dashboard', view: '/bi-dashboard', permission: 'DISPATCH_ANALYTICS_VIEW' },
@@ -336,13 +338,32 @@ function App() {
           <h1 className="text-lg font-black tracking-[0.25em] text-slate-900 dark:text-primary">CABI ADMIN</h1>
           <div className="mt-0.5 text-[9px] text-slate-500 dark:text-slate-400 uppercase tracking-[0.2em] mb-4 font-semibold">Central Administrative Suite</div>
 
-          <img
-            src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=FFD700&color=000"}
-            alt="Profile"
-            className="w-14 h-14 rounded-[3px] object-cover ring-1 ring-amber-500/30 mb-2.5 shadow-sm"
-          />
-          <div className="font-bold text-sm text-slate-900 dark:text-slate-200">{user?.fullName || 'Admin User'}</div>
-          <div className="text-[10px] font-mono text-amber-600 dark:text-amber-500 uppercase tracking-wider mb-4 font-semibold">{user?.role || 'Senior Administrator'}</div>
+          <button
+            onClick={() => navigate('/profile')}
+            className="group flex flex-col items-center cursor-pointer p-2 rounded-xl hover:bg-slate-100 dark:hover:bg-white/5 transition-all text-center w-full mb-3 border border-transparent hover:border-amber-500/30"
+            title="Click to view & edit your profile"
+          >
+            <div className="relative">
+              <img
+                src={user?.profilePictureUrl || "https://ui-avatars.com/api/?name=" + (user?.fullName || "Admin") + "&background=FFD700&color=000"}
+                alt="Profile"
+                className="w-14 h-14 rounded-full object-cover ring-2 ring-amber-500/30 group-hover:ring-amber-500 transition-all mb-2 shadow-sm"
+              />
+              <span className="absolute bottom-1 right-0 p-1 rounded-full bg-amber-500 text-black shadow-xs opacity-80 group-hover:opacity-100 transition-opacity">
+                <Settings className="w-2.5 h-2.5" />
+              </span>
+            </div>
+            <div className="font-bold text-sm text-slate-900 dark:text-slate-200 group-hover:text-amber-500 transition-colors flex items-center gap-1">
+              <span>{user?.fullName || 'Admin User'}</span>
+              <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+            <div className="text-[10px] font-mono text-amber-600 dark:text-amber-500 uppercase tracking-wider font-semibold">
+              {user?.role || 'Senior Administrator'}
+            </div>
+            <span className="text-[10px] text-amber-600 dark:text-amber-400 font-semibold underline mt-1">
+              Edit My Profile
+            </span>
+          </button>
 
           <div className="flex gap-2 w-full justify-center">
             <button
@@ -468,6 +489,7 @@ function App() {
             <Suspense fallback={<RouteFallback />}>
               <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
+              <Route path="/profile" element={<ProfilePage />} />
 
               <Route path="/dashboard" element={
                 <div className="space-y-6">
