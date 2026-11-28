@@ -4,9 +4,9 @@ FROM node:20-alpine AS builder
 RUN apk add --no-cache openssl
 WORKDIR /app
 
-# Install dependencies deterministically from lockfile
+# Install dependencies deterministically from lockfile (cached across services via BuildKit)
 COPY package.json package-lock.json ./
-RUN npm ci --legacy-peer-deps --ignore-scripts
+RUN --mount=type=cache,target=/root/.npm npm ci --legacy-peer-deps --ignore-scripts --no-audit --no-fund
 
 # Copy all source code
 COPY . .

@@ -121,13 +121,18 @@ jobs:
           command_timeout: 30m
           script: |
             set -euo pipefail
+            export DOCKER_BUILDKIT=1
+            export COMPOSE_DOCKER_CLI_BUILD=1
             cd /opt/cabi-africa
             git fetch origin main
             git reset --hard origin/main
             chmod -R 755 /opt/cabi-africa/web/user_portal/public/downloads
-            docker compose build user-portal
-            docker compose up -d --force-recreate user-portal
-            docker compose up -d --build
+            # Build auth-gateway first so all backend services share the cached npm ci + prisma layer
+            for svc in auth-gateway dispatch-service verification-service referral-service sacco-service user-portal admin-panel dispatch-panel; do
+              echo "=== Building $svc ==="
+              docker compose build "$svc"
+            done
+            docker compose up -d --no-build
             docker compose up -d --force-recreate caddy
             docker compose exec -T auth-gateway npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
 
