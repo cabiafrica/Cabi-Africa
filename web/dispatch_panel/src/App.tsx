@@ -53,7 +53,7 @@ import InactivitySentinel from './components/InactivitySentinel';
 import apiClient from './lib/apiClient';
 
 function App() {
-    const { isAuthenticated, logout, user, hasPermission } = useAuth();
+    const { isAuthenticated, token, logout, user, hasPermission } = useAuth();
     const [darkMode, setDarkMode] = useState(() => {
         const saved = localStorage.getItem('dispatch_theme') || localStorage.getItem('theme');
         if (saved) return saved === 'dark';
@@ -91,10 +91,14 @@ function App() {
     const [selectedRide, setSelectedRide] = useState<RideRequest | null>(null);
     const [emergencyAlerts, setEmergencyAlerts] = useState<any[]>([]);
 
-    // SOS Emergency Socket Listener
+    // SOS Emergency Socket Listener (authenticated only)
     useEffect(() => {
+        if (!isAuthenticated || !token) return;
         const socketUrl = import.meta.env.VITE_SOCKET_URL || 'https://cabi.africa';
-        const sosSocket = io(`${socketUrl}/sos`);
+        const sosSocket = io(`${socketUrl}/sos`, {
+            auth: { token },
+            withCredentials: true,
+        });
 
         sosSocket.on('connect', () => {
             console.log('Connected to SOS Real-time Safety Gateway');
@@ -141,10 +145,11 @@ function App() {
         return () => {
             sosSocket.disconnect();
         };
-    }, [user]);
+    }, [isAuthenticated, token, user]);
 
-    // Initial fetch of active open SOS alerts
+    // Initial fetch of active open SOS alerts (authenticated only)
     useEffect(() => {
+        if (!isAuthenticated || !token) return;
         const fetchOpenAlerts = async () => {
             try {
                 const res = await apiClient.get('/safety/alerts?status=OPEN');
