@@ -50,7 +50,7 @@ jobs:
           else
             cd mobile/driver_app
             flutter pub get
-            flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+            flutter build apk --release --obfuscate --split-debug-info=build/debug-info --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --dart-define=GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} --no-tree-shake-icons
             cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Drive-Official.apk
             cd ../..
           fi
@@ -63,10 +63,13 @@ jobs:
           else
             cd mobile/passenger_app
             flutter pub get
-            flutter build apk --release --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --no-tree-shake-icons
+            flutter build apk --release --obfuscate --split-debug-info=build/debug-info --android-skip-build-dependency-validation --target-platform android-arm,android-arm64 --dart-define=IS_PRODUCTION=true --dart-define=GOOGLE_MAPS_API_KEY=${{ secrets.GOOGLE_MAPS_API_KEY }} --no-tree-shake-icons
             cp build/app/outputs/flutter-apk/app-release.apk ../../Cabi-Go-Official.apk
             cd ../..
           fi
+
+      - name: 🔐 Generate APK SHA-256 Checksums
+        run: sha256sum Cabi-Drive-Official.apk Cabi-Go-Official.apk > SHA256SUMS.txt && cat SHA256SUMS.txt
 
       - name: 📦 Stage APKs into User Portal Public Downloads
         run: |
@@ -100,6 +103,7 @@ jobs:
           files: |
             Cabi-Drive-Official.apk
             Cabi-Go-Official.apk
+            SHA256SUMS.txt
           body: |
             ### 🚖 CABI Africa Official Production Mobile Releases
             Connected to live `https://www.cabi.africa/api` production services.

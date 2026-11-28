@@ -15,6 +15,7 @@
         android:name="${applicationName}"
         android:icon="@mipmap/launcher_icon"
         android:roundIcon="@mipmap/launcher_icon"
+        android:allowBackup="false"
         android:usesCleartextTraffic="false">
         <meta-data
             android:name="com.google.android.geo.API_KEY"
