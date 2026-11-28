@@ -84,26 +84,31 @@ class AuthNotifier extends StateNotifier<AuthState> {
       final storedToken = await _storage
           .read(key: 'jwt_token')
           .timeout(const Duration(seconds: 4));
+      if (!mounted) return;
       if (storedToken != null) {
         // Fetch full profile to populate user object and userId
         final result = await _authService.getMe(storedToken);
+        if (!mounted) return;
         if (result.isSignedIn) {
           state = Authenticated(storedToken, result.user);
           await _analyticsService.setUserId(result.user?['email'] ?? 'auto_logged_in');
         } else {
           // If profile fetch fails (e.g. token expired), clear and set unauthenticated
           await _storage.delete(key: 'jwt_token');
+          if (!mounted) return;
           state = const Unauthenticated();
         }
       } else {
         state = const Unauthenticated();
       }
     } catch (e) {
+      if (!mounted) return;
       state = const Unauthenticated();
     }
   }
 
   void updateUser(Map<String, dynamic> updatedFields) {
+    if (!mounted) return;
     if (state is Authenticated) {
       final current = state as Authenticated;
       final updated = Map<String, dynamic>.from(current.user ?? {});
@@ -114,6 +119,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> setSession(String token, Map<String, dynamic>? user) async {
     await _storage.write(key: 'jwt_token', value: token);
+    if (!mounted) return;
     state = Authenticated(token, user);
   }
 }

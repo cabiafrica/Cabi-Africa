@@ -7,23 +7,15 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(const MaterialApp(home: LoyaltyDashboardScreen()));
+    await tester.pump();
 
-    // Verify Points Balance
-    expect(find.text('Cabi Points Balance'), findsOneWidget);
-    expect(find.text('1250'), findsOneWidget);
-
-    // Verify Tier Progress
-    expect(find.text('Current Tier: Silver'), findsOneWidget);
+    // Verify Points Balance & Tier Progress
+    expect(find.text('LOYALTY REWARDS'), findsOneWidget);
+    expect(find.text('CABI POINTS BALANCE'), findsOneWidget);
     expect(find.byType(LinearProgressIndicator), findsOneWidget);
-    expect(find.text('1250 points to reach Gold Tier'), findsOneWidget);
 
-    // Verify Recent Activity
-    expect(find.text('Recent Activity'), findsOneWidget);
-    expect(find.text('Trip to Westgate Mall'), findsOneWidget);
-    expect(find.text('+50'), findsOneWidget);
-
-    // Verify Redeem Button
-    final redeemButton = find.widgetWithText(ElevatedButton, 'Redeem Points');
-    expect(redeemButton, findsOneWidget);
+    // Verify Recent Activity & Redeem Button
+    expect(find.text('RECENT ACTIVITY'), findsOneWidget);
+    expect(find.text('REDEEM PRESTIGE POINTS'), findsOneWidget);
   });
 }

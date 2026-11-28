@@ -17,5 +17,9 @@ void main() {
     );
     // Verify the app renders at least one widget
     expect(find.byType(MaterialApp), findsOneWidget);
+    // Advance past startup timers and dispose cleanly
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump();
   });
 }

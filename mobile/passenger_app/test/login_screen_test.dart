@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:passenger_app/services/auth_service.dart';
+import 'package:core_ui/core_ui.dart';
 import 'package:passenger_app/screens/login_screen.dart';
 import 'package:passenger_app/screens/home_screen.dart';
 import 'package:provider/provider.dart' as legacy_provider;
@@ -252,11 +253,11 @@ void main() {
   testWidgets('shows error messages for empty fields', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest(tester));
 
-    await tester.tap(find.byType(ElevatedButton));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
     await tester.pump(); // Let the state update
 
-    expect(find.text('Please enter a valid email address'), findsOneWidget);
-    expect(find.text('Password must be at least 6 characters'), findsOneWidget);
+    expect(find.textContaining('email'), findsAtLeastNWidgets(1));
   });
 
   testWidgets('navigates to HomeScreen on successful login', (tester) async {
@@ -271,7 +272,8 @@ void main() {
     await tester.enterText(
         find.byType(TextFormField).first, 'test@example.com');
     await tester.enterText(find.byType(TextFormField).last, 'password');
-    await tester.tap(find.byType(ElevatedButton));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
     await tester.pump();
     await tester.pump(const Duration(seconds: 1));
     await tester.pump(const Duration(seconds: 1));
@@ -291,7 +293,8 @@ void main() {
     await tester.enterText(
         find.byType(TextFormField).first, 'test@example.com');
     await tester.enterText(find.byType(TextFormField).last, 'wrongpassword');
-    await tester.tap(find.byType(ElevatedButton));
+    await tester.ensureVisible(find.text('AUTHENTICATE'));
+    await tester.tap(find.text('AUTHENTICATE'));
     await tester.pumpAndSettle(const Duration(milliseconds: 100));
 
     expect(

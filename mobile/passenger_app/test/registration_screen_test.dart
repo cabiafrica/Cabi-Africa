@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:passenger_app/screens/registration_screen.dart';
@@ -22,8 +23,10 @@ void main() {
       tester.view.resetDevicePixelRatio();
     });
 
-    return MaterialApp(
-      home: RegistrationScreen(authService: mockAuthService),
+    return ProviderScope(
+      child: MaterialApp(
+        home: RegistrationScreen(authService: mockAuthService),
+      ),
     );
   }
 
@@ -34,8 +37,8 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
-    expect(find.text('Required'), findsNWidgets(2)); // First Name, Last Name
-    expect(find.text('Please enter a valid email'), findsOneWidget);
+    expect(find.text('First Name is required'), findsOneWidget);
+    expect(find.text('Last Name is required'), findsOneWidget);
     expect(find.text('Please enter your phone number'), findsOneWidget);
     expect(find.text('Password must be at least 8 characters long'),
         findsOneWidget);
@@ -54,7 +57,7 @@ void main() {
     await tester.tap(find.byType(ElevatedButton));
     await tester.pumpAndSettle();
 
-    expect(find.text('Enter a valid Kenyan phone number'), findsOneWidget);
+    expect(find.textContaining('Enter a valid Kenyan phone number'), findsOneWidget);
     expect(find.text('Must contain: Lowercase, Uppercase, Number & Symbol'),
         findsOneWidget);
   });
@@ -87,10 +90,10 @@ void main() {
     await tester.pump(); // simulate click
     await tester.pump(const Duration(milliseconds: 100)); // Wait for snackbar
 
-    expect(find.text('Registration successful! Please sign in to continue.'),
+    expect(find.text('Registration successful! Welcome to Cabi Africa.'),
         findsOneWidget);
-    await tester
-        .pumpAndSettle(const Duration(seconds: 2)); // let all timers finish
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 5));
   });
 
   testWidgets('shows error message on failed registration', (tester) async {

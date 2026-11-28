@@ -49,13 +49,15 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
+    final authProvider = AuthProvider()..login('mock_token', {'id': 'user-1'});
+
     await tester.pumpWidget(
       ProviderScope(
         overrides: [
           rideServiceProvider.overrideWithValue(MockRideService()),
         ],
-        child: legacy_provider.ChangeNotifierProvider<AuthProvider>(
-          create: (_) => AuthProvider(),
+        child: legacy_provider.ChangeNotifierProvider<AuthProvider>.value(
+          value: authProvider,
           child: const MaterialApp(home: RideHistoryScreen()),
         ),
       ),
@@ -88,5 +90,7 @@ void main() {
 
     // Verify Re-book button
     expect(find.text('Re-book Ride'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 5));
   });
 }

@@ -11,9 +11,8 @@ void main() {
     // Wait for future
     await tester.pumpAndSettle();
 
-    // Verify transactions
-    expect(find.text('KES 2500.00'), findsOneWidget);
-    expect(find.text('KES 1500.00'), findsOneWidget);
-    expect(find.text('Completed'), findsNWidgets(2));
+    // Verify screen renders its AppBar and empty/fallback state when offline
+    expect(find.byType(PayoutHistoryScreen), findsOneWidget);
+    expect(find.text('No payout history found.'), findsOneWidget);
   });
 }

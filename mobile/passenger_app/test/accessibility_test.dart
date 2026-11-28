@@ -12,8 +12,8 @@ void main() {
       final textFieldFinder = find.byType(TextField);
       expect(textFieldFinder, findsOneWidget);
 
-      // Verify hint text is present (often used as label for screen readers)
-      expect(find.text('Search location...'), findsOneWidget);
+      // Verify dropoff hint text is present for screen readers
+      expect(find.text('Dropoff location'), findsOneWidget);
     });
   });
 }

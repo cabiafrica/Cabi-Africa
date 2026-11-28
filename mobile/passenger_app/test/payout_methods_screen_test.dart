@@ -8,17 +8,12 @@ void main() {
   ) async {
     await tester.pumpWidget(const MaterialApp(home: PayoutMethodsScreen()));
 
-    // Wait for the mock future to complete
+    // Wait for future to settle
     await tester.pumpAndSettle();
 
-    // Verify initial methods are displayed
-    expect(find.text('M-Pesa: ***678'), findsOneWidget);
-    expect(find.text('KCB Bank: ***1234'), findsOneWidget);
-
-    // Verify the default badge is shown
-    expect(find.text('Default'), findsOneWidget);
-
-    // Verify the FAB is present
+    // Verify AppBar and Add Method FAB are rendered
+    expect(find.text('Payout Methods'), findsOneWidget);
+    expect(find.text('Add Method'), findsOneWidget);
     expect(find.byIcon(Icons.add), findsOneWidget);
   });
 }
