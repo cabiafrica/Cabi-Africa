@@ -45,6 +45,9 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
+      - name: Generate Prisma Client
+        run: npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
+
       - name: Run linting on changed TypeScript files
         run: |
           CHANGED=$(git diff --name-only --diff-filter=ACMR HEAD~1 -- '*.ts' '*.tsx' | grep -v '^e2e/' || true)

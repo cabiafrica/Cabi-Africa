@@ -1,3 +1,4 @@
+/** @jest-environment node */
 import reviewHandler from '../../pages/api/admin/vehicles/claims/[id]/review';
 import listHandler from '../../pages/api/admin/vehicles/claims/index';
 import { signUserToken } from '../../lib/serverAuth';

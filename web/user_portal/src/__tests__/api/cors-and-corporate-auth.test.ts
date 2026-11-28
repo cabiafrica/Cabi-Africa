@@ -1,3 +1,8 @@
+/** @jest-environment node */
+jest.mock('../../lib/prisma', () => ({
+  prisma: {},
+}));
+
 import { applyCorsHeaders, signUserToken } from '../../lib/serverAuth';
 import accountHandler from '../../pages/api/corporate/account';
 import walletHandler from '../../pages/api/corporate/wallet';
