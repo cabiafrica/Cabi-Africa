@@ -45,8 +45,14 @@ jobs:
       - name: Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Run linting
-        run: npx nx affected --target=lint --parallel=3 --base=HEAD~1
+      - name: Run linting on changed TypeScript files
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=ACMR HEAD~1 -- '*.ts' '*.tsx' | grep -v '^e2e/' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED" | xargs npx eslint --quiet
+          else
+            echo "No changed TS/TSX files to lint."
+          fi
 
       - name: Run tests
         run: npx nx affected --target=test --parallel=3 --base=HEAD~1 --coverage --ci

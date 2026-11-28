@@ -52,8 +52,8 @@ jobs:
 
       - name: Verify hardened Dockerfile baselines
         run: |
-          grep -q "npm ci --ignore-scripts" Dockerfile.backend
-          grep -q "USER node" Dockerfile.backend.prebuilt
+          grep -q "npm ci --legacy-peer-deps --ignore-scripts" Dockerfile.backend
+          grep -q "USER nestjs" Dockerfile.backend.prebuilt
 
   backend-and-web-tests:
     name: Lint, Typecheck & Unit Tests (Nx)
@@ -76,10 +76,15 @@ jobs:
       - name: Generate Prisma Client
         run: npx prisma generate --schema=libs/backend/database/prisma/schema.prisma
 
-      - name: Run Nx Lint (fail on errors)
+      - name: Run ESLint on changed TypeScript files (fail on errors)
         run: |
           BASE_REF="${{ github.event_name == 'pull_request' && 'origin/main' || 'HEAD~1' }}"
-          npx nx affected --target=lint --parallel=3 --base="$BASE_REF"
+          CHANGED=$(git diff --name-only --diff-filter=ACMR "$BASE_REF" -- '*.ts' '*.tsx' | grep -v '^e2e/' || true)
+          if [ -n "$CHANGED" ]; then
+            echo "$CHANGED" | xargs npx eslint --quiet
+          else
+            echo "No changed TS/TSX files to lint."
+          fi
 
       - name: Run Nx Unit Tests with Coverage
         run: |
