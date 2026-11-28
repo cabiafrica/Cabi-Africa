@@ -27,9 +27,9 @@ void main() {
       ),
     );
 
-    expect(find.text('DOCUMENT SUBMISSION'), findsOneWidget);
-    expect(find.text("Driver's License"), findsOneWidget);
-    expect(find.text('Vehicle Insurance'), findsOneWidget);
+    expect(find.byType(DocumentSubmissionScreen), findsOneWidget);
+    expect(find.text("Smart Driving License"), findsOneWidget);
+    expect(find.text('Commercial PSV Insurance'), findsOneWidget);
     expect(find.byType(DocumentTile), findsWidgets);
   });
 
@@ -49,7 +49,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text("Driver's License"));
+    await tester.tap(find.text("Smart Driving License"));
     await tester.pump();
 
     // Since we can't easily mock ImagePicker's static platform interface without proper setup,

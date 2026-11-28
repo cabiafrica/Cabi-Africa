@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:provider/provider.dart' as legacy_provider;
+import 'package:driver_app/providers/ride_request_provider.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:geolocator_platform_interface/geolocator_platform_interface.dart';
 import 'package:plugin_platform_interface/plugin_platform_interface.dart';
@@ -114,15 +116,31 @@ void main() {
           ProviderScope(
             overrides: [
               authProvider.overrideWith((ref) => MockAuthNotifier(
-                  const Authenticated('fake-token', {'id': 'driver-123'}))),
+                  const Authenticated('fake-token', {
+                    'id': 'driver-123',
+                    'role': 'DRIVER',
+                    'driverProfile': {
+                      'id': 'dp-123',
+                      'isBiometricVerified': true,
+                      'isOnline': false,
+                    },
+                  }))),
               rideServiceProvider.overrideWithValue(mockRideService),
             ],
-            child: const MaterialApp(home: AuthWrapper()),
+            child: legacy_provider.ChangeNotifierProvider(
+              create: (_) => RideRequestProvider(),
+              child: MaterialApp(
+                home: const AuthWrapper(),
+                routes: {'/login': (_) => const LoginScreen()},
+              ),
+            ),
           ),
         );
 
         await tester.pump(const Duration(milliseconds: 100));
         expect(find.byType(HomeScreen), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pump(const Duration(seconds: 1));
       });
     });
   });

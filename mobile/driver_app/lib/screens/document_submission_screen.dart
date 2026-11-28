@@ -275,7 +275,9 @@ class DocumentTile extends StatelessWidget {
               : Colors.white.withValues(alpha: 0.08),
         ),
       ),
-      child: ListTile(
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: Container(
@@ -356,6 +358,7 @@ class DocumentTile extends StatelessWidget {
           ),
         ),
         onTap: onTap,
+        ),
       ),
     );
   }

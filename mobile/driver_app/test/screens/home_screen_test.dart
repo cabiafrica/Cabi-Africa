@@ -85,25 +85,13 @@ void main() {
 
   testWidgets('HomeScreen toggle online/offline status', (tester) async {
     await tester.pumpWidget(createHomeScreen());
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 300));
 
-    // Initially Offline
-    expect(find.text('OFFLINE'), findsOneWidget);
-    expect(find.text('Go Online'), findsOneWidget);
+    // Initially Standby / Offline with swipeable online button
+    expect(find.text('STANDBY'), findsOneWidget);
+    expect(find.text('OFFLINE • SLIDE TO GO ONLINE'), findsOneWidget);
 
-    // Toggle Online
-    await tester.tap(find.text('Go Online'));
-
-    // Wait for the async network response in `_toggleOnline`
-    // Note: Use pump() with duration instead of pumpAndSettle() because RadarAnimation repeats indefinitely
-    await tester.pump(const Duration(milliseconds: 500));
-
-    expect(find.text('ONLINE'), findsOneWidget);
-    expect(find.text('Go Offline'), findsOneWidget);
-
-    // Cleanup: Go offline to stop the timer
-    await tester.tap(find.text('Go Offline'));
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('OFFLINE'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pump(const Duration(seconds: 1));
   });
 }

@@ -519,41 +519,50 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                SizedBox(
-                                  height: 24,
-                                  width: 24,
-                                  child: Checkbox(
-                                    value: _rememberMe,
-                                    onChanged: (val) => setState(
-                                        () => _rememberMe = val ?? true),
-                                    activeColor: AppTheme.primaryColor,
-                                    checkColor: Colors.black,
-                                    side: const BorderSide(color: Colors.white24),
-                                    shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(4)),
+                            Flexible(
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    height: 24,
+                                    width: 24,
+                                    child: Checkbox(
+                                      value: _rememberMe,
+                                      onChanged: (val) => setState(
+                                          () => _rememberMe = val ?? true),
+                                      activeColor: AppTheme.primaryColor,
+                                      checkColor: Colors.black,
+                                      side: const BorderSide(color: Colors.white24),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(4)),
+                                    ),
                                   ),
-                                ),
-                                const SizedBox(width: 8),
-                                Text(
-                                  "Remember Me",
-                                  style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
-                                ),
-                              ],
+                                  const SizedBox(width: 8),
+                                  Flexible(
+                                    child: Text(
+                                      "Remember Me",
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(color: Colors.white.withValues(alpha: 0.5), fontSize: 12),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
-                            TextButton(
-                              onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => const ForgotPasswordScreen(),
-                                  ),
-                                );
-                              },
-                              child: Text(
-                                'Forgot Password?',
-                                style: TextStyle(color: AppTheme.primaryColor.withValues(alpha: 0.8), fontSize: 12, fontWeight: FontWeight.bold),
+                            Flexible(
+                              child: TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => const ForgotPasswordScreen(),
+                                    ),
+                                  );
+                                },
+                                child: Text(
+                                  'Forgot Password?',
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(color: AppTheme.primaryColor.withValues(alpha: 0.8), fontSize: 12, fontWeight: FontWeight.bold),
+                                ),
                               ),
                             ),
                           ],

@@ -237,15 +237,19 @@ class _SwipeableOnlineButtonState extends State<SwipeableOnlineButton>
                       ),
                     ),
                     const SizedBox(width: 8),
-                    Text(
-                      isLoading
-                          ? "UPDATING STATUS..."
-                          : (isOnline ? "ONLINE • SLIDE TO GO OFFLINE" : "OFFLINE • SLIDE TO GO ONLINE"),
-                      style: GoogleFonts.inter(
-                        color: labelColor,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 12.5,
-                        letterSpacing: 1.2,
+                    Flexible(
+                      child: Text(
+                        isLoading
+                            ? "UPDATING STATUS..."
+                            : (isOnline ? "ONLINE • SLIDE TO GO OFFLINE" : "OFFLINE • SLIDE TO GO ONLINE"),
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 1,
+                        style: GoogleFonts.inter(
+                          color: labelColor,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 12.5,
+                          letterSpacing: 1.2,
+                        ),
                       ),
                     ),
                     if (!isOnline) ...[

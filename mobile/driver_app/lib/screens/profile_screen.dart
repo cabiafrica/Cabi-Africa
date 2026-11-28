@@ -495,7 +495,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   }
 
   Widget _buildDetailTile(IconData icon, String label, String value, Color color, {bool isStatus = false}) {
-    return ListTile(
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 4),
       leading: Container(
         padding: const EdgeInsets.all(8),
@@ -520,6 +522,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
               )
             ])
           : Text(value, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: Colors.white)),
+      ),
     );
   }
 
@@ -560,7 +563,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       required String title,
       required String subtitle,
       required VoidCallback onTap}) {
-    return ListTile(
+    return Material(
+      type: MaterialType.transparency,
+      child: ListTile(
       onTap: onTap,
       contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
       leading: Container(
@@ -575,6 +580,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       subtitle: Text(subtitle, style: const TextStyle(fontSize: 11, color: AppTheme.darkTextSecondary)),
       trailing:
           Icon(Icons.arrow_forward_ios_rounded, color: Colors.white.withValues(alpha: 0.2), size: 14),
+      ),
     );
   }
 

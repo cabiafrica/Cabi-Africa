@@ -85,7 +85,7 @@ void main() {
       final mockAuthResult = AuthResult(
         isSignedIn: true,
         token: 'test-token',
-        user: {'id': 'driver-123', 'fullName': 'Test Driver'},
+        user: {'id': 'driver-123', 'fullName': 'Test Driver', 'role': 'DRIVER'},
       );
 
       when(() => mockAuthService.signIn(any(), any()))
@@ -104,7 +104,7 @@ void main() {
       expect(authState.userId, 'driver-123');
 
       verify(() => mockStorage.write(
-            key: 'authToken',
+            key: 'jwt_token',
             value: 'test-token',
             iOptions: any(named: 'iOptions'),
             aOptions: any(named: 'aOptions'),
@@ -138,7 +138,7 @@ void main() {
       await container.read(authProvider.notifier).logout();
       expect(container.read(authProvider), isA<Unauthenticated>());
       verify(() => mockStorage.delete(
-            key: 'authToken',
+            key: 'jwt_token',
             iOptions: any(named: 'iOptions'),
             aOptions: any(named: 'aOptions'),
             lOptions: any(named: 'lOptions'),
@@ -150,13 +150,20 @@ void main() {
 
     test('tryAutoLogin succeeds if token exists in storage', () async {
       when(() => mockStorage.read(
-            key: 'authToken',
+            key: 'jwt_token',
             iOptions: any(named: 'iOptions'),
             aOptions: any(named: 'aOptions'),
             lOptions: any(named: 'lOptions'),
             wOptions: any(named: 'wOptions'),
             mOptions: any(named: 'mOptions'),
           )).thenAnswer((_) async => 'stored-token');
+      when(() => mockAuthService.getMe('stored-token')).thenAnswer(
+        (_) async => AuthResult(
+          isSignedIn: true,
+          token: 'stored-token',
+          user: {'id': 'driver-123'},
+        ),
+      );
 
       final container = createContainer();
       await container.read(authProvider.notifier).tryAutoLogin();

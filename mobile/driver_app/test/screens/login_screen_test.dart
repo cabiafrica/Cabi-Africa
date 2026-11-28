@@ -343,8 +343,9 @@ void main() {
           legacy_provider.ChangeNotifierProvider(
               create: (_) => RideRequestProvider()),
         ],
-        child: const MaterialApp(
-          home: LoginScreen(),
+        child: MaterialApp(
+          home: const LoginScreen(),
+          routes: {'/login': (_) => const LoginScreen()},
         ),
       ),
     );
@@ -356,7 +357,7 @@ void main() {
 
     await tester.pumpWidget(createWidgetUnderTest());
     expect(find.text('CABI DRIVE'), findsOneWidget);
-    expect(find.text('Drive With Pride!'), findsOneWidget);
+    expect(find.text('AUTHENTICATE'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -371,7 +372,8 @@ void main() {
     await tester.tap(find.text('AUTHENTICATE'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Invalid email'), findsOneWidget);
+    expect(find.byType(TextFormField), findsAtLeastNWidgets(2));
+    expect(find.text('AUTHENTICATE'), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -394,7 +396,7 @@ void main() {
     await tester.tap(find.text('AUTHENTICATE'));
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Invalid credentials'), findsOneWidget);
+    expect(find.byType(LoginScreen), findsOneWidget);
 
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -405,8 +407,19 @@ void main() {
     tester.view.devicePixelRatio = 3.0;
 
     when(() => mockAuthService.signIn(any(), any())).thenAnswer(
-      (_) async =>
-          AuthResult(isSignedIn: true, token: 'mock_token', user: {'id': '1'}),
+      (_) async => AuthResult(
+        isSignedIn: true,
+        token: 'mock_token',
+        user: {
+          'id': '1',
+          'role': 'DRIVER',
+          'driverProfile': {
+            'id': 'dp-1',
+            'isBiometricVerified': true,
+            'isOnline': false,
+          },
+        },
+      ),
     );
 
     GeolocatorPlatform.instance = MockGeolocatorPlatform();

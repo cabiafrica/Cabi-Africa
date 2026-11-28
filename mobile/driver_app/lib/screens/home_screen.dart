@@ -1523,50 +1523,56 @@ class _HomeScreenState extends ConsumerState<HomeScreen>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                width: 8,
-                                height: 8,
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF9E9E9E),
-                                  boxShadow: _isOnline
-                                      ? [
-                                          BoxShadow(
-                                            color: const Color(0xFF10B981).withValues(alpha: 0.6),
-                                            blurRadius: 6,
-                                            spreadRadius: 1,
-                                          ),
-                                        ]
-                                      : null,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  width: 8,
+                                  height: 8,
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: _isOnline ? const Color(0xFF10B981) : const Color(0xFF9E9E9E),
+                                    boxShadow: _isOnline
+                                        ? [
+                                            BoxShadow(
+                                              color: const Color(0xFF10B981).withValues(alpha: 0.6),
+                                              blurRadius: 6,
+                                              spreadRadius: 1,
+                                            ),
+                                          ]
+                                        : null,
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(width: 8),
-                              Text(
-                                _isOnline ? 'Online • Ready for Rides' : 'Offline',
-                                style: GoogleFonts.inter(
-                                  color: theme.textTheme.bodyLarge?.color,
-                                  fontSize: 16,
-                                  fontWeight: FontWeight.w800,
+                                const SizedBox(width: 8),
+                                Flexible(
+                                  child: Text(
+                                    _isOnline ? 'Online • Ready for Rides' : 'Offline',
+                                    overflow: TextOverflow.ellipsis,
+                                    style: GoogleFonts.inter(
+                                      color: theme.textTheme.bodyLarge?.color,
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            _isOnline
-                                ? 'Scanning ${_tripRadiusKm.toStringAsFixed(1)} km radius for trips'
-                                : 'Slide below to start receiving passenger requests',
-                            style: GoogleFonts.inter(
-                              color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
-                              fontSize: 12,
+                              ],
                             ),
-                          ),
-                        ],
+                            const SizedBox(height: 2),
+                            Text(
+                              _isOnline
+                                  ? 'Scanning ${_tripRadiusKm.toStringAsFixed(1)} km radius for trips'
+                                  : 'Slide below to start receiving passenger requests',
+                              overflow: TextOverflow.ellipsis,
+                              style: GoogleFonts.inter(
+                                color: theme.textTheme.bodyMedium?.color ?? AppTheme.darkTextSecondary,
+                                fontSize: 12,
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                       IconButton(
                         onPressed: () {

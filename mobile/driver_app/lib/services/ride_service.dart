@@ -12,7 +12,12 @@ class RideService {
   String get _dispatchBaseUrl => AppConfig.dispatchApiUrl;
 
   Future<Map<String, String>> _getAuthHeaders() async {
-    final token = await const FlutterSecureStorage().read(key: 'jwt_token');
+    String? token;
+    try {
+      token = await const FlutterSecureStorage().read(key: 'jwt_token');
+    } catch (_) {
+      token = null;
+    }
     return {
       'Content-Type': 'application/json',
       if (token != null && token.isNotEmpty) 'Authorization': 'Bearer $token',

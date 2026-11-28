@@ -57,11 +57,10 @@ void main() {
   testWidgets('InTripPanel renders correctly with ride data', (tester) async {
     await tester.pumpWidget(createWidgetUnderTest());
 
-    expect(find.text('Trip to: Yaya Centre'), findsOneWidget);
-    expect(find.text('Passenger: Jane Doe'), findsOneWidget);
-    expect(find.byIcon(Icons.sos), findsOneWidget);
-    expect(
-        find.widgetWithText(ElevatedButton, 'Complete Trip'), findsOneWidget);
+    expect(find.text('TRIP IN PROGRESS'), findsOneWidget);
+    expect(find.text('Yaya Centre'), findsOneWidget);
+    expect(find.text('Jane Doe'), findsOneWidget);
+    expect(find.text('Complete Trip'), findsOneWidget);
   });
 
   testWidgets('tapping Complete Trip calls rideService.completeTrip',

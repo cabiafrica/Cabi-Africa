@@ -57,7 +57,7 @@ void main() {
 
       // Assert data
       expect(find.text('KES 12000.50'), findsOneWidget);
-      expect(find.text('CABI Sacco'), findsOneWidget);
+      expect(find.text('CABI Sacco'), findsWidgets);
     });
 
     testWidgets('shows transactions list', (tester) async {

@@ -62,11 +62,15 @@ class RatingsData {
 // --- SERVICE ---
 
 class RatingsService {
+  final http.Client _client;
+
+  RatingsService({http.Client? client}) : _client = client ?? http.Client();
+
   Future<RatingsData> fetchRatings(String driverId) async {
     debugPrint('Fetching ratings for driver $driverId from ${AppConfig.authApiUrl}...');
     
     try {
-      final response = await http.get(
+      final response = await _client.get(
         Uri.parse('${AppConfig.authApiUrl}/ratings/admin/all?rateeId=$driverId'),
       );
 
@@ -103,7 +107,7 @@ class RatingsService {
 
   Future<Map<String, dynamic>> fetchRatingSummary(String driverId) async {
     try {
-      final response = await http.get(Uri.parse('${AppConfig.authApiUrl}/ratings/summary/$driverId'));
+      final response = await _client.get(Uri.parse('${AppConfig.authApiUrl}/ratings/summary/$driverId'));
 
       if (response.statusCode == 200) {
         return json.decode(response.body);

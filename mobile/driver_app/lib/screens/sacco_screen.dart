@@ -524,7 +524,9 @@ class _SaccoScreenState extends ConsumerState<SaccoScreen> {
                     const SizedBox(height: 16),
 
                     // Daily Welfare Fund Switch
-                    SwitchListTile(
+                    Material(
+                      type: MaterialType.transparency,
+                      child: SwitchListTile(
                       contentPadding: EdgeInsets.zero,
                       activeColor: accentColor,
                       title: Text(
@@ -546,6 +548,7 @@ class _SaccoScreenState extends ConsumerState<SaccoScreen> {
                       onChanged: (val) {
                         setState(() => _isWelfareEnabled = val);
                       },
+                      ),
                     ),
 
                     const SizedBox(height: 10),

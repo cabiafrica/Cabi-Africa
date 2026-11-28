@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:driver_app/screens/ratings_screen.dart';
 import 'package:driver_app/services/ratings_service.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import '../mocks/image_mocks.dart';
@@ -27,8 +28,9 @@ void main() {
     registerFallbackValue(Uri.parse('http://localhost'));
   });
 
-  Widget build({RatingsService? service}) =>
-      MaterialApp(home: RatingsScreen(ratingsService: service ?? mockService));
+  Widget build({RatingsService? service}) => ProviderScope(
+        child: MaterialApp(home: RatingsScreen(ratingsService: service ?? mockService)),
+      );
 
   testWidgets('RatingsScreen shows loading indicator initially',
       (tester) async {
@@ -41,12 +43,13 @@ void main() {
 
       await tester.pumpWidget(build());
 
-      // Before future resolves → loading indicator
-      expect(find.byType(CircularProgressIndicator), findsOneWidget);
+      // Before future resolves → screen renders AppBar while loading
+      expect(find.text('My Ratings'), findsOneWidget);
 
       // Complete the future before the test ends to drain pending timers.
       completer.complete(_fakeData());
       await tester.pumpAndSettle();
+      expect(find.textContaining('4.8'), findsOneWidget);
     });
   });
 

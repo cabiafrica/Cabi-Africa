@@ -28,17 +28,18 @@ void main() {
       (tester) async {
     await tester.pumpWidget(build(mockRideDetails));
 
-    expect(find.text('Passenger Arriving...'), findsOneWidget);
+    expect(find.text('ARRIVED AT PICKUP'), findsOneWidget);
     expect(find.text('Jane Doe'), findsOneWidget);
-    expect(find.widgetWithText(ElevatedButton, 'START TRIP'), findsOneWidget);
+    expect(find.text('ENTER PIN TO START TRIP'), findsOneWidget);
   });
 
   testWidgets('WaitingForPassengerPanel tapping Start Trip shows PIN dialog',
       (tester) async {
     await tester.pumpWidget(build(mockRideDetails));
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'START TRIP'));
-    await tester.pumpAndSettle();
+    await tester.tap(find.text('ENTER PIN TO START TRIP'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
 
     // PinEntryDialog should now be visible
     expect(find.byType(AlertDialog), findsOneWidget);

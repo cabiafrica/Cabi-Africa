@@ -82,6 +82,8 @@ void main() {
           .thenAnswer((_) async => 'ABC-123');
 
       // Act
+      await tester.binding.setSurfaceSize(const Size(1080, 2400));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
       await tester.pumpWidget(createScreen());
       await tester.pumpAndSettle();
 

@@ -19,7 +19,7 @@ void main() {
         'tripId': 'trip_123',
         'lat': -1.2921,
         'lng': 36.8219,
-        'driverName': 'John Doe',
+        'driverName': 'ELITE DRIVER',
         'distance': '2.5 km',
       };
 

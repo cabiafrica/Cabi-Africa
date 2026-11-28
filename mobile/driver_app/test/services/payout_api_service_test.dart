@@ -18,7 +18,14 @@ void main() {
   });
 
   group('PayoutApiService', () {
-    test('getAvailableEarnings returns mock value after delay', () async {
+    test('getAvailableEarnings returns balance from backend', () async {
+      final mockResponse = MockResponse();
+      when(() => mockResponse.data).thenReturn({'balance': 250.00});
+      when(() => mockDio.get(
+            '/earnings/balance',
+            queryParameters: {'driverId': 'driver-123'},
+          )).thenAnswer((_) async => mockResponse);
+
       final earnings =
           await payoutApiService.getAvailableEarnings('driver-123');
       expect(earnings, 250.00);

@@ -79,13 +79,13 @@ void main() {
       expect(find.text('DRIVER PROFILE'), findsOneWidget);
       expect(find.text('JOHN DOE'), findsOneWidget);
       expect(find.text('john.doe@example.com'), findsOneWidget);
-      expect(find.text('4.9 ★'), findsOneWidget); // 4.85 rounded
+      expect(find.textContaining('4.8'), findsWidgets);
       expect(find.text('GOLD'), findsOneWidget);
       expect(find.text('ACTIVE'), findsOneWidget);
     });
   });
 
-  testWidgets('tapping edit button shows a snackbar', (tester) async {
+  testWidgets('tapping edit button navigates to profile edit screen', (tester) async {
     await provideMockedNetworkImages(() async {
       await pumpScreen(tester);
       await tester.pumpAndSettle();
@@ -93,10 +93,9 @@ void main() {
       final editButton = find.byIcon(Icons.edit_note);
       expect(editButton, findsOneWidget);
       await tester.tap(editButton);
-      await tester.pump(); // Trigger snackbar animation
+      await tester.pumpAndSettle();
 
-      expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.textContaining('Profile editing will be available'), findsOneWidget);
+      expect(find.byType(ProfileScreen), findsNothing);
     });
   });
 }

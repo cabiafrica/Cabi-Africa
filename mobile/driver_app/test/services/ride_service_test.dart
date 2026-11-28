@@ -129,13 +129,13 @@ void main() {
       expect(fare, 450.0);
     });
 
-    test('completeTrip returns 450.0 fallback on network error', () async {
+    test('completeTrip returns 0.0 fallback on network error', () async {
       when(() => mockClient.post(any(),
           headers: any(named: 'headers'),
           body: any(named: 'body'))).thenThrow(Exception('Network error'));
 
       final fare = await rideService.completeTrip(rideId);
-      expect(fare, 450.0); // mock fallback
+      expect(fare, 0.0);
     });
 
     // ── confirmCashPayment ─────────────────────────────────────────────────
