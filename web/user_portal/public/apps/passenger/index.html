@@ -86,10 +86,10 @@
         }
     </style>
     <script>
-        const serviceWorkerVersion = "1264480156" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
+        const serviceWorkerVersion = "18003704" /* Flutter's service worker is deprecated and will be removed in a future Flutter release. */;
     </script>
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0&libraries=places"></script>
-    <script src="flutter_bootstrap.js" async></script>
+    <script src="flutter.js" defer></script>
 </head>
 
 <body>
@@ -117,20 +117,21 @@
             }
         })();
 
-        function dismissCabiLoader() {
-            var loader = document.getElementById('cabi-loader');
-            if (loader) {
-                loader.style.opacity = '0';
-                setTimeout(function () {
-                    if (loader && loader.parentNode) loader.parentNode.removeChild(loader);
-                }, 350);
-            }
-        }
-
-        window.addEventListener('flutter-first-frame', dismissCabiLoader);
         window.addEventListener('load', function () {
-            // Safety timeout ensures user is never blocked if CanvasKit or service worker takes extra time
-            setTimeout(dismissCabiLoader, 3000);
+            _flutter.loader.loadEntrypoint({
+                serviceWorker: {
+                    serviceWorkerVersion: serviceWorkerVersion,
+                }
+            }).then(function (engineInitializer) {
+                return engineInitializer.initializeEngine();
+            }).then(function (appRunner) {
+                var loader = document.getElementById('cabi-loader');
+                if (loader) {
+                    loader.style.opacity = '0';
+                    setTimeout(function () { loader.remove(); }, 350);
+                }
+                return appRunner.runApp();
+            });
         });
     </script>
 </body>
