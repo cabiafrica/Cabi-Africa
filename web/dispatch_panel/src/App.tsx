@@ -131,7 +131,9 @@ function App() {
                     osc.start();
                     osc.stop(ctx.currentTime + 0.85);
                 }
-            } catch (_) {}
+            } catch {
+                // Ignore Web Audio autoplay restrictions
+            }
         });
 
         sosSocket.on('sos_acknowledged', (ack: any) => {
@@ -156,7 +158,9 @@ function App() {
                 if (Array.isArray(res.data)) {
                     setEmergencyAlerts(res.data);
                 }
-            } catch (_) {}
+            } catch {
+                // Ignore transient SOS fetch errors
+            }
         };
         if (isAuthenticated) {
             fetchOpenAlerts();
@@ -251,7 +255,7 @@ function App() {
                     let loc = { lat: -1.286389, lng: 36.817223 };
                     if (d.currentLocation) {
                         if (typeof d.currentLocation === 'string') {
-                            try { loc = JSON.parse(d.currentLocation); } catch {}
+                            try { loc = JSON.parse(d.currentLocation); } catch { /* ignore malformed coordinates */ }
                         } else if (typeof d.currentLocation === 'object' && d.currentLocation.lat && d.currentLocation.lng) {
                             loc = { lat: Number(d.currentLocation.lat), lng: Number(d.currentLocation.lng) };
                         }

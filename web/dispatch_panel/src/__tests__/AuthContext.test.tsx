@@ -44,7 +44,7 @@ describe('Dispatch Panel AuthContext', () => {
   it('recovers safely from corrupted localStorage user JSON', () => {
     localStorage.setItem('authToken', 'stale-token');
     localStorage.setItem('authUser', '{invalid-json');
-    const errSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+    const errSpy = jest.spyOn(console, 'error').mockImplementation(() => undefined);
 
     render(
       <AuthProvider>

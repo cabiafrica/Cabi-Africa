@@ -71,7 +71,7 @@ export class AuthController {
         user,
       };
     } catch (error: any) {
-      globalAuditTelemetry.logAuthFailure((loginDto as any)?.identifier || loginDto?.email || 'unknown', error?.message || 'Login failed').catch(() => {});
+      globalAuditTelemetry.logAuthFailure((loginDto as any)?.identifier || loginDto?.email || 'unknown', error?.message || 'Login failed').catch(() => undefined);
       if (error instanceof UnauthorizedException) {
         throw error;
       }
@@ -86,7 +86,7 @@ export class AuthController {
     try {
       return await this.userService.initiateAdminLogin(loginDto.email, loginDto.password);
     } catch (error: any) {
-      globalAuditTelemetry.logAuthFailure(loginDto?.email || 'unknown', error?.message || 'Admin login initiation failed').catch(() => {});
+      globalAuditTelemetry.logAuthFailure(loginDto?.email || 'unknown', error?.message || 'Admin login initiation failed').catch(() => undefined);
       throw new UnauthorizedException(error?.message || 'Invalid credentials.');
     }
   }
@@ -100,7 +100,7 @@ export class AuthController {
     try {
       return await this.userService.verifyAdminIdentity(body.challengeToken, body.otpCode);
     } catch (error: any) {
-      globalAuditTelemetry.logAuthFailure('admin-challenge-verification', error?.message || 'Admin 2FA verification failed').catch(() => {});
+      globalAuditTelemetry.logAuthFailure('admin-challenge-verification', error?.message || 'Admin 2FA verification failed').catch(() => undefined);
       throw error;
     }
   }
