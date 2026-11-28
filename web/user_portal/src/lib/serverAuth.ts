@@ -62,3 +62,63 @@ export function requireAuth(req: NextApiRequest, res: NextApiResponse): Authenti
     }
     return caller;
 }
+
+const DEFAULT_ALLOWED_ORIGINS = [
+    'https://cabi.africa',
+    'https://www.cabi.africa',
+    'https://app.cabi.africa',
+    'https://admin.cabi.africa',
+    'https://dispatch.cabi.africa',
+];
+
+export function getAllowedOrigins(): string[] {
+    const configured = (process.env.ALLOWED_ORIGINS || process.env.CORS_ORIGINS || '')
+        .split(',')
+        .map((o) => o.trim())
+        .filter(Boolean);
+    const origins = configured.length > 0 ? configured : DEFAULT_ALLOWED_ORIGINS;
+    if (process.env.NODE_ENV !== 'production') {
+        return [
+            ...origins,
+            'http://localhost:3000',
+            'http://localhost:3001',
+            'http://localhost:3002',
+            'http://localhost:5173',
+        ];
+    }
+    return origins;
+}
+
+export function applyCorsHeaders(
+    req: NextApiRequest,
+    res: NextApiResponse,
+    methods: string
+): boolean {
+    const origin = req.headers.origin;
+    const allowed = getAllowedOrigins();
+    res.setHeader('Vary', 'Origin');
+    if (origin && allowed.includes(origin)) {
+        res.setHeader('Access-Control-Allow-Origin', origin);
+        res.setHeader('Access-Control-Allow-Credentials', 'true');
+    }
+    res.setHeader('Access-Control-Allow-Methods', methods);
+    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    if (req.method === 'OPTIONS') {
+        res.status(200).end();
+        return true;
+    }
+    return false;
+}
+
+export function requireAdmin(req: NextApiRequest, res: NextApiResponse): AuthenticatedCaller | null {
+    const caller = requireAuth(req, res);
+    if (!caller) {
+        return null;
+    }
+    const role = (caller.role || '').toUpperCase();
+    if (role !== 'ADMIN' && role !== 'SUPER_ADMIN') {
+        res.status(403).json({ success: false, message: 'Administrator privileges required.' });
+        return null;
+    }
+    return caller;
+}

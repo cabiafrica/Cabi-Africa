@@ -8,11 +8,21 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '@cabi/backend/database';
+
+const WS_ALLOWED_ORIGINS = (
+  process.env.CORS_ORIGINS ||
+  'https://cabi.africa,https://app.cabi.africa,https://admin.cabi.africa,https://dispatch.cabi.africa'
+)
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
 
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' ? WS_ALLOWED_ORIGINS : [...WS_ALLOWED_ORIGINS, 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173'],
+    credentials: true,
   },
   namespace: '/trip-tracking',
 })
@@ -27,8 +37,47 @@ export class TripTrackingGateway
     this.logger.log('WebSocket Gateway Initialized');
   }
 
+  private verifySocketUser(client: Socket): { userId: string; driverProfileId?: string; role: string } | null {
+    const rawToken =
+      client.handshake?.auth?.token ||
+      (typeof client.handshake?.headers?.authorization === 'string'
+        ? client.handshake.headers.authorization.replace(/^Bearer\s+/i, '').trim()
+        : undefined);
+    const secret =
+      process.env.JWT_SECRET ||
+      process.env.SUPABASE_JWT_SECRET ||
+      (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+    if (!rawToken || !secret) return null;
+    try {
+      const decoded = jwt.verify(String(rawToken), secret) as any;
+      const userId = String(decoded?.sub || decoded?.id || decoded?.userId || '');
+      if (!userId) return null;
+      return {
+        userId,
+        driverProfileId: decoded?.driverProfileId || decoded?.driverProfile?.id,
+        role: String(decoded?.role || 'USER').toUpperCase(),
+      };
+    } catch {
+      return null;
+    }
+  }
+
+  private isAuthorizedForDriver(client: Socket, driverId: string): boolean {
+    const user = client.data?.user;
+    if (!user) return false;
+    if (['ADMIN', 'SUPER_ADMIN', 'DISPATCHER'].includes(user.role)) return true;
+    return user.role === 'DRIVER' && (user.userId === driverId || user.driverProfileId === driverId);
+  }
+
   handleConnection(client: Socket, ...args: any[]) {
-    this.logger.log(`Client connected: ${client.id}`);
+    const user = this.verifySocketUser(client);
+    if (!user) {
+      this.logger.warn(`Rejected unauthenticated trip-tracking socket: ${client.id}`);
+      client.disconnect(true);
+      return;
+    }
+    client.data = { ...(client.data || {}), user };
+    this.logger.log(`Client authenticated: ${client.id} (${user.userId}, ${user.role})`);
   }
 
   handleDisconnect(client: Socket) {
@@ -37,6 +86,7 @@ export class TripTrackingGateway
 
   @SubscribeMessage('joinTrip')
   handleJoinTrip(client: Socket, tripId: string): void {
+    if (!client.data?.user || !tripId || typeof tripId !== 'string') return;
     this.logger.log(`Client ${client.id} joining room for trip ${tripId}`);
     client.join(tripId);
   }
@@ -46,26 +96,28 @@ export class TripTrackingGateway
     client: Socket,
     payload: { driverId: string; tripId?: string; lat: number; lng: number }
   ): Promise<void> {
+    if (!payload?.driverId || !this.isAuthorizedForDriver(client, payload.driverId)) return;
     const { driverId, tripId, lat, lng } = payload;
+    if (!Number.isFinite(Number(lat)) || !Number.isFinite(Number(lng))) return;
 
     try {
       await this.prisma.driverProfile.update({
         where: { id: driverId },
-        data: { currentLocation: { lat, lng } as any },
+        data: { currentLocation: { lat: Number(lat), lng: Number(lng) } as any },
       });
     } catch (e) {
       this.logger.error(`Failed to update driver location: ${e.message}`);
     }
 
     if (tripId) {
-      this.server.to(tripId).emit('locationUpdate', { lat, lng });
+      this.server.to(tripId).emit('locationUpdate', { lat: Number(lat), lng: Number(lng) });
     }
-    // Broadcast globally for dispatch map
-    this.server.emit('globalDriverUpdate', { driverId, lat, lng });
+    this.server.to('dispatch-monitors').emit('globalDriverUpdate', { driverId, lat: Number(lat), lng: Number(lng) });
   }
 
   @SubscribeMessage('driverGoOnline')
   async handleDriverOnline(client: Socket, driverId: string): Promise<void> {
+    if (!driverId || !this.isAuthorizedForDriver(client, driverId)) return;
     await this.prisma.driverProfile.update({
       where: { id: driverId },
       data: { isOnline: true },
@@ -75,6 +127,7 @@ export class TripTrackingGateway
 
   @SubscribeMessage('driverGoOffline')
   async handleDriverOffline(client: Socket, driverId: string): Promise<void> {
+    if (!driverId || !this.isAuthorizedForDriver(client, driverId)) return;
     await this.prisma.driverProfile.update({
       where: { id: driverId },
       data: { isOnline: false },
@@ -87,18 +140,13 @@ export class TripTrackingGateway
    */
   broadcastRideRequest(driverId: string, ride: any) {
     this.logger.log(`Broadcasting ride ${ride.id} to driver ${driverId}`);
-    // Emit to specific driver room (assuming they join room 'driver_DRIVER_ID')
-    // Or we can emit to all and filter on client, but better to be targeted.
-    // Ideally duplicate socket connection logic to join driver room on connect.
-    // For now, we'll try to emit to a room name convention
     this.server.to(`driver:${driverId}`).emit('newRideRequest', ride);
-
-    // Fallback: emit global event for testing if room join isn't perfect yet
-    this.server.emit(`driver:${driverId}:rideRequest`, ride);
+    this.server.to(`driver:${driverId}`).emit(`driver:${driverId}:rideRequest`, ride);
   }
 
   @SubscribeMessage('driverJoinRoom')
   handleDriverJoinRoom(client: Socket, driverId: string) {
+    if (!driverId || !this.isAuthorizedForDriver(client, driverId)) return;
     client.join(`driver:${driverId}`);
     this.logger.log(`Driver ${driverId} joined personal room`);
   }

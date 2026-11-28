@@ -1,13 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
+import { requireAdmin } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ message: 'Method not allowed' });
     }
 
+    const admin = requireAdmin(req, res);
+    if (!admin) return;
+
     const { id } = req.query;
-    const { status, rejectionReason, adminId } = req.body;
+    const { status, rejectionReason } = req.body;
 
     if (typeof id !== 'string' || !status || !['APPROVED', 'REJECTED'].includes(status)) {
         return res.status(400).json({ success: false, message: 'Invalid claim ID or review status' });
@@ -32,7 +36,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: {
                 status,
                 reviewedAt: new Date(),
-                reviewedByAdminId: adminId || 'admin-system',
+                reviewedByAdminId: admin.sub,
                 rejectionReason: status === 'REJECTED' ? rejectionReason : null
             },
             include: {
@@ -75,6 +79,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     } catch (error: any) {
         console.error('Error reviewing claim:', error);
-        return res.status(500).json({ success: false, message: 'Internal server error reviewing claim', error: error.message });
+        return res.status(500).json({ success: false, message: 'Internal server error reviewing claim' });
     }
 }

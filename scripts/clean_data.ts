@@ -4,6 +4,14 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 async function main() {
+    if (process.env.NODE_ENV === 'production') {
+        console.error('❌ Refusing to run destructive data cleanup when NODE_ENV=production.');
+        process.exit(1);
+    }
+    if (!process.argv.includes('--confirm-cleanup')) {
+        console.error('❌ Destructive script blocked. Re-run with --confirm-cleanup in a non-production environment.');
+        process.exit(1);
+    }
     console.log('🧹 Starting Data Cleanup...');
 
     try {

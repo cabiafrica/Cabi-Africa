@@ -8,6 +8,7 @@ import {
 } from '@nestjs/websockets';
 import { Logger } from '@nestjs/common';
 import { Server, Socket } from 'socket.io';
+import * as jwt from 'jsonwebtoken';
 
 export interface SOSBroadcastAlert {
   alertId: string;
@@ -27,9 +28,18 @@ export interface SOSBroadcastAlert {
   trackingUrl: string;
 }
 
+const WS_ALLOWED_ORIGINS = (
+  process.env.CORS_ORIGINS ||
+  'https://cabi.africa,https://app.cabi.africa,https://admin.cabi.africa,https://dispatch.cabi.africa'
+)
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' ? WS_ALLOWED_ORIGINS : [...WS_ALLOWED_ORIGINS, 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173'],
+    credentials: true,
   },
   namespace: '/sos',
 })
@@ -46,8 +56,41 @@ export class SOSGateway
     this.logger.log('🚨 SOS Real-Time Emergency Gateway Initialized on namespace /sos');
   }
 
+  private verifySocketToken(client: Socket): { userId: string; role: string } | null {
+    const rawToken =
+      client.handshake?.auth?.token ||
+      (typeof client.handshake?.headers?.authorization === 'string'
+        ? client.handshake.headers.authorization.replace(/^Bearer\s+/i, '').trim()
+        : undefined);
+    const secret =
+      process.env.JWT_SECRET ||
+      process.env.SUPABASE_JWT_SECRET ||
+      (process.env.NODE_ENV !== 'production' ? 'dev-only-jwt-secret-do-not-use-in-prod' : '');
+    if (!rawToken || !secret) return null;
+    try {
+      const decoded = jwt.verify(String(rawToken), secret) as any;
+      const userId = String(decoded?.sub || decoded?.id || decoded?.userId || '');
+      if (!userId) return null;
+      return { userId, role: String(decoded?.role || 'USER').toUpperCase() };
+    } catch {
+      return null;
+    }
+  }
+
   handleConnection(client: Socket) {
-    this.logger.log(`Safety socket connected: ${client.id}`);
+    const verified = this.verifySocketToken(client);
+    if (!verified) {
+      this.logger.warn(`Rejected unauthenticated safety socket: ${client.id}`);
+      client.disconnect(true);
+      return;
+    }
+    client.data = { ...(client.data || {}), user: verified };
+    this.connectedSockets.set(client.id, verified.userId);
+    client.join(`user_${verified.userId}`);
+    if (['ADMIN', 'SUPER_ADMIN', 'DISPATCHER'].includes(verified.role)) {
+      client.join('dispatch_ops_room');
+    }
+    this.logger.log(`Safety socket authenticated: ${client.id} (${verified.userId}, ${verified.role})`);
   }
 
   handleDisconnect(client: Socket) {
@@ -56,34 +99,40 @@ export class SOSGateway
   }
 
   @SubscribeMessage('registerClient')
-  handleRegister(client: Socket, payload: { userId: string; role?: string }) {
-    if (payload?.userId) {
-      this.connectedSockets.set(client.id, payload.userId);
-      client.join(`user_${payload.userId}`);
-      if (['ADMIN', 'SUPER_ADMIN', 'DISPATCHER'].includes(payload.role?.toUpperCase() || '')) {
-        client.join('dispatch_ops_room');
-      }
-      this.logger.log(`Safety socket registered user ${payload.userId} (${payload.role || 'GUEST'})`);
+  handleRegister(client: Socket, _payload: { userId?: string; role?: string }) {
+    const verified = client.data?.user || this.verifySocketToken(client);
+    if (!verified) {
+      this.logger.warn(`Blocked unauthenticated registerClient from socket ${client.id}`);
+      client.disconnect(true);
+      return;
     }
+    this.connectedSockets.set(client.id, verified.userId);
+    client.join(`user_${verified.userId}`);
+    if (['ADMIN', 'SUPER_ADMIN', 'DISPATCHER'].includes(verified.role)) {
+      client.join('dispatch_ops_room');
+    }
+    this.logger.log(`Safety socket registered verified user ${verified.userId} (${verified.role})`);
   }
 
   /**
-   * Dispatches real-time distress alert to operations room and public safety stream
+   * Dispatches real-time distress alert to operations room and affected user room
    */
   sendAlert(alert: SOSBroadcastAlert) {
     if (this.server) {
       this.server.to('dispatch_ops_room').emit('sos_alert', alert);
-      this.server.emit('sos_alert', alert); // Global emergency alert stream for map pins
+      if (alert?.userId) {
+        this.server.to(`user_${alert.userId}`).emit('sos_alert', alert);
+      }
       this.logger.log(`[SOSGateway] Broadcasted sos_alert for incident #${alert.obNumber}`);
     }
   }
 
   /**
-   * Dispatches hybrid distress signal to assigned Sacco Distress Patron
+   * Dispatches hybrid distress signal to assigned Legacy Program Distress Patron and operations room
    */
   sendPatronDistressAlert(patron: any, alert: SOSBroadcastAlert, trackingUrl: string) {
     if (this.server) {
-      this.server.emit('patron_distress_alert', {
+      this.server.to('dispatch_ops_room').emit('patron_distress_alert', {
         patron,
         alert,
         trackingUrl,

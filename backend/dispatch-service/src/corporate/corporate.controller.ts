@@ -53,10 +53,28 @@ export class CorporateController {
     return user;
   }
 
+  private assertAuthenticated(req: any): any {
+    const user = this.extractUser(req);
+    if (!user) {
+      throw new UnauthorizedException('Authentication required.');
+    }
+    return user;
+  }
+
+  private assertAdmin(req: any): any {
+    const user = this.assertAuthenticated(req);
+    const role = String(user.role || '').toUpperCase();
+    if (!['ADMIN', 'SUPER_ADMIN', 'CORPORATE_ADMIN'].includes(role)) {
+      throw new UnauthorizedException('Administrative privileges required for corporate account operations.');
+    }
+    return user;
+  }
+
   // --- Corporate Accounts ---
 
   @Get('accounts')
-  listAccounts() {
+  listAccounts(@Req() req: any) {
+    this.assertAdmin(req);
     return {
       success: true,
       accounts: this.corporateService.listAccounts(),
@@ -64,7 +82,8 @@ export class CorporateController {
   }
 
   @Post('accounts')
-  createAccount(@Body() body: Partial<CorporateAccount>) {
+  createAccount(@Req() req: any, @Body() body: Partial<CorporateAccount>) {
+    this.assertAdmin(req);
     if (!body?.companyName) {
       throw new BadRequestException('companyName is required');
     }
@@ -77,7 +96,8 @@ export class CorporateController {
   }
 
   @Get('accounts/:id')
-  getAccount(@Param('id') id: string) {
+  getAccount(@Req() req: any, @Param('id') id: string) {
+    this.assertAuthenticated(req);
     const account = this.corporateService.getAccount(id);
     const costCenters = this.corporateService.listCostCenters(id);
     return {
@@ -91,7 +111,8 @@ export class CorporateController {
   // --- Cost Centers ---
 
   @Post('cost-centers')
-  createCostCenter(@Body() body: Partial<CostCenter>) {
+  createCostCenter(@Req() req: any, @Body() body: Partial<CostCenter>) {
+    this.assertAdmin(req);
     const cc = this.corporateService.createCostCenter(body);
     return {
       success: true,
@@ -100,7 +121,8 @@ export class CorporateController {
   }
 
   @Get('cost-centers/:accountId')
-  listCostCenters(@Param('accountId') accountId: string) {
+  listCostCenters(@Req() req: any, @Param('accountId') accountId: string) {
+    this.assertAuthenticated(req);
     return {
       success: true,
       costCenters: this.corporateService.listCostCenters(accountId),
@@ -110,7 +132,8 @@ export class CorporateController {
   // --- Employee Enrolment ---
 
   @Post('employees')
-  enrolEmployee(@Body() body: Partial<CorporateEmployee>) {
+  enrolEmployee(@Req() req: any, @Body() body: Partial<CorporateEmployee>) {
+    this.assertAdmin(req);
     const emp = this.corporateService.enrolEmployee(body);
     return {
       success: true,

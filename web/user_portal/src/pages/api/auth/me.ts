@@ -1,13 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { prisma } from '@/lib/prisma';
-import { extractCallerUser } from '@/lib/serverAuth';
+import { applyCorsHeaders, extractCallerUser } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-    if (req.method === 'OPTIONS') {
-        return res.status(200).end();
+    if (applyCorsHeaders(req, res, 'GET, OPTIONS')) {
+        return;
     }
 
     const caller = extractCallerUser(req);

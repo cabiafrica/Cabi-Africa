@@ -1,5 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as crypto from 'crypto';
 import axios from 'axios';
 
 export interface VerificationWebhookEvent {
@@ -28,7 +29,29 @@ export class VerificationWebhookService {
     this.webhookUrl = this.configService.get('VERIFICATION_WEBHOOK_URL') || '';
   }
 
+  private validateWebhookUrl(url: string): void {
+    let parsed: URL;
+    try {
+      parsed = new URL(url);
+    } catch {
+      throw new BadRequestException('Invalid webhook URL format');
+    }
+    if (parsed.protocol !== 'https:' && process.env.NODE_ENV === 'production') {
+      throw new BadRequestException('Webhook URL must use HTTPS in production');
+    }
+    if (parsed.protocol !== 'https:' && parsed.protocol !== 'http:') {
+      throw new BadRequestException('Unsupported webhook URL protocol');
+    }
+    const host = parsed.hostname.toLowerCase();
+    const blockedHostPattern =
+      /^(localhost|127\.|10\.|192\.168\.|169\.254\.|0\.0\.0\.0|::1|\[::1\]|172\.(1[6-9]|2\d|3[0-1])\.)/;
+    if (blockedHostPattern.test(host) || host.endsWith('.internal')) {
+      throw new BadRequestException('Webhook URL cannot target internal or private network addresses');
+    }
+  }
+
   async setWebhookUrl(url: string): Promise<void> {
+    this.validateWebhookUrl(url);
     this.webhookUrl = url;
     this.logger.log(`Webhook URL set to: ${url}`);
   }
@@ -40,15 +63,28 @@ export class VerificationWebhookService {
     }
 
     try {
+      this.validateWebhookUrl(this.webhookUrl);
       this.logger.log(`Sending webhook for event: ${event.event}`);
 
-      await axios.post(this.webhookUrl, event, {
-        headers: {
-          'Content-Type': 'application/json',
-          'X-Webhook-Event': event.event,
-          'X-Webhook-Timestamp': event.timestamp,
-        },
+      const payload = JSON.stringify(event);
+      const headers: Record<string, string> = {
+        'Content-Type': 'application/json',
+        'X-Webhook-Event': event.event,
+        'X-Webhook-Timestamp': event.timestamp,
+      };
+      const webhookSecret = this.configService.get('VERIFICATION_WEBHOOK_SECRET');
+      if (webhookSecret) {
+        const signature = crypto
+          .createHmac('sha256', String(webhookSecret))
+          .update(`${event.timestamp}.${payload}`)
+          .digest('hex');
+        headers['X-Webhook-Signature'] = `sha256=${signature}`;
+      }
+
+      await axios.post(this.webhookUrl, payload, {
+        headers,
         timeout: 10000,
+        maxRedirects: 0,
       });
 
       this.logger.log(`Webhook sent successfully for event: ${event.event}`);

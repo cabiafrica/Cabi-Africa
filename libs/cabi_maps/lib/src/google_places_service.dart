@@ -23,7 +23,10 @@ class PlaceSuggestion {
 }
 
 class GooglePlacesService {
-  static const String defaultApiKey = 'AIzaSyA_ybfC1sxL4K92fKiuIsfHLkFK7sWl9-0';
+  static const String defaultApiKey = String.fromEnvironment(
+    'GOOGLE_MAPS_API_KEY',
+    defaultValue: '',
+  );
   final String apiKey;
 
   GooglePlacesService({String? apiKey})
@@ -37,6 +40,9 @@ class GooglePlacesService {
     double radiusMeters = 35000,
   }) async {
     if (query.trim().isEmpty) return [];
+    if (apiKey.trim().isEmpty) {
+      return _fallbackNominatim(query, countryCode, userLocation: userLocation);
+    }
 
     try {
       final locationParam = userLocation != null
@@ -76,7 +82,7 @@ class GooglePlacesService {
 
   /// Get place details (coordinates) for a given Google Place ID
   Future<LatLng?> getPlaceDetails(String placeId) async {
-    if (placeId.isEmpty) return null;
+    if (placeId.isEmpty || apiKey.trim().isEmpty) return null;
 
     try {
       final uri = Uri.parse(
@@ -105,22 +111,24 @@ class GooglePlacesService {
 
   /// Reverse geocode coordinates to an address string
   Future<String?> reverseGeocode(LatLng location) async {
-    try {
-      final uri = Uri.parse(
-        'https://maps.googleapis.com/maps/api/geocode/json'
-        '?latlng=${location.latitude},${location.longitude}'
-        '&key=$apiKey',
-      );
+    if (apiKey.trim().isNotEmpty) {
+      try {
+        final uri = Uri.parse(
+          'https://maps.googleapis.com/maps/api/geocode/json'
+          '?latlng=${location.latitude},${location.longitude}'
+          '&key=$apiKey',
+        );
 
-      final response = await http.get(uri);
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-        if (data['status'] == 'OK' && (data['results'] as List).isNotEmpty) {
-          return data['results'][0]['formatted_address'] as String?;
+        final response = await http.get(uri);
+        if (response.statusCode == 200) {
+          final data = json.decode(response.body);
+          if (data['status'] == 'OK' && (data['results'] as List).isNotEmpty) {
+            return data['results'][0]['formatted_address'] as String?;
+          }
         }
+      } catch (_) {
+        // Ignore and fallback
       }
-    } catch (_) {
-      // Ignore and fallback
     }
 
     try {

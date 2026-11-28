@@ -46,10 +46,10 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run linting
-        run: npx nx affected --target=lint --parallel=3 --base=origin/main --max-warnings=5000 || echo "⚠️ Non-critical lint warnings tolerated"
+        run: npx nx affected --target=lint --parallel=3 --base=origin/main
 
       - name: Run tests
-        run: npx nx affected --target=test --parallel=3 --base=origin/main --coverage || echo "⚠️ Tests completed"
+        run: npx nx affected --target=test --parallel=3 --base=origin/main --coverage --ci
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
@@ -75,9 +75,7 @@ jobs:
         run: npm install --legacy-peer-deps
 
       - name: Run Prisma migrations
-        run: |
-          npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma || echo "⚠️ Prisma migrate deploy skipped"
-          npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss
+        run: npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
         env:
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
           DIRECT_URL: ${{ secrets.DIRECT_URL || secrets.DATABASE_URL }}
@@ -107,12 +105,13 @@ jobs:
       - name: Deploy to DigitalOcean Droplet
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: 104.248.168.68
-          username: root
+          host: ${{ secrets.DROPLET_HOST }}
+          username: ${{ secrets.DROPLET_USER || 'deploy' }}
           key: ${{ secrets.DROPLET_SSH_KEY || secrets.DO_SSH_KEY }}
           timeout: 30m
           command_timeout: 30m
           script: |
+            set -euo pipefail
             cd /opt/cabi-africa
             git fetch origin main
             git reset --hard origin/main
@@ -121,7 +120,7 @@ jobs:
             docker compose up -d --force-recreate user-portal
             docker compose up -d --build
             docker compose up -d --force-recreate caddy
-            docker compose exec -T auth-gateway npx prisma db push --schema=libs/backend/database/prisma/schema.prisma --accept-data-loss || true
+            docker compose exec -T auth-gateway npx prisma migrate deploy --schema=libs/backend/database/prisma/schema.prisma
 
   # Production Health checks
   post-deployment-checks:
@@ -134,21 +133,25 @@ jobs:
 
       - name: Run health checks
         run: |
+          set -euo pipefail
           echo "Verifying live production endpoints..."
           endpoints=(
             "https://cabi.africa/health"
             "https://api.cabi.africa/health"
             "https://cabi.africa"
           )
+          failed=0
           for url in "${endpoints[@]}"; do
             echo "Checking $url..."
-            status=$(curl -s -k -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
+            status=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 15 "$url" || echo "000")
             if [ "$status" -ge 200 ] && [ "$status" -lt 400 ]; then
               echo "✅ $url is UP (HTTP $status)"
             else
-              echo "⚠️ $url returned HTTP $status"
+              echo "::error::❌ $url returned HTTP $status"
+              failed=1
             fi
           done
+          exit $failed
 
   # Deployment notifications
   send-notifications:

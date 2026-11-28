@@ -36,12 +36,12 @@ class EmergencyContactService {
 
   Future<String?> _resolveAuthToken() async {
     try {
-      final token = await _storage.read(key: 'jwt_token');
-      if (token != null && token.isNotEmpty) return token;
+      for (final key in const ['jwt_token', 'auth_token', 'access_token', 'driver_token']) {
+        final token = await _storage.read(key: key);
+        if (token != null && token.isNotEmpty) return token;
+      }
     } catch (_) {}
-
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString('jwt_token') ?? prefs.getString('authToken') ?? prefs.getString('token');
+    return null;
   }
 
   /**

@@ -19,9 +19,18 @@ export interface ChatUserSession {
   name: string;
 }
 
+const WS_ALLOWED_ORIGINS = (
+  process.env.CORS_ORIGINS ||
+  'https://cabi.africa,https://app.cabi.africa,https://admin.cabi.africa,https://dispatch.cabi.africa'
+)
+  .split(',')
+  .map((o) => o.trim())
+  .filter(Boolean);
+
 @WebSocketGateway({
   cors: {
-    origin: '*',
+    origin: process.env.NODE_ENV === 'production' ? WS_ALLOWED_ORIGINS : [...WS_ALLOWED_ORIGINS, 'http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:5173'],
+    credentials: true,
   },
   namespace: '/chat',
 })

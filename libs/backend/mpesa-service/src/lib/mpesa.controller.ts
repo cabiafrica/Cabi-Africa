@@ -59,34 +59,36 @@ export class MpesaController {
   }
 
   private verifyWebhookOrigin(req: any, headers: Record<string, string>): void {
-    const expectedSecret = process.env.MPESA_WEBHOOK_SECRET;
+    const expectedSecret = process.env.MOBILE_MONEY_WEBHOOK_SECRET || process.env.MPESA_WEBHOOK_SECRET;
     if (expectedSecret) {
-      const provided = headers?.['x-mpesa-webhook-secret'] || req?.query?.secret;
+      // Header-only secret verification (never accept secrets in URL query parameters)
+      const provided = headers?.['x-mobile-money-webhook-secret'] || headers?.['x-mpesa-webhook-secret'];
       if (!provided || typeof provided !== 'string') {
-        this.logger.warn('Rejected M-Pesa callback: missing webhook secret');
-        throw new UnauthorizedException('Invalid M-Pesa webhook signature');
+        this.logger.warn('Rejected Mobile Money callback: missing webhook secret header');
+        throw new UnauthorizedException('Invalid Mobile Money webhook signature');
       }
       const bufExpected = Buffer.from(expectedSecret);
       const bufProvided = Buffer.from(provided);
       if (bufExpected.length !== bufProvided.length || !crypto.timingSafeEqual(bufExpected, bufProvided)) {
-        this.logger.warn('Rejected M-Pesa callback with invalid webhook secret');
-        throw new UnauthorizedException('Invalid M-Pesa webhook signature');
+        this.logger.warn('Rejected Mobile Money callback with invalid webhook secret');
+        throw new UnauthorizedException('Invalid Mobile Money webhook signature');
       }
       return;
     }
 
-    if (process.env.NODE_ENV === 'production') {
-      const forwardedFor = headers?.['x-forwarded-for']?.split(',')[0]?.trim();
-      const remoteIp = forwardedFor || req?.ip || req?.socket?.remoteAddress || '';
-      const normalizedIp = remoteIp.replace(/^::ffff:/, '');
-      if (!SAFARICOM_ALLOWED_IPS.has(normalizedIp)) {
-        this.logger.warn(`Rejected M-Pesa callback from untrusted IP in production: ${normalizedIp}`);
-        throw new ForbiddenException('Untrusted M-Pesa callback origin');
+    const env = (process.env.NODE_ENV || '').toLowerCase();
+    if (env === 'production' || env === 'staging') {
+      // Never trust client-spoofable leftmost x-forwarded-for[0]; rely on Express req.ip / socket address
+      const rawIp = req?.ip || req?.socket?.remoteAddress || '';
+      const normalizedIp = String(rawIp).replace(/^::ffff:/, '').trim();
+      if (!normalizedIp || !SAFARICOM_ALLOWED_IPS.has(normalizedIp)) {
+        this.logger.warn(`Rejected Mobile Money callback from untrusted IP in ${env}: ${normalizedIp || 'unknown'}`);
+        throw new ForbiddenException('Untrusted Mobile Money callback origin');
       }
       return;
     }
 
-    this.logger.warn('[SECURITY WARNING] M-Pesa callback received without MPESA_WEBHOOK_SECRET configured.');
+    this.logger.warn('[SECURITY WARNING] Mobile Money callback received without MOBILE_MONEY_WEBHOOK_SECRET / MPESA_WEBHOOK_SECRET configured (dev only).');
   }
 
   @Post('stk-push')

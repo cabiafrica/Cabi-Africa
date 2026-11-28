@@ -100,7 +100,7 @@ export class SaccoController {
 
         const callerId = user.id || user.userId || user.sub;
         const callerDriverId = user.driverProfile?.id || user.driverProfileId;
-        if (targetUserId && callerId !== targetUserId && callerDriverId !== targetUserId && user.role !== 'DRIVER') {
+        if (targetUserId && callerId !== targetUserId && callerDriverId !== targetUserId) {
             throw new ForbiddenException('Access denied: Cannot access another driver\'s financial records.');
         }
     }

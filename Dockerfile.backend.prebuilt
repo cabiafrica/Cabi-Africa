@@ -24,16 +24,17 @@ ARG SERVICE_NAME
 ENV NODE_OPTIONS=--max-old-space-size=2048
 RUN npx nx build $SERVICE_NAME --configuration=production
 
-# Stage 2: Production Runner
-FROM node:20
+# Stage 2: Production Runner (minimal Alpine image)
+FROM node:20-alpine
 
+RUN apk add --no-cache openssl
 WORKDIR /app
 
-RUN groupadd --gid 1001 nodejs && useradd --uid 1001 --gid nodejs nestjs
+RUN addgroup --system --gid 1001 nodejs && adduser --system --uid 1001 nestjs
 
-COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/scripts/start-service.sh ./start-service.sh
+COPY --from=builder --chown=nestjs:nodejs /app/dist ./dist
+COPY --from=builder --chown=nestjs:nodejs /app/node_modules ./node_modules
+COPY --from=builder --chown=nestjs:nodejs /app/scripts/start-service.sh ./start-service.sh
 RUN sed -i 's/\r$//' ./start-service.sh && chmod +x ./start-service.sh
 
 ARG SERVICE_NAME

@@ -52,10 +52,11 @@ class _CorporateBillingSelectorState extends State<CorporateBillingSelector> {
   Future<String?> _resolveAuthToken() async {
     try {
       const storage = FlutterSecureStorage();
-      final token = await storage.read(key: 'jwt_token');
-      if (token != null && token.isNotEmpty) return token;
-      final prefs = await SharedPreferences.getInstance();
-      return prefs.getString('auth_token') ?? prefs.getString('access_token');
+      for (final key in const ['jwt_token', 'auth_token', 'access_token', 'driver_token']) {
+        final token = await storage.read(key: key);
+        if (token != null && token.isNotEmpty) return token;
+      }
+      return null;
     } catch (_) {
       return null;
     }

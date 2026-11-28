@@ -1,7 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { corporateService } from '@/lib/corporateService';
+import { requireAuth } from '@/lib/serverAuth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const caller = requireAuth(req, res);
+    if (!caller) return;
+
     const { orgId } = req.query;
     const targetOrgId = (typeof orgId === 'string' && orgId) ? orgId : 'corp-nexus-tech-01';
 
